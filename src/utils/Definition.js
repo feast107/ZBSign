@@ -5,6 +5,9 @@ export const IpcMessage = {
     Execute : 'execute',
     Self : 'self',
     BlueToothPair : 'bluetooth-pairing-response',
+    BlueToothList : 'blueToothList',
+    BlueToothSelect : 'blueToothSelect',
+    BlueToothFinish : 'blueToothFinish',
 }
 
 export const WindowMessage = {

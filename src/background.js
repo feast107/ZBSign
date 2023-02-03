@@ -4,7 +4,7 @@ import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import path from "path";
 import { screen } from "electron";
-import { IpcMessage, WindowMessage, WindowType } from "./utils/Definition";
+import { IpcMessage, LogLevel, WindowMessage, WindowType } from "./utils/Definition";
 const isDevelopment = process.env.NODE_ENV !== "production";
 import { application } from "./dispatcher/Application";
 // Scheme must be registered before the app is ready
@@ -16,7 +16,7 @@ async function createWindow() {
     const primaryDisplay = screen.getPrimaryDisplay();
     const { width, height } = primaryDisplay.workAreaSize;
     // Create the browser window.
-    const win = application.createWindow(WindowType.Main, {
+    const mainWin = application.createWindow(WindowType.Main, {
         width: width,
         height: height,
         frame: false,
@@ -28,14 +28,17 @@ async function createWindow() {
         },
         closable: true,
     });
+    mainWin.on('closed',()=>{
+        application.closeAll();
+    });
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
-        await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
-        if (!process.env.IS_TEST) win.webContents.openDevTools();
+        await mainWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL+WindowType.Main);
+        if (!process.env.IS_TEST) mainWin.webContents.openDevTools();
     } else {
         createProtocol("app");
         // Load the index.html when not in development
-        win.loadURL("app://./index.html");
+        mainWin.loadURL("app://./index.html");
     }
     // Listen for a message from the renderer to get the response for the Bluetooth pairing.
     ipcMain.on(IpcMessage.BlueToothPair, (e, ...args) => {
@@ -45,7 +48,6 @@ async function createWindow() {
     //#region
     ipcMain.on(IpcMessage.Close, (e, ...args) => {
         e.sender.$Scope.close();
-        if(e.sender == win){ application.closeAll(); }
     });
     ipcMain.on(IpcMessage.Quit, (e, ...args) => {
         app.quit();
@@ -56,33 +58,43 @@ async function createWindow() {
     ipcMain.on(IpcMessage.Self,(e)=>{
         e.sender.$Scope.send(IpcMessage.Self, e.sender.$Scope.$Name);
     });
-    win.webContents.session.setBluetoothPairingHandler(
+    mainWin.webContents.session.setBluetoothPairingHandler(
         (details, callback) => {
             this.bluetoothPinCallback = callback;
             // Send a message to the renderer to prompt the user to confirm the pairing.
-            mainWindow.webContents.send(IpcMessage.BlueToothPair, details);
+            mainWin.webContents.send(IpcMessage.BlueToothPair, details);
         }
     );
-    win.webContents.on(
-        WindowMessage.BlueTooth,
-        (e, deviceList, callback) => {
-            console.log(e.sender);
-            console.log(callback);
+    mainWin.webContents.on(WindowMessage.BlueTooth,async (e, deviceList, callback) => {
             e.preventDefault();
-            if (deviceList && deviceList.length > 0) {
-                if (!application.getWindow(WindowType.BlueTooth)) {
-                    let bwin = application.createWindow(WindowType.BlueTooth, {
-                        width: 300,
-                        height: 400,
-                        webPreferences: {
-                            preload: path.join(__dirname, "/preload.js"),
-                        },
-                    });
-                    bwin.loadURL("app://./index.html");
-                } else {
-                    application.getWindow(WindowType.BlueTooth).show()
+            if(!e.sender.$Scope.$BlueToothHandle){
+                let handler;
+                handler = e.sender.$Scope.$BlueToothHandle = function(event,...args) {
+                    console.log(args)
+                    ipcMain.off(IpcMessage.BlueToothSelect,handler);
+                    delete e.sender.$Scope.$BlueToothHandle;
+                    callback(args[0][0]);
+                    mainWin.webContents.send(IpcMessage.BlueToothFinish);
                 }
-                application.$Logger.info(deviceList);
+                ipcMain.on(IpcMessage.BlueToothSelect,handler)
+            }
+            if (deviceList && deviceList.length > 0) {
+                mainWin.webContents.send(IpcMessage.BlueToothList,deviceList);
+                //mainWin.webContents.send(IpcMessage.Log,LogLevel.Log,deviceList);
+                // if (!application.getWindow(WindowType.BlueTooth)) {
+                //     let bwin = application.createWindow(WindowType.BlueTooth, {
+                //         width: 300,
+                //         height: 400,
+                //         webPreferences: {
+                //             preload: path.join(__dirname, "/preload.js"),
+                //         },
+                //     });
+                //     bwin.on('closed',()=>{ callback(null); });
+                //     await bwin.loadURL(process.env.WEBPACK_DEV_SERVER_URL+WindowType.BlueTooth);
+                // } else {
+                //     application.getWindow(WindowType.BlueTooth).show();
+                // }
+                // application.getWindow(WindowType.BlueTooth).webContents.$Scope.$Logger.log(deviceList);
             }
         }
     );

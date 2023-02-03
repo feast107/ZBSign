@@ -3,41 +3,27 @@ const { IpcMessage } = require("./utils/Definition");
 
 const bridge = {
     listen: (handler, callback) => {
-        ipcRenderer.on(handler, callback);
+        ipcRenderer.on(handler, function (_, ...args) {
+            callback(args);
+        });
     },
-    invoke: (handler) => ipcRenderer.send(handler),
+    invoke: (handler,...args) => ipcRenderer.send(handler,args),
     testLogger: (...args) => {
         ipcRenderer.send(IpcMessage.Log, args);
     },
-    promise:(handler,...args) => {
-        return new Promise((res,rej)=>{
+    promise: (handler, ...args) => {
+        return new Promise((res, rej) => {
             let callback;
-            callback = (e,...result) => {
+            callback = (e, ...result) => {
                 console.log(e);
-                ipcRenderer.off(handler,callback);
+                ipcRenderer.off(handler, callback);
                 res(result[0]);
-            }
-            ipcRenderer.on(handler,callback);
-            ipcRenderer.send(handler,args);
+            };
+            ipcRenderer.on(handler, callback);
+            ipcRenderer.send(handler, args);
         });
     },
     execute: (fun) => ipcRenderer.send(IpcMessage.Execute, fun),
-    identity: () => {
-        // return new Promise((res, rej) => {
-        //     let handler;
-        //     handler = (e, name) => {
-        //         ipcRenderer.off(IpcMessage.Self, handler);
-        //         if(name[0]){
-        //             res(name[0]);
-        //         }else{
-        //             rej("name not found");
-        //         }
-        //     };
-        //     ipcRenderer.on(IpcMessage.Self, handler);
-        //     ipcRenderer.send(IpcMessage.Self);
-        // });
-        return this.promise(IpcMessage.Self)
-    },
 };
 
 ipcRenderer.on(IpcMessage.Log, function (_, __) {
@@ -51,7 +37,7 @@ ipcRenderer.on(IpcMessage.Log, function (_, __) {
 });
 contextBridge.exposeInMainWorld("$Dispatcher", bridge);
 window.onload = () => {
-    document.querySelector("#closer").addEventListener("click", () => {
-        bridge.invoke(IpcMessage.Close);
-    });
+    // document.querySelector("#closer").addEventListener("click", () => {
+    //     bridge.invoke(IpcMessage.Close);
+    // });
 };

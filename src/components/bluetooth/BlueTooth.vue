@@ -1,19 +1,45 @@
 <template>
-    <div>
-        <li :key="item.id" v-for="(item,index) of blueToothList">
-            {{ item.name }}
-        </li>
-    </div>
+    <el-card v-if="blueTooth.length > 0" :style="{ boxShadow: `var(--el-box-shadow-dark)` }" shadow="always">
+        <el-table :data="blueTooth" style="height: 400px;">
+            <el-table-column prop="deviceId" label="编号" width="150" />
+            <el-table-column prop="deviceName" label="名称" width="150" />
+            <el-table-column prop="deviceName" label="事件" width="70">
+                <template #default="scope">
+                    <el-button type="primary"  @click="SelectDevice(scope.row)">
+                        连接
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-card>
 </template>
 
 <script>
+import { IpcMessage } from '../../utils/Definition'
 export default {
     name: 'BlueTooth',
     data() {
         return {
-            blueToothList: []
+            blueTooth:[],
         }
     },
+    created() {
+        window.$Dispatcher.listen(IpcMessage.BlueToothList, (list) => {
+            this.blueTooth = list[0];
+        })
+        window.$Dispatcher.listen(IpcMessage.BlueToothFinish,()=>{
+            this.blueTooth = [];
+        })
+    },
+    setup() {
+        window.$Dispatcher;
+    },
+    methods:{
+        SelectDevice(device){ 
+            console.log(device.deviceId);
+            window.$Dispatcher.invoke(IpcMessage.BlueToothSelect,device.deviceId);
+        }
+    }
 }
 </script>
 <style scoped>
