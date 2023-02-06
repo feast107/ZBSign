@@ -7,7 +7,7 @@ export const IpcMessage = {
     BlueToothPair : 'bluetooth-pairing-response',
     BlueToothList : 'blueToothList',
     BlueToothSelect : 'blueToothSelect',
-    BlueToothFinish : 'blueToothFinish',
+    BlueToothCancel : 'blueToothFinish',
 }
 
 export const WindowMessage = {
@@ -25,4 +25,22 @@ export const LogLevel = {
 export const WindowType = {
     Main : 'main',
     BlueTooth : 'bluetooth'
+}
+
+export const ComponentKey = {
+    Dotpen : 'dotpen',
+    ConnectStatus : 'connectStatus'
+}
+
+export class Dotpen{
+    constructor(){ 
+        this.$ConnectStatus = ConnectStatus.Disconnected;
+        this.$Name = null;
+    }
+}
+
+export const ConnectStatus = {
+    Disconnected : 'disconnected',
+    Connected : 'connected',
+    Connecting : 'connecting'
 }

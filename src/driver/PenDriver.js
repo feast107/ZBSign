@@ -20131,7 +20131,16 @@
                     return (
                         null != t && (e.filters[0].name = t),
                         navigator.bluetooth
-                            .requestDevice(e)
+                            .requestDevice({
+                                filters: [
+                                    {
+                                        namePrefix: "TD",
+                                        services: [
+                                            "0000fff0-0000-1000-8000-00805f9b34fb",
+                                        ],
+                                    },
+                                ],
+                            })
                             .then((t) => {
                                 this._device = t;
                                 var e = -1;
