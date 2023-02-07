@@ -246,9 +246,16 @@
 import { ComponentKey , ConnectStatus } from "@/utils/Definition";
 import { license, signature } from "../driver/MyLicense";
 import TStudyDigitalPen from "../driver/PenDriver.js";
+import Request from '../utils/Request';
+
 export default {
     name: 'DrawView',
     inject: [ComponentKey.Dotpen],
+    created(){
+        Request.post("http://localhost:5148/Picture/Post",{data:1})
+        .then(r=>console.log(r))
+        .catch(e=>console.error(e))
+    },
     data() {
         console.log("in DrawView");
         console.log(this[ComponentKey.Dotpen])
@@ -278,6 +285,7 @@ export default {
             TStudyDigitalPen.getInstance().setCallbackDelegate(
                 this.callbacks()
             );
+            let date = new Date();
             TStudyDigitalPen.getInstance().scanAndConnectPen()
                 .then((ret) => {
                     if (ret) {
@@ -291,6 +299,7 @@ export default {
                     }
                 })
                 .catch((error) => {
+                    console.log('No result of bluetooth Expired in:' + new String((new Date() - date)/1000));
                     this.rawResult = error.toString();
                 });
         },

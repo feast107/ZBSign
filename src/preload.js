@@ -27,12 +27,23 @@ const bridge = {
 };
 
 ipcRenderer.on(IpcMessage.Log, function (_, __) {
+    let extractArray = (message,executive) =>{ 
+        if(message instanceof Array){
+            message.forEach(m=>extractArray(m,executive))
+        }else{
+            executive(message);
+        }
+    }
     if (arguments.length <= 1) {
         return;
     }
     let key = arguments[1];
     for (let i = 2; i < arguments.length; i++) {
-        console[key](arguments[i]);
+        if(arguments[i] instanceof Array){
+            extractArray(arguments[i],console[key])
+        }else{
+            console[key](arguments[i]);
+        }
     }
 });
 contextBridge.exposeInMainWorld("$Dispatcher", bridge);

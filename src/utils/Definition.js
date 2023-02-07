@@ -7,7 +7,7 @@ export const IpcMessage = {
     BlueToothPair : 'bluetooth-pairing-response',
     BlueToothList : 'blueToothList',
     BlueToothSelect : 'blueToothSelect',
-    BlueToothCancel : 'blueToothFinish',
+    BlueToothCancel : 'blueToothCancel',
 }
 
 export const WindowMessage = {

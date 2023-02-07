@@ -8,9 +8,9 @@
     <el-upload
     v-model:file-list="FileList" 
     multiple 
+    :action="PictureUrl"
     class="upload-demo" 
     accept="image/png,image/jpg,image/jpeg" 
-    :http-request="(options) => { this.log(options) }" 
     :list-type="'picture-card'" 
     :limit="3"
     :auto-upload="true" :on-preview="(file) => { this.Preview(file) }"
@@ -28,11 +28,19 @@
 </template>
 
 <script>
+import Request from '../utils/Request';
 export default {
+    created(){
+        debugger;
+        Request.get("http://localhost:5148/Picture/Get")
+        .then(r=>console.log(r))
+        .catch(e=>console.error(e))
+    },
     data() {
         return {
             FileList: [],
-            Previewer: { Visible: false, Url: null }
+            Previewer: { Visible: false, Url: null },
+            PictureUrl: "http://localhost:5148/Picture/Upload"
         }
     },
     methods: {

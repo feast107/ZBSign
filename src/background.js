@@ -21,13 +21,14 @@ async function createWindow() {
         height: height,
         frame: false,
         transparent: false,
-        fullscreenable:true,
+        fullscreenable: true,
         //fullscreen: true,
         //simpleFullscreen:true,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
             preload: path.join(__dirname, "/preload.js"),
+            webSecurity: false,
         },
         closable: true,
     });
@@ -37,7 +38,9 @@ async function createWindow() {
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
         if (!process.env.IS_TEST) mainWin.webContents.openDevTools();
-        await mainWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL + WindowType.Main);
+        await mainWin.loadURL(
+            process.env.WEBPACK_DEV_SERVER_URL + WindowType.Main
+        );
     } else {
         createProtocol("app");
         // Load the index.html when not in development
@@ -70,20 +73,22 @@ async function createWindow() {
     );
     mainWin.webContents.on(
         WindowMessage.BlueTooth,
-        async (event, deviceList, callback) => {
+        (event, deviceList, callback) => {
             event.preventDefault();
             if (!event.sender.$Scope.$BlueToothConnecting) {
+                application.$Logger.warn("Listening message");
                 event.sender.$Scope.$BlueToothConnecting = true;
                 let connectHandler;
                 let cancelHandler;
-                connectHandler = function (e, ...args) {
+                connectHandler = (e, ...args) => {
                     console.log(args);
                     ipcMain.off(IpcMessage.BlueToothSelect, connectHandler);
                     ipcMain.off(IpcMessage.BlueToothCancel, cancelHandler);
                     e.sender.$Scope.$BlueToothConnecting = false;
                     callback(args[0][0]);
                 };
-                cancelHandler = function (e, _) {
+                cancelHandler = (e, ...args) => {
+                    application.$Logger.warn("Cancel request");
                     ipcMain.off(IpcMessage.BlueToothSelect, connectHandler);
                     ipcMain.off(IpcMessage.BlueToothCancel, cancelHandler);
                     e.sender.$Scope.$BlueToothConnecting = false;
