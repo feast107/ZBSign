@@ -1,13 +1,14 @@
 <template>
 	<BlueTooth style="position:fixed;margin-top: 20px;margin-left: 20px;" />
 	<img alt="Vue logo" src="./assets/logo.png" />
-	<DrawView />
+	<DisplayView />
 </template>
 
 <script>
 import HelloWorld from "./components/HelloWorld.vue";
 import BlueTooth from "./components/BlueTooth.vue";
 import DrawView from "./components/DrawView.vue";
+import DisplayView from "./components/DisplayView.vue";
 import { ComponentKey, Dotpen } from "./utils/Definition";
 import { computed } from 'vue'
 export default {
@@ -15,7 +16,8 @@ export default {
 	components: {
 		HelloWorld,
 		BlueTooth,
-		DrawView
+		DrawView,
+		DisplayView
 	},
 	provide: {
 		[ComponentKey.Dotpen]: computed(() => new Dotpen()),

@@ -540,7 +540,6 @@ export default {
                         var can = document.getElementById("myCanvas");
                         var x = (can.width / vueapp.dotwdith) * coordX;
                         var y = (can.height / vueapp.dotheight) * coordY;
-
                         //vueapp.points.push({x,y});
                         vueapp.drawStrokeDynamic({ x, y }, 0.8);
                     }

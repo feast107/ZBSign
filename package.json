@@ -14,6 +14,7 @@
   },
   "main": "background.js",
   "dependencies": {
+    "axios": "^1.3.2",
     "core-js": "^3.8.3",
     "element-plus": "^2.2.29",
     "unzip-crx-3": "^0.2.0",
@@ -44,24 +45,24 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {
-      "no-empty":"off",
+      "no-empty": "off",
       "no-undef": "off",
       "no-debugger": "off",
-      "no-cond-assign":"off",
-      "no-self-assign":"off",
-      "no-func-assign":"off",
-      "no-fallthrough":"off",
+      "no-cond-assign": "off",
+      "no-self-assign": "off",
+      "no-func-assign": "off",
+      "no-fallthrough": "off",
       "no-unused-vars": "off",
-      "no-control-regex":"off",
-      "no-useless-escape":"off",
+      "no-control-regex": "off",
+      "no-useless-escape": "off",
       "no-unused-labels": "off",
-      "no-irregular-whitespace":"off",
-      "no-prototype-builtins":"off",
-      "no-inner-declarations":"off",
+      "no-irregular-whitespace": "off",
+      "no-prototype-builtins": "off",
+      "no-inner-declarations": "off",
       "no-unexpected-multiline": "off",
       "vue/no-unused-vars": "off",
-      "vue/no-parsing-error":"off",
-      "vue/no-unused-components":"off"
+      "vue/no-parsing-error": "off",
+      "vue/no-unused-components": "off"
     }
   },
   "browserslist": [

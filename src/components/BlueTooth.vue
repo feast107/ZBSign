@@ -1,7 +1,7 @@
 <template>
     <el-card v-if="this.Show" :style="{ boxShadow: `var(--el-box-shadow-dark)` }" shadow="always">
-        <el-collapse style="border:none ;border-width: 0;">
-            <el-collapse-item style="border:none ;border-width: 0;">
+        <el-collapse v-model="Activate" style="border:none ;border-width: 0;">
+            <el-collapse-item style="border:none ;border-width: 0;" name="main">
                 <template #title>
                     <el-button loading text 
                     class="el-icon--right">
@@ -45,6 +45,7 @@ export default {
             BlueTooth: [],
             TryingToConnect: false,
             Show: false,
+            Activate:['main']
         }
     },
     watch: {

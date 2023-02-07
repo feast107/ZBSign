@@ -21,6 +21,9 @@ async function createWindow() {
         height: height,
         frame: false,
         transparent: false,
+        fullscreenable:true,
+        //fullscreen: true,
+        //simpleFullscreen:true,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: true,
