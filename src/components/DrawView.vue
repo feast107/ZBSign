@@ -1,7 +1,5 @@
 <template>
-    <button
-        class="close"
-        onclick="window.close()"
+    <button class="close" onclick="window.close()"
         style="position: fixed; margin-top: 10px; right: 0; margin-right: 10px">
         CLOSE
     </button>
@@ -33,140 +31,96 @@
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    id="btn"
-                                    :disabled="scanDisabled"
-                                    v-on:click="scanAndConnect">
+                                <button id="btn" :disabled="scanDisabled" v-on:click="scanAndConnect">
                                     扫描连接
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    id="disconnect"
-                                    :disabled="functionDisabled"
-                                    v-on:click="disconnect">
+                                <button id="disconnect" :disabled="functionDisabled" v-on:click="disconnect">
                                     断开连接
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    id="peninfo"
-                                    :disabled="functionDisabled"
-                                    v-on:click="getPenInfo">
+                                <button id="peninfo" :disabled="functionDisabled" v-on:click="getPenInfo">
                                     获取笔信息
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    id="battery"
-                                    :disabled="functionDisabled"
-                                    v-on:click="getBatteryInfo">
+                                <button id="battery" :disabled="functionDisabled" v-on:click="getBatteryInfo">
                                     获取电量信息
                                 </button>
                             </th>
                         </tr>
                         <tr align="left">
                             <th>
-                                <button
-                                    id="startReceiveStroke"
-                                    :disabled="functionDisabled"
+                                <button id="startReceiveStroke" :disabled="functionDisabled"
                                     v-on:click="startReceiveStroke">
                                     接收坐标
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    id="stopReceiveStroke"
-                                    :disabled="functionDisabled"
+                                <button id="stopReceiveStroke" :disabled="functionDisabled"
                                     v-on:click="stopReceiveStroke">
                                     停止数据
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    id="receiveRealtimeMode"
-                                    :disabled="functionDisabled"
+                                <button id="receiveRealtimeMode" :disabled="functionDisabled"
                                     v-on:click="receiveRealtimeMode">
                                     获取实时
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    id="receiveStorageMode"
-                                    :disabled="functionDisabled"
+                                <button id="receiveStorageMode" :disabled="functionDisabled"
                                     v-on:click="receiveStorageMode">
                                     获取存储
                                 </button>
                             </th>
 
                             <th>
-                                <button
-                                    :disabled="functionDisabled"
-                                    v-on:click="hoverOn">
+                                <button :disabled="functionDisabled" v-on:click="hoverOn">
                                     开启悬浮
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    :disabled="functionDisabled"
-                                    v-on:click="hoverOff">
+                                <button :disabled="functionDisabled" v-on:click="hoverOff">
                                     关闭悬浮
                                 </button>
                             </th>
                         </tr>
                         <tr align="left">
                             <th>
-                                <button
-                                    id="mac"
-                                    :disabled="functionDisabled"
-                                    v-on:click="getMac">
+                                <button id="mac" :disabled="functionDisabled" v-on:click="getMac">
                                     获取mac地址
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    id="getPenRTC"
-                                    :disabled="functionDisabled"
-                                    v-on:click="getPenRTC">
+                                <button id="getPenRTC" :disabled="functionDisabled" v-on:click="getPenRTC">
                                     获取时钟
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    id="setPenRTC"
-                                    :disabled="functionDisabled"
-                                    v-on:click="setPenRTC">
+                                <button id="setPenRTC" :disabled="functionDisabled" v-on:click="setPenRTC">
                                     设置时钟
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    id="getPowerOffTime"
-                                    :disabled="functionDisabled"
-                                    v-on:click="getPowerOffTime">
+                                <button id="getPowerOffTime" :disabled="functionDisabled" v-on:click="getPowerOffTime">
                                     获取关机时间
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    id="setPowerOffTime"
-                                    :disabled="functionDisabled"
-                                    v-on:click="setPowerOffTime">
+                                <button id="setPowerOffTime" :disabled="functionDisabled" v-on:click="setPowerOffTime">
                                     设置关机时间
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    id="offlineinfo"
-                                    :disabled="functionDisabled"
-                                    v-on:click="getOfflineDataInfo">
+                                <button id="offlineinfo" :disabled="functionDisabled" v-on:click="getOfflineDataInfo">
                                     离线数据信息
                                 </button>
                             </th>
                             <th>
-                                <button
-                                    id="clearofflinedata"
-                                    :disabled="functionDisabled"
+                                <button id="clearofflinedata" :disabled="functionDisabled"
                                     v-on:click="clearOfflineData">
                                     清空离线数据
                                 </button>
@@ -181,10 +135,7 @@
             <div id="status">
                 <div class="item">
                     <div class="lable">连接状态：</div>
-                    <div
-                        class="info"
-                        id="penconnstatus"
-                        v-text="connectionStatus"></div>
+                    <div class="info" id="penconnstatus" v-text="connectionStatus"></div>
                 </div>
                 <div class="item">
                     <div class="lable">设备名：</div>
@@ -203,34 +154,26 @@
                     <div class="info" id="pencoor" v-text="coorInfo"></div>
                 </div>
             </div>
-            <div
-                id="content"
-                style="
+            <div id="content" style="
                     width: 100%;
                     min-width: 1000px;
                     height: 1414px;
                     background: rgb(60, 60, 60);
                 ">
-                <div
-                    style="
+                <div style="
                         margin: 0 auto;
                         width: 1000px;
                         min-width: 1000px;
                         height: 1414px;
                         background-color: rgb(37, 37, 38);
                     "></div>
-                <div
-                    style="
+                <div style="
                         width: 1000px;
                         position: relative;
                         top: -1414px;
                         margin: 0 auto;
                     ">
-                    <canvas
-                        id="myCanvas"
-                        style="width: 1000px; height: 1414px"
-                        width="1000"
-                        height="1414"></canvas>
+                    <canvas id="myCanvas" style="width: 1000px; height: 1414px" width="1000" height="1414"></canvas>
                 </div>
             </div>
         </div>
@@ -243,7 +186,7 @@
 
 
 <script>
-import { ComponentKey , ConnectStatus } from "@/utils/Definition";
+import { ComponentKey, ConnectStatus } from "@/utils/Definition";
 import { license, signature } from "../driver/MyLicense";
 import TStudyDigitalPen from "../driver/PenDriver.js";
 import Request from '../utils/Request';
@@ -251,16 +194,16 @@ import Request from '../utils/Request';
 export default {
     name: 'DrawView',
     inject: [ComponentKey.Dotpen],
-    created(){
-        Request.post("http://localhost:5148/Picture/Post",{data:1})
-        .then(r=>console.log(r))
-        .catch(e=>console.error(e))
+    created() {
+        Request.post("http://localhost:5148/Picture/Post", { data: 1 })
+            .then(r => console.log(r))
+            .catch(e => console.error(e))
     },
     data() {
         console.log("in DrawView");
         console.log(this[ComponentKey.Dotpen])
         return {
-            Dotpen:this[ComponentKey.Dotpen],
+            Dotpen: this[ComponentKey.Dotpen],
             connectionStatus: "未连接",
             penName: "",
             penSerial: "",
@@ -299,7 +242,7 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    console.log('No result of bluetooth Expired in:' + new String((new Date() - date)/1000));
+                    console.log('No result of bluetooth Expired in:' + new String((new Date() - date) / 1000));
                     this.rawResult = error.toString();
                 });
         },
@@ -459,9 +402,8 @@ export default {
             return {
                 onPenConnectionStateChange: function ({ name, connect }) {
                     console.log("onPenConnectionStateChange: ", name, connect);
-                    vueapp.connectionStatus = `${
-                        connect ? "已连接" : "未连接"
-                    }`;
+                    vueapp.connectionStatus = `${connect ? "已连接" : "未连接"
+                        }`;
                     if (!connect) {
                         vueapp.functionDisabled = true;
                         vueapp.scanDisabled = false;

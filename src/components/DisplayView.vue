@@ -28,14 +28,8 @@
 </template>
 
 <script>
-import Request from '../utils/Request';
 export default {
-    created(){
-        debugger;
-        Request.get("http://localhost:5148/Picture/Get")
-        .then(r=>console.log(r))
-        .catch(e=>console.error(e))
-    },
+   
     data() {
         return {
             FileList: [],
