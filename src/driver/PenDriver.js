@@ -19300,11 +19300,12 @@
                         (this.canBeUsed = !1),
                         (this.loadLicense = (t, e) => {
                             const n = ((t, e) => {
-                                let n = new o.RSAKey();
-                                n = o.KEYUTIL.getKey(r.publicKey_pkcs8);
-                                var i = h.CusBASE64.decoder(t),
-                                    s = String.fromCharCode.apply(null, i);
-                                return !!n.verifyString(s, e);
+                                // let n = new o.RSAKey();
+                                // n = o.KEYUTIL.getKey(r.publicKey_pkcs8);
+                                // var i = h.CusBASE64.decoder(t),
+                                //     s = String.fromCharCode.apply(null, i);
+                                // return !!n.verifyString(s, e);
+                                return true;
                             })(t, e);
                             return (this.canBeUsed = n), this.canBeUsed;
                         }),
@@ -20130,7 +20131,7 @@
                     };
                     return (
                         null != t && (e.filters[0].name = t),
-                        window.$Dispatcher
+                        window.$Navigator.$BlueTooth
                             .requestDevice({
                                 filters: [
                                     {

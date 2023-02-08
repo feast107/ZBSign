@@ -76,8 +76,8 @@ async function createWindow() {
         (event, deviceList, callback) => {
             event.preventDefault();
             if (!event.sender.$Scope.$BlueToothConnecting) {
-                application.$Logger.warn("Listening message");
                 event.sender.$Scope.$BlueToothConnecting = true;
+                application.$Logger.warn("Listening message");
                 let connectHandler;
                 let cancelHandler;
                 connectHandler = (e, ...args) => {
