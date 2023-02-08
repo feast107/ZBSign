@@ -22,23 +22,18 @@ export default {
 	provide: {
 		[ComponentKey.Dotpen]: computed(() => new Dotpen()),
 	},
-	created(){
+	created() {
 		window.$Navigator = document.$Navigator = {
-        $BlueTooth: {
-            requestDevice(config) {
-                console.log(this);
-                if (this.$Promise) return this.$Promise;
-                let ret = (this.$Promise =
-                    navigator.bluetooth.requestDevice(config));
-                ret.then((e) => console.log(e))
-                    .catch((e) => console.log(e))
-                    .finally(() => {
-                        delete this.$Promise;
-                    });
-                return ret;
-            },
-        },
-    };
+			$BlueTooth: {
+				requestDevice(config) {
+					if (this.$Promise) return this.$Promise;
+					const ret = (this.$Promise = navigator.bluetooth.requestDevice(config));
+					return ret.catch((e) => console.log(e)).finally(() => {
+						delete this.$Promise;
+					});
+				},
+			},
+		};
 	}
 };
 </script>

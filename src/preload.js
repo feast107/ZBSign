@@ -24,17 +24,6 @@ const bridge = {
         });
     },
     execute: (fun) => ipcRenderer.send(IpcMessage.Execute, fun),
-    requestDevice: (config) => {
-        console.log(this);
-        if (this.$Promise) return this.$Promise;
-        let ret = (this.$Promise = navigator.bluetooth.requestDevice(config));
-        ret.then((e) => console.log(e))
-            .catch((e) => console.log(e))
-            .finally(() => {
-                delete this.$Promise;
-            });
-        return ret;
-    },
 };
 
 ipcRenderer.on(IpcMessage.Log, function (_, __) {
@@ -59,22 +48,5 @@ ipcRenderer.on(IpcMessage.Log, function (_, __) {
 });
 contextBridge.exposeInMainWorld("$Dispatcher", bridge);
 window.onload = function(){
-    console.log("window on load")
-    console.log(document);
-    document.$Navigator = {
-        $BlueTooth: {
-            requestDevice(config) {
-                console.log(this);
-                if (this.$Promise) return this.$Promise;
-                let ret = (this.$Promise =
-                    navigator.bluetooth.requestDevice(config));
-                ret.then((e) => console.log(e))
-                    .catch((e) => console.log(e))
-                    .finally(() => {
-                        delete this.$Promise;
-                    });
-                return ret;
-            },
-        },
-    };
+    
 };

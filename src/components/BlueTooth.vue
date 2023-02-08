@@ -13,9 +13,9 @@
                     <el-table-column prop="deviceName" label="名称" width="150" />
                     <el-table-column prop="deviceName" label="操作" width="100">
                         <template #default="scope">
-                            <el-button type="primary" plain 
+                            <el-button type="primary" plain style="width:100%;"
                             :disabled="this.TryingToConnect"
-                            :loading="scope.row.IsConnecting" 
+                            :loading="scope.row.IsConnecting"
                             @click="SelectDevice(scope.row)">
                                 连接
                             </el-button>

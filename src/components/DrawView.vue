@@ -1,8 +1,8 @@
 <template>
-    <button class="close" onclick="window.close()"
+    <el-button class="close" onclick="window.close()"
         style="position: fixed; margin-top: 10px; right: 0; margin-right: 10px">
         CLOSE
-    </button>
+    </el-button>
     <div id="draw">
         <div id="title">
             <div style="margin-left: 10px">拓思德点阵笔网页DEMO</div>
@@ -15,9 +15,9 @@
                         <tr></tr>
                         <tr>
                             <th>
-                                <button @click="clearDrawing">
+                                <el-button @click="clearDrawing">
                                     清空画布
-                                </button>
+                                </el-button>
                             </th>
                         </tr>
                     </table>
@@ -26,104 +26,104 @@
                     <table>
                         <tr>
                             <th>
-                                <button id="btn" @click="checkWebBluetooth">
+                                <el-button id="btn" @click="checkWebBluetooth">
                                     蓝牙可用性
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button id="btn" :disabled="scanDisabled" @click="scanAndConnect">
+                                <el-button id="btn" :disabled="scanDisabled" @click="scanAndConnect">
                                     扫描连接
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button id="disconnect" :disabled="functionDisabled" @click="disconnect">
+                                <el-button id="disconnect" :disabled="functionDisabled" @click="disconnect">
                                     断开连接
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button id="peninfo" :disabled="functionDisabled" @click="getPenInfo">
+                                <el-button id="peninfo" :disabled="functionDisabled" @click="getPenInfo">
                                     获取笔信息
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button id="battery" :disabled="functionDisabled" @click="getBatteryInfo">
+                                <el-button id="battery" :disabled="functionDisabled" @click="getBatteryInfo">
                                     获取电量信息
-                                </button>
+                                </el-button>
                             </th>
                         </tr>
                         <tr align="left">
                             <th>
-                                <button id="startReceiveStroke" :disabled="functionDisabled"
+                                <el-button id="startReceiveStroke" :disabled="functionDisabled"
                                     @click="startReceiveStroke">
                                     接收坐标
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button id="stopReceiveStroke" :disabled="functionDisabled"
+                                <el-button id="stopReceiveStroke" :disabled="functionDisabled"
                                     @click="stopReceiveStroke">
                                     停止数据
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button id="receiveRealtimeMode" :disabled="functionDisabled"
+                                <el-button id="receiveRealtimeMode" :disabled="functionDisabled"
                                     @click="receiveRealtimeMode">
                                     获取实时
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button id="receiveStorageMode" :disabled="functionDisabled"
+                                <el-button id="receiveStorageMode" :disabled="functionDisabled"
                                     @click="receiveStorageMode">
                                     获取存储
-                                </button>
+                                </el-button>
                             </th>
 
                             <th>
-                                <button :disabled="functionDisabled" @click="hoverOn">
+                                <el-button :disabled="functionDisabled" @click="hoverOn">
                                     开启悬浮
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button :disabled="functionDisabled" @click="hoverOff">
+                                <el-button :disabled="functionDisabled" @click="hoverOff">
                                     关闭悬浮
-                                </button>
+                                </el-button>
                             </th>
                         </tr>
                         <tr align="left">
                             <th>
-                                <button id="mac" :disabled="functionDisabled" @click="getMac">
+                                <el-button id="mac" :disabled="functionDisabled" @click="getMac">
                                     获取mac地址
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button id="getPenRTC" :disabled="functionDisabled" @click="getPenRTC">
+                                <el-button id="getPenRTC" :disabled="functionDisabled" @click="getPenRTC">
                                     获取时钟
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button id="setPenRTC" :disabled="functionDisabled" @click="setPenRTC">
+                                <el-button id="setPenRTC" :disabled="functionDisabled" @click="setPenRTC">
                                     设置时钟
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button id="getPowerOffTime" :disabled="functionDisabled" @click="getPowerOffTime">
+                                <el-button id="getPowerOffTime" :disabled="functionDisabled" @click="getPowerOffTime">
                                     获取关机时间
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button id="setPowerOffTime" :disabled="functionDisabled" @click="setPowerOffTime">
+                                <el-button id="setPowerOffTime" :disabled="functionDisabled" @click="setPowerOffTime">
                                     设置关机时间
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button id="offlineinfo" :disabled="functionDisabled" @click="getOfflineDataInfo">
+                                <el-button id="offlineinfo" :disabled="functionDisabled" @click="getOfflineDataInfo">
                                     离线数据信息
-                                </button>
+                                </el-button>
                             </th>
                             <th>
-                                <button id="clearofflinedata" :disabled="functionDisabled"
+                                <el-button id="clearofflinedata" :disabled="functionDisabled"
                                     @click="clearOfflineData">
                                     清空离线数据
-                                </button>
+                                </el-button>
                             </th>
                         </tr>
                     </table>
@@ -595,7 +595,7 @@ export default {
     min-width: 1000px;
 }
 
-button {
+el-button {
     width: 100px;
     margin-right: 10px;
     text-align: center;
@@ -607,20 +607,20 @@ button {
     border: none;
 }
 
-button:disabled {
+el-button:disabled {
     color: lightgray;
     background-color: #4e6ef2;
 }
 
-button:hover {
+el-button:hover {
     background-color: #2951f3;
 }
 
-button:hover:disabled {
+el-button:hover:disabled {
     background-color: #4e6ef2;
 }
 
-button:active {
+el-button:active {
     background-color: #0934df;
 }
 
