@@ -20130,7 +20130,7 @@
                     };
                     return (
                         null != t && (e.filters[0].name = t),
-                        navigator.bluetooth
+                        window.$Dispatcher
                             .requestDevice({
                                 filters: [
                                     {

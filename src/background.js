@@ -87,7 +87,7 @@ async function createWindow() {
                     e.sender.$Scope.$BlueToothConnecting = false;
                     callback(args[0][0]);
                 };
-                cancelHandler = (e, ...args) => {
+                cancelHandler = (e, _) => {
                     application.$Logger.warn("Cancel request");
                     ipcMain.off(IpcMessage.BlueToothSelect, connectHandler);
                     ipcMain.off(IpcMessage.BlueToothCancel, cancelHandler);

@@ -26,7 +26,8 @@
                 type="danger" 
                 size="small" 
                 style="float:right;width: 50px;margin-top: 10px;"
-                @click="CancelSelect()">
+                @click="CancelSelect()"
+                :disabled="this.BlueTooth.length==0">
                     取消
                 </el-button>
             </el-collapse-item>

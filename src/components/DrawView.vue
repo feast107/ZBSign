@@ -15,7 +15,7 @@
                         <tr></tr>
                         <tr>
                             <th>
-                                <button v-on:click="clearDrawing">
+                                <button @click="clearDrawing">
                                     清空画布
                                 </button>
                             </th>
@@ -26,27 +26,27 @@
                     <table>
                         <tr>
                             <th>
-                                <button id="btn" v-on:click="checkWebBluetooth">
+                                <button id="btn" @click="checkWebBluetooth">
                                     蓝牙可用性
                                 </button>
                             </th>
                             <th>
-                                <button id="btn" :disabled="scanDisabled" v-on:click="scanAndConnect">
+                                <button id="btn" :disabled="scanDisabled" @click="scanAndConnect">
                                     扫描连接
                                 </button>
                             </th>
                             <th>
-                                <button id="disconnect" :disabled="functionDisabled" v-on:click="disconnect">
+                                <button id="disconnect" :disabled="functionDisabled" @click="disconnect">
                                     断开连接
                                 </button>
                             </th>
                             <th>
-                                <button id="peninfo" :disabled="functionDisabled" v-on:click="getPenInfo">
+                                <button id="peninfo" :disabled="functionDisabled" @click="getPenInfo">
                                     获取笔信息
                                 </button>
                             </th>
                             <th>
-                                <button id="battery" :disabled="functionDisabled" v-on:click="getBatteryInfo">
+                                <button id="battery" :disabled="functionDisabled" @click="getBatteryInfo">
                                     获取电量信息
                                 </button>
                             </th>
@@ -54,74 +54,74 @@
                         <tr align="left">
                             <th>
                                 <button id="startReceiveStroke" :disabled="functionDisabled"
-                                    v-on:click="startReceiveStroke">
+                                    @click="startReceiveStroke">
                                     接收坐标
                                 </button>
                             </th>
                             <th>
                                 <button id="stopReceiveStroke" :disabled="functionDisabled"
-                                    v-on:click="stopReceiveStroke">
+                                    @click="stopReceiveStroke">
                                     停止数据
                                 </button>
                             </th>
                             <th>
                                 <button id="receiveRealtimeMode" :disabled="functionDisabled"
-                                    v-on:click="receiveRealtimeMode">
+                                    @click="receiveRealtimeMode">
                                     获取实时
                                 </button>
                             </th>
                             <th>
                                 <button id="receiveStorageMode" :disabled="functionDisabled"
-                                    v-on:click="receiveStorageMode">
+                                    @click="receiveStorageMode">
                                     获取存储
                                 </button>
                             </th>
 
                             <th>
-                                <button :disabled="functionDisabled" v-on:click="hoverOn">
+                                <button :disabled="functionDisabled" @click="hoverOn">
                                     开启悬浮
                                 </button>
                             </th>
                             <th>
-                                <button :disabled="functionDisabled" v-on:click="hoverOff">
+                                <button :disabled="functionDisabled" @click="hoverOff">
                                     关闭悬浮
                                 </button>
                             </th>
                         </tr>
                         <tr align="left">
                             <th>
-                                <button id="mac" :disabled="functionDisabled" v-on:click="getMac">
+                                <button id="mac" :disabled="functionDisabled" @click="getMac">
                                     获取mac地址
                                 </button>
                             </th>
                             <th>
-                                <button id="getPenRTC" :disabled="functionDisabled" v-on:click="getPenRTC">
+                                <button id="getPenRTC" :disabled="functionDisabled" @click="getPenRTC">
                                     获取时钟
                                 </button>
                             </th>
                             <th>
-                                <button id="setPenRTC" :disabled="functionDisabled" v-on:click="setPenRTC">
+                                <button id="setPenRTC" :disabled="functionDisabled" @click="setPenRTC">
                                     设置时钟
                                 </button>
                             </th>
                             <th>
-                                <button id="getPowerOffTime" :disabled="functionDisabled" v-on:click="getPowerOffTime">
+                                <button id="getPowerOffTime" :disabled="functionDisabled" @click="getPowerOffTime">
                                     获取关机时间
                                 </button>
                             </th>
                             <th>
-                                <button id="setPowerOffTime" :disabled="functionDisabled" v-on:click="setPowerOffTime">
+                                <button id="setPowerOffTime" :disabled="functionDisabled" @click="setPowerOffTime">
                                     设置关机时间
                                 </button>
                             </th>
                             <th>
-                                <button id="offlineinfo" :disabled="functionDisabled" v-on:click="getOfflineDataInfo">
+                                <button id="offlineinfo" :disabled="functionDisabled" @click="getOfflineDataInfo">
                                     离线数据信息
                                 </button>
                             </th>
                             <th>
                                 <button id="clearofflinedata" :disabled="functionDisabled"
-                                    v-on:click="clearOfflineData">
+                                    @click="clearOfflineData">
                                     清空离线数据
                                 </button>
                             </th>
@@ -195,9 +195,6 @@ export default {
     name: 'DrawView',
     inject: [ComponentKey.Dotpen],
     created() {
-        Request.post("http://localhost:5148/Picture/Post", { data: 1 })
-            .then(r => console.log(r))
-            .catch(e => console.error(e))
     },
     data() {
         console.log("in DrawView");

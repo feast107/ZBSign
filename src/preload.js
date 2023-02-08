@@ -24,6 +24,12 @@ const bridge = {
         });
     },
     execute: (fun) => ipcRenderer.send(IpcMessage.Execute, fun),
+    requestDevice:(config) => {
+        if(this.$Promise) return this.$Promise;
+        this.$Promise = navigator.bluetooth.requestDevice(config);
+        this.$Promise.finally(()=>{ delete this.$Promise })
+        return this.$Promise;
+    }
 };
 
 ipcRenderer.on(IpcMessage.Log, function (_, __) {
