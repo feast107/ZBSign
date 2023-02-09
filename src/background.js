@@ -7,6 +7,7 @@ import { screen } from "electron";
 import { IpcMessage, WindowMessage, WindowType } from "./utils/Definition";
 const isDevelopment = process.env.NODE_ENV !== "production";
 import { application } from "./dispatcher/Application";
+import { Events } from "./events";
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
     { scheme: "app", privileges: { secure: true, standard: true } },
@@ -32,9 +33,6 @@ async function createWindow() {
         },
         closable: true,
     });
-    mainWin.on("closed", () => {
-        application.closeAll();
-    });
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
         if (!process.env.IS_TEST) mainWin.webContents.openDevTools();
@@ -46,23 +44,9 @@ async function createWindow() {
         // Load the index.html when not in development
         mainWin.loadURL("app://./index.html");
     }
-    // Listen for a message from the renderer to get the response for the Bluetooth pairing.
-    ipcMain.on(IpcMessage.BlueToothPair, (e, ...args) => {
-        console.log({ event: e, response: args });
-        this.bluetoothPinCallback(args);
-    });
-    //#region
-    ipcMain.on(IpcMessage.Close, (e, ...args) => {
-        e.sender.$Scope.close();
-    });
-    ipcMain.on(IpcMessage.Quit, (e, ...args) => {
-        app.quit();
-    });
-    ipcMain.on(IpcMessage.Log, (e, ...args) => {
-        application.$Logger.log("This is test logger info", args);
-    });
-    ipcMain.on(IpcMessage.Self, (e) => {
-        e.sender.$Scope.send(IpcMessage.Self, e.sender.$Scope.$Name);
+    Events.Register(ipcMain);
+    mainWin.on("closed", () => {
+        application.closeAll();
     });
     mainWin.webContents.session.setBluetoothPairingHandler(
         (details, callback) => {
@@ -101,8 +85,6 @@ async function createWindow() {
             }
         }
     );
-
-    //#endregion
 }
 
 // Quit when all windows are closed.

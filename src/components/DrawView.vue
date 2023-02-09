@@ -120,8 +120,7 @@
                                 </el-button>
                             </th>
                             <th>
-                                <el-button id="clearofflinedata" :disabled="functionDisabled"
-                                    @click="clearOfflineData">
+                                <el-button id="clearofflinedata" :disabled="functionDisabled" @click="clearOfflineData">
                                     清空离线数据
                                 </el-button>
                             </th>
@@ -404,7 +403,6 @@ export default {
                     if (!connect) {
                         vueapp.functionDisabled = true;
                         vueapp.scanDisabled = false;
-
                         vueapp.penName = "";
                         vueapp.penSerial = "";
                     } else {
@@ -441,7 +439,6 @@ export default {
                     vueapp.rawResult =
                         "onReceivePenPowerOffTime:" + JSON.stringify(time);
                 },
-
                 onReceivePen_Warning: function (warning) {
                     let content = "";
                     if (warning.type === 0x04) {
@@ -454,7 +451,6 @@ export default {
                     vueapp.rawResult =
                         "onReceivePen_Warning:" + JSON.stringify(warning);
                 },
-
                 onReceivePenOfflineDataInfo: function ({ size, percent }) {
                     console.log(`总大小: ${size}字节; 百分比: ${percent}%`);
                     vueapp.rawResult =

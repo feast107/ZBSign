@@ -1,7 +1,7 @@
 <template>
 	<BlueTooth style="position:fixed;margin-top: 20px;margin-left: 20px;" />
 	<img alt="Vue logo" src="./assets/logo.png" />
-	<DrawView />
+	<DisplayView />
 </template>
 
 <script>

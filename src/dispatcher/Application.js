@@ -1,12 +1,35 @@
 import { IpcMessage, LogLevel } from "@/utils/Definition";
 import { BrowserWindow } from "electron";
-/**
- * Application
- * {
- *     $Windows:[],
- *     $Logger:{ log(),debug(),info(),warn(),error() },
- * }
- */
+
+export class Scope {
+    /**
+     * 创建一个Scope
+     * @param {string} name
+     * @param {BrowserWindow} window
+     */
+    constructor(name, window) {
+        this.$Name = name;
+        this.$Window = window;
+        this.$Logger = {};
+        Object.keys(LogLevel).forEach((level) => {
+            let handler = LogLevel[level];
+            this.$Logger[handler] = function (...args) {
+                if(args.length == 1 && args[0] instanceof Array){
+                    args = args[0];
+                }
+                window.webContents.send(IpcMessage.Log, handler, args);
+            };
+        });
+        Object.freeze(this);
+    }
+    close() {
+        this.$Window.close();
+    }
+    send(handler, ...args) {
+        this.$Window.webContents.send(handler, args);
+    }
+}
+
 export class Application {
     constructor() {
         this.$Windows = {};
@@ -22,6 +45,12 @@ export class Application {
         });
         Object.freeze(this);
     }
+    /**
+     * 创建窗口
+     * @param {string} name
+     * @param {Electron.BrowserWindowConstructorOptions} config
+     * @returns
+     */
     createWindow(name, config) {
         if (!name) throw "Window name required";
         let win = new BrowserWindow(config);
@@ -49,23 +78,8 @@ export class Application {
                 }
             }
         };
-        let scope = (win.webContents.$Scope = {
-            $Name: name,
-            close: () => {
-                win.close();
-            },
-            send: (handler, ...args) => {
-                win.webContents.send(handler, args);
-            },
-            $Logger: {},
-        });
+        win.webContents.$Scope = new Scope(name, win);
         win.on("closed", () => closeHandler());
-        Object.keys(LogLevel).forEach((level) => {
-            let handler = LogLevel[level];
-            scope.$Logger[handler] = function (...args) {
-                win.webContents.send(IpcMessage.Log, handler, args);
-            };
-        });
         win.webContents.send(IpcMessage.Self, name);
         return win;
     }
@@ -85,9 +99,18 @@ export class Application {
             delete this.$Windows[key];
         });
     }
+    /**
+     * 获取窗口，为window或者array
+     * @param {string} name
+     * @returns
+     */
     getWindow(name) {
         return this.$Windows[name];
     }
+    /**
+     * 
+     * @returns {Array<BrowserWindow>} windows
+     */
     getAllWindow() {
         let ret = [];
         Object.keys(this.$Windows).forEach((x) => {

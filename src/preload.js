@@ -1,7 +1,7 @@
-const { contextBridge, ipcRenderer, ipcMain } = require("electron");
-const { IpcMessage } = require("./utils/Definition");
+const { contextBridge, ipcRenderer } = require("electron");
+const { IpcMessage, Bridges, FileType } = require("./utils/Definition");
 
-const bridge = {
+const dispatcher = {
     listen: (handler, callback) => {
         ipcRenderer.on(handler, function (_, ...args) {
             callback(args);
@@ -11,19 +11,43 @@ const bridge = {
     testLogger: (...args) => {
         ipcRenderer.send(IpcMessage.Log, args);
     },
-    promise: (handler, ...args) => {
-        return new Promise((res, rej) => {
+    promise: async (handler, ...args) => {
+        return new Promise((s, _) => {
             let callback;
             callback = (e, ...result) => {
                 console.log(e);
                 ipcRenderer.off(handler, callback);
-                res(result[0]);
+                s(result[0]);
             };
             ipcRenderer.on(handler, callback);
             ipcRenderer.send(handler, args);
         });
     },
     execute: (fun) => ipcRenderer.send(IpcMessage.Execute, fun),
+};
+
+const fileRequest = (fileName, fileType) => {
+    return new Promise((s, e) => {
+        let handler;
+        handler = (_, name, type, value) => {
+            if (name != fileName || type != fileType) return;
+            ipcRenderer.off(IpcMessage.FileRead, handler);
+            s(value);
+        };
+        ipcRenderer.on(IpcMessage.FileRead, handler);
+        ipcRenderer.send(IpcMessage.FileRead,fileType,fileName);
+    });
+};
+
+const fileSystem = {
+    File: {
+        readAllText(fileName) {
+            return fileRequest(fileName, FileType.Text);
+        },
+        readAllBytes(fileName) {
+            return fileRequest(fileName, FileType.Bytes);
+        },
+    },
 };
 
 ipcRenderer.on(IpcMessage.Log, function (_, __) {
@@ -46,7 +70,6 @@ ipcRenderer.on(IpcMessage.Log, function (_, __) {
         }
     }
 });
-contextBridge.exposeInMainWorld("$Dispatcher", bridge);
-window.onload = function(){
-    
-};
+contextBridge.exposeInMainWorld(Bridges.Dispatcher, dispatcher);
+contextBridge.exposeInMainWorld(Bridges.FileSystem, fileSystem);
+window.onload = function () {};

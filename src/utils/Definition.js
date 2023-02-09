@@ -4,14 +4,28 @@ export const IpcMessage = {
     Log : 'log',
     Execute : 'execute',
     Self : 'self',
+    FullScreen : 'fullScreen',
     BlueToothPair : 'bluetooth-pairing-response',
     BlueToothList : 'blueToothList',
     BlueToothSelect : 'blueToothSelect',
     BlueToothCancel : 'blueToothCancel',
+
+    FileRead : 'fileRead',
+    FileWrite : 'fileWrite'
+}
+
+export const FileType = {
+    Text : 'text',
+    Bytes : 'bytes'
 }
 
 export const WindowMessage = {
     BlueTooth : 'select-bluetooth-device'
+}
+
+export const Bridges = {
+    Dispatcher : '$Dispatcher',
+    FileSystem : '$FileSystem',
 }
 
 export const LogLevel = {

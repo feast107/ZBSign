@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { ComponentKey, IpcMessage, ConnectStatus } from '../utils/Definition'
+import { ComponentKey, IpcMessage, ConnectStatus, Bridges } from '../utils/Definition'
 export default {
     name: 'BlueTooth',
     inject: [ComponentKey.Dotpen],
@@ -73,7 +73,7 @@ export default {
         }
     },
     created() {
-        window.$Dispatcher.listen(IpcMessage.BlueToothList, (list) => {
+        window[Bridges.Dispatcher].listen(IpcMessage.BlueToothList, (list) => {
             if (!this.TryingToConnect) {
                 this.BlueTooth = list[0];
             }
@@ -83,10 +83,10 @@ export default {
         SelectDevice(device) {
             this.TryingToConnect = true;
             device.IsConnecting = true;
-            window.$Dispatcher.invoke(IpcMessage.BlueToothSelect, device.deviceId);
+            window[Bridges.Dispatcher].invoke(IpcMessage.BlueToothSelect, device.deviceId);
         },
         CancelSelect() {
-            window.$Dispatcher.invoke(IpcMessage.BlueToothCancel);
+            window[Bridges.Dispatcher].invoke(IpcMessage.BlueToothCancel);
             this.Dotpen.$ConnectStatus = ConnectStatus.Disconnected;
         }
     }
