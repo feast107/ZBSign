@@ -25,11 +25,15 @@
     <el-dialog v-model="Previewer.Visible">
         <img style="max-width:95%;max-height:95%;" w-full :src="Previewer.Url" alt="Preview Image" />
     </el-dialog>
+    <PictureCut />
 </template>
 
 <script>
+import PictureCut from './PictureCut.vue'
 export default {
-   
+    components:{
+        PictureCut
+    },
     data() {
         return {
             FileList: [],

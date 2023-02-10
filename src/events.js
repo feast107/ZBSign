@@ -33,7 +33,10 @@ export const Events = {
             switch (type) {
                 case FileType.Text:
                     fs.readFile(name, (err, data) => {
-                        e.sender.send(IpcMessage.FileRead,name,type,
+                        e.sender.send(
+                            IpcMessage.FileRead,
+                            name,
+                            type,
                             err ? null : data
                         );
                         e.sender.$Scope.$Logger.log(
@@ -50,10 +53,10 @@ export const Events = {
                         let buf = Buffer.alloc(size);
                         fs.read(fd,buf,0,size,0,
                             function (err, bytesRead, buffer) {
-                                if (err) throw err;
-                                console.log(buffer.length);
-                                e.sender.send(IpcMessage.FileRead,name,type,
-                                    err ? null : buffer
+                                console.log(buffer.buffer);
+                                e.sender.send(
+                                    IpcMessage.FileRead, name,type,
+                                    err ? null : buffer.buffer
                                 );
                             }
                         );
