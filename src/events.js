@@ -33,16 +33,31 @@ export const Events = {
             switch (type) {
                 case FileType.Text:
                     fs.readFile(name, (err, data) => {
-                        e.sender.send(
-                            IpcMessage.FileRead,
-                            name,
-                            type,
+                        e.sender.send(IpcMessage.FileRead,name,type,
                             err ? null : data
                         );
-                        e.sender.$Scope.$Logger.log(`File Read ${type} ${name} ${err} ${data}`);
+                        e.sender.$Scope.$Logger.log(
+                            `File Read ${type} ${name} ${err} ${data}`
+                        );
                     });
                     break;
                 case FileType.Bytes:
+                    fs.open(name, "r", function (err, fd) {
+                        if (err) throw err;
+                        // 读取文件
+                        //首先创建buffer，文件读取到buffer中
+                        let size = fs.statSync(name).size; //计算文件长度
+                        let buf = Buffer.alloc(size);
+                        fs.read(fd,buf,0,size,0,
+                            function (err, bytesRead, buffer) {
+                                if (err) throw err;
+                                console.log(buffer.length);
+                                e.sender.send(IpcMessage.FileRead,name,type,
+                                    err ? null : buffer
+                                );
+                            }
+                        );
+                    });
                     break;
             }
             e.sender.send(IpcMessage.FileRead, name, type, null);

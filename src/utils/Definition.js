@@ -25,7 +25,7 @@ export const WindowMessage = {
 
 export const Bridges = {
     Dispatcher : '$Dispatcher',
-    FileSystem : '$FileSystem',
+    File : '$File',
 }
 
 export const LogLevel = {

@@ -30,23 +30,22 @@ const fileRequest = (fileName, fileType) => {
     return new Promise((s, e) => {
         let handler;
         handler = (_, name, type, value) => {
+            console.log(value);
             if (name != fileName || type != fileType) return;
             ipcRenderer.off(IpcMessage.FileRead, handler);
             s(value);
         };
         ipcRenderer.on(IpcMessage.FileRead, handler);
-        ipcRenderer.send(IpcMessage.FileRead,fileType,fileName);
+        ipcRenderer.send(IpcMessage.FileRead, fileType, fileName);
     });
 };
 
-const fileSystem = {
-    File: {
-        readAllText(fileName) {
-            return fileRequest(fileName, FileType.Text);
-        },
-        readAllBytes(fileName) {
-            return fileRequest(fileName, FileType.Bytes);
-        },
+const file = {
+    readAllText(fileName) {
+        return fileRequest(fileName, FileType.Text);
+    },
+    readAllBytes(fileName) {
+        return fileRequest(fileName, FileType.Bytes);
     },
 };
 
@@ -71,5 +70,5 @@ ipcRenderer.on(IpcMessage.Log, function (_, __) {
     }
 });
 contextBridge.exposeInMainWorld(Bridges.Dispatcher, dispatcher);
-contextBridge.exposeInMainWorld(Bridges.FileSystem, fileSystem);
+contextBridge.exposeInMainWorld(Bridges.File, file);
 window.onload = function () {};
