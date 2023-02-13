@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>曾某--智慧脑瓜</title>
+<style>
+        /* 设置弹性布局，用来为盒状模型提供最大的灵活性 */
+        body{
+            display: flex;  
+        }
+        .book{
+            width: 640px;
+            height: 420px;
+            position: absolute;
+            top: 150px;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: 1s;
+            left: 650px;
+        }
+        .book_nav_1,.book_nav_2,.book_nav_3,.book_nav_4,.book_nav_5{
+            /* 设置宽高 */
+            width: 640px;
+            height: 400px;
+            /* 生成绝对定位元素 */
+            position: absolute;
+            /* 这是翻页的起点，在左边 */
+            transform-origin: left;
+            /* 把背景图片放大到适合元素容器的尺寸，图片比例不变，但是要注意，超出容器的部分可能会裁掉。 */
+            background-size: cover;
+            /* 这是翻页时元素之间的延迟 */
+            transition: calc(var(--i)*.6s);
+            /* 这是翻页时元素的层级 */
+            z-index: calc(var(--i)*99);
+        }
+        .book_nav_1,.book_nav_2{
+            /* 设置边距 */
+            border: solid 23px gray;
+            /* 设置左边框 */
+            border-left: none;
+            /* 设置距离顶部高度 */
+            top: -20px;
+            /* 设置圆角边框 */
+            border-radius: 0 20px 20px 0;
+        }
+        .book:hover .book_nav_1{
+            border-left: #576574 20px solid;
+        }
+        .book:hover .book_nav_2,.book:hover .book_nav_3,.book:hover .book_nav_4,.book:hover .book_nav_5{
+            /* css调转180度实现页面翻动后效果 */
+            transform: rotateY(-180deg);
+            /* 翻页延迟和层级*/
+            transition: calc(var(--s)*.6s);
+            z-index: calc(var(--s)*-99);
+        }
+        .book:hover{
+            /* 平移 */
+            transform: translateX(100px);
+        }
+    </style>
+</head>
+<body>
+    <!-- 先构建需要主体框架 -->
+    <div class="book">
+    <!-- 第一页 
+    注意这里用的图片路径为链接式
+    若更换本地图片需新建img文件夹引入
+    -->
+        <div class="book_nav_1" style="--i:2;background-image:url(https://uploadstatic.mihoyo.com/contentweb/20220102/2022010212060483653.jpg);background-size:100%;"></div>
+    <!-- 第二页 -->
+        <div class="book_nav_2" style="--i:4;--s:1;background-image:url(https://uploadstatic.mihoyo.com/contentweb/20211231/2021123112015523211.jpg);"></div>
+    <!-- 第三页 -->
+        <div class="book_nav_3" style="--i:3;--s:2;background-image:url(https://uploadstatic.mihoyo.com/contentweb/20211230/2021123012063011892.jpg);"></div>
+    <!-- 第四页 -->
+        <div class="book_nav_4" style="--i:2;--s:3;background-image:url(https://uploadstatic.mihoyo.com/contentweb/20211226/2021122621332859489.png);"></div>
+    <!-- 第五页 -->
+        <div class="book_nav_5" style="--i:1;--s:1;background-image:url(https://uploadstatic.mihoyo.com/contentweb/20220102/2022010212060483653.jpg);"></div>
+    </div>
+</body>
+</html>

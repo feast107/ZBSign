@@ -1,7 +1,7 @@
 <template>
 	<BlueTooth style="position:fixed;margin-top: 20px;margin-left: 20px;" />
 	<img alt="Vue logo" src="./assets/logo.png" />
-	<DisplayView />
+	<FadeInAndOut />
 </template>
 
 <script>
@@ -9,6 +9,8 @@ import HelloWorld from "./components/HelloWorld.vue";
 import BlueTooth from "./components/BlueTooth.vue";
 import DrawView from "./components/DrawView.vue";
 import DisplayView from "./components/DisplayView.vue";
+import FlipBook from "./components/animations/FlipBook.vue";
+import FadeInAndOut from "./components/animations/FadeInAndOut.vue";
 import { ComponentKey, Dotpen } from "./utils/Definition";
 import { computed } from 'vue'
 export default {
@@ -17,7 +19,9 @@ export default {
 		HelloWorld,
 		BlueTooth,
 		DrawView,
-		DisplayView
+		DisplayView,
+		FlipBook,
+		FadeInAndOut,
 	},
 	provide: {
 		[ComponentKey.Dotpen]: computed(() => new Dotpen()),
