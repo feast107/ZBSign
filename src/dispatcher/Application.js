@@ -11,6 +11,7 @@ export class Scope {
         this.$Name = name;
         this.$Window = window;
         this.$Logger = {};
+        this.$BlueToothConnecting = false;
         Object.keys(LogLevel).forEach((level) => {
             let handler = LogLevel[level];
             this.$Logger[handler] = function (...args) {
@@ -20,7 +21,6 @@ export class Scope {
                 window.webContents.send(IpcMessage.Log, handler, args);
             };
         });
-        Object.freeze(this);
     }
     close() {
         this.$Window.close();

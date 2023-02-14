@@ -172,7 +172,6 @@
                         top: -1414px;
                         margin: 0 auto;
                     ">
-                    <canvas id="myCanvas" style="width: 1000px; height: 1414px" width="1000" height="1414"></canvas>
                 </div>
             </div>
         </div>

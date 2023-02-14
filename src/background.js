@@ -18,11 +18,12 @@ async function createWindow() {
     const { width, height } = primaryDisplay.workAreaSize;
     // Create the browser window.
     const mainWin = application.createWindow(WindowType.Main, {
-        width: width,
-        height: height,
-        frame: false,
+        minWidth: 960,
+        minHeight: 540,
+        frame: true,
         transparent: false,
         fullscreenable: true,
+        autoHideMenuBar: true,
         //fullscreen: true,
         //simpleFullscreen:true,
         webPreferences: {
@@ -45,6 +46,25 @@ async function createWindow() {
         mainWin.loadURL("app://./index.html");
     }
     Events.Register(ipcMain);
+    let aspectRatio = 1920/1080;
+    mainWin.on("will-resize", (event, newBounds) => {
+        const win = event.sender;
+        event.preventDefault(); // 拦截，使窗口先不变
+        const currentSize = win.getSize();
+        const widthChanged = currentSize[0] !== newBounds.width; // 判断是宽变了还是高变了，两者都变优先按宽适配
+        // ! 虽然搞不懂为何有1px偏差，但是可以解决问题(Windows 10)
+        if (widthChanged) {
+            win.setContentSize(
+                newBounds.width - 1,
+                parseInt(newBounds.width / aspectRatio + 0.5) - 1
+            );
+        } else {
+            win.setContentSize(
+                parseInt(aspectRatio * newBounds.height + 0.5) - 1,
+                newBounds.height - 1
+            );
+        }
+    });
     mainWin.on("closed", () => {
         application.closeAll();
     });

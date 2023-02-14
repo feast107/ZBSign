@@ -1,8 +1,6 @@
 <template>
     <img src="../../../test/2.jpg" alt="" class="item active">
     <img src="../../../test/1.jpg" alt="" class="item">
-    <link rel="stylesheet" href="@ideal-image-slider/ideal-image-slider.css">
-	<link rel="stylesheet" href="@ideal-image-slider/themes/default/default.css">
 </template>
 
 
@@ -12,14 +10,13 @@ export default{
         var item = document.querySelectorAll('.item');
         var index = 0; //记录图片的下标
         // 切换图片效果实现
-        let timer1 = setInterval(nextImg, 2000)
         function nextImg() {
-            console.log(item);
             item[index].className = "fadeout"; //当前图片淡出
             index++;
             index = index % 2;
             item[index].className = "fadein"; //下一张图片淡出
         }
+        setInterval(nextImg, 2000)
     }
 }
 </script>

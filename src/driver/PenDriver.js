@@ -20132,6 +20132,7 @@
                     return (
                         null != t && (e.filters[0].name = t),
                         window.$Navigator.$BlueTooth
+                            // .requestDevice({ acceptAllDevices:true})
                             .requestDevice({
                                 filters: [
                                     {
@@ -20140,6 +20141,9 @@
                                             "0000fff0-0000-1000-8000-00805f9b34fb",
                                         ],
                                     },
+                                    {
+                                        namePrefix: "ADP"
+                                    }
                                 ],
                             })
                             .then((t) => {

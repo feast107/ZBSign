@@ -1,27 +1,28 @@
 <template>
 	<BlueTooth style="position:fixed;margin-top: 20px;margin-left: 20px;" />
-	<img alt="Vue logo" src="./assets/logo.png" />
-	<FadeInAndOut />
+	<HomePage />
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import HomePage from "./components/HomePage.vue";
 import BlueTooth from "./components/BlueTooth.vue";
 import DrawView from "./components/DrawView.vue";
 import DisplayView from "./components/DisplayView.vue";
 import FlipBook from "./components/animations/FlipBook.vue";
 import FadeInAndOut from "./components/animations/FadeInAndOut.vue";
+import AnimationVue from './components/animations/AnimationVue.vue';
 import { ComponentKey, Dotpen } from "./utils/Definition";
 import { computed } from 'vue'
 export default {
 	name: "App",
 	components: {
-		HelloWorld,
+		HomePage,
 		BlueTooth,
 		DrawView,
 		DisplayView,
 		FlipBook,
 		FadeInAndOut,
+		AnimationVue,
 	},
 	provide: {
 		[ComponentKey.Dotpen]: computed(() => new Dotpen()),
@@ -49,6 +50,16 @@ export default {
 	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
 	color: #2c3e50;
-	margin-top: 60px;
+	height: 100%;
+	width:100%;
+}
+html{
+	height: 100%;
+	width:100%;
+}
+body{
+	height: 100%;
+	width:100%;
+	margin: 0;
 }
 </style>
