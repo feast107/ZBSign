@@ -1,22 +1,26 @@
 <template>
 	<BlueTooth style="position:fixed;margin-top: 20px;margin-left: 20px;" />
-	<HomePage />
+	<HomePage v-if="!this.user.isLogin"/>
+	<MainPage v-if="this.user.isLogin"/>
 </template>
 
 <script>
 import HomePage from "./components/HomePage.vue";
-import BlueTooth from "./components/BlueTooth.vue";
 import DrawView from "./components/DrawView.vue";
+import MainPage from "./components/MainPage.vue";
+import BlueTooth from "./components/BlueTooth.vue";
 import DisplayView from "./components/DisplayView.vue";
 import FlipBook from "./components/animations/FlipBook.vue";
 import FadeInAndOut from "./components/animations/FadeInAndOut.vue";
 import AnimationVue from './components/animations/AnimationVue.vue';
+import { User } from './utils/User';
 import { ComponentKey, Dotpen } from "./utils/Definition";
 import { computed } from 'vue'
 export default {
 	name: "App",
 	components: {
 		HomePage,
+		MainPage,
 		BlueTooth,
 		DrawView,
 		DisplayView,
@@ -24,10 +28,20 @@ export default {
 		FadeInAndOut,
 		AnimationVue,
 	},
-	provide: {
-		[ComponentKey.Dotpen]: computed(() => new Dotpen()),
+	provide() {
+		return {
+			[ComponentKey.User]: computed(() => { return this.user; }),
+			[ComponentKey.Dotpen]: computed(() => new Dotpen()),
+		}
+	},
+	data() {
+		return {
+			user: new User(),
+		}
 	},
 	created() {
+		window.USER = this.user;
+		this.user.isLogin = true;
 		window.$Navigator = document.$Navigator = {
 			$BlueTooth: {
 				requestDevice(config) {
@@ -51,15 +65,17 @@ export default {
 	text-align: center;
 	color: #2c3e50;
 	height: 100%;
-	width:100%;
+	width: 100%;
 }
-html{
+
+html {
 	height: 100%;
-	width:100%;
+	width: 100%;
 }
-body{
+
+body {
 	height: 100%;
-	width:100%;
+	width: 100%;
 	margin: 0;
 }
 </style>

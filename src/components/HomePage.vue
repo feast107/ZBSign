@@ -29,7 +29,7 @@
                             </el-form-item>
                         </el-row>
                         <el-row >
-                            <el-col :span="11">
+                            <el-col :span="12">
                                 <el-form-item prop="verifyCode" style="width: 100%;height:100%">
                                     <el-input
                                         placeholder="验证码"
@@ -41,7 +41,7 @@
                                             <el-icon class="el-input__icon">
                                                 <img
                                                     style="
-                                                        width: 20 px;
+                                                        width: 20px;
                                                         height: 20px;
                                                         margin-top: -9px;
                                                     "
@@ -51,11 +51,11 @@
                                     </el-input>
                                 </el-form-item>
                             </el-col>
-                            <el-col :offset="2" :span="11">
+                            <el-col :offset="2" :span="10">
                                 <el-button
                                     :disabled="!this.form.canGetCode"
                                     @click="this.getVerifyCode()"
-                                    style="max-width: 90px"
+                                    style="width:100%; font-size: 10;"
                                     >获取验证码
                                 </el-button>
                             </el-col>
@@ -73,7 +73,9 @@
 </template>
 
 <script>
+import { ComponentKey } from '@/utils/Definition';
 export default {
+    inject:[ComponentKey.User],
     data() {
         return {
             form: {
