@@ -16,6 +16,7 @@ import AnimationVue from './components/animations/AnimationVue.vue';
 import { User } from './utils/User';
 import { ComponentKey, Dotpen } from "./utils/Definition";
 import { computed } from 'vue'
+import Request from "./utils/Request";
 export default {
 	name: "App",
 	components: {
@@ -30,6 +31,7 @@ export default {
 	},
 	provide() {
 		return {
+			[ComponentKey.Http]: computed(()=> Request ),
 			[ComponentKey.User]: computed(() => { return this.user; }),
 			[ComponentKey.Dotpen]: computed(() => new Dotpen()),
 		}

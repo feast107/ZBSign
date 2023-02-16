@@ -11,7 +11,6 @@
                                     clearable
                                     maxlength="11"
                                     controls="false"
-                                    prop="phoneNumber"
                                     oninput="value=value.replace(/[^\d.]/g,'')"
                                     placeholder="手机号">
                                     <template #prefix>

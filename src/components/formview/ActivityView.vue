@@ -1,18 +1,23 @@
 <template>
-    <el-scrollbar>
-        <el-form :model="form" label-width="120px" style="margin-right: 20px">
-            <el-form-item label="活动标题">
-                <el-input placeholder="请输入文字" />
+    <el-scrollbar style="margin-right: 1px">
+        <el-form
+            :model="dataForm"
+            :rules="rules"
+            label-width="120px"
+            ref="activeForm"
+            style="margin-right: 20px">
+            <el-form-item prop="title" label="活动标题">
+                <el-input placeholder="请输入文字" v-model="dataForm.title" />
             </el-form-item>
             <el-form-item label="标题颜色">
-                <el-color-picker v-model="form.titleColor" />
+                <el-color-picker v-model="dataForm.titleColor" />
             </el-form-item>
-            <el-form-item label="活动LOGO">
-                <el-upload 
+            <el-form-item prop="logo" label="活动LOGO">
+                <el-upload
                     class="avatar-uploader"
                     action="#"
                     :limit="1"
-                    :accept="accpetance" 
+                    :accept="accpetance"
                     :on-change="logoUpload"
                     :on-remove="logoRemove"
                     :auto-upload="false"
@@ -35,76 +40,143 @@
                     <el-icon id="backgroundUpload" class="avatar-uploader-icon">
                         <Plus />
                     </el-icon>
-                    <template #file="{ file }">
-                        <img style="width:20px;height:20px" class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
-                    </template>
                 </el-upload>
             </el-form-item>
             <el-form-item label="上传照片墙">
+                <template #label>
+                    <el-popover
+                        placement="left"
+                        :width="'auto'"
+                        trigger="hover">
+                        <template #reference>
+                            <label>上传照片墙</label>
+                        </template>
+                        <el-button
+                            id="PopRemoveAll"
+                            @click="
+                                () => {
+                                    this.$refs.pictureWall.clearFiles();
+                                    this.fileForm.files = [];
+                                }
+                            "
+                            type="danger"
+                            >清空</el-button
+                        >
+                    </el-popover>
+                </template>
                 <el-upload
+                    ref="pictureWall"
+                    multiple
                     action="#"
                     :auto-upload="false"
-                    multiple
+                    :accept="accpetance"
+                    :on-change="pictureUpload"
+                    :on-remove="pictureRemove"
                     list-type="picture-card">
-                    <el-icon  class="avatar-uploader-icon">
+                    <el-icon class="avatar-uploader-icon">
                         <Plus />
                     </el-icon>
                 </el-upload>
             </el-form-item>
             <el-form-item label="照片滚动速度">
-                <el-radio-group v-model="form.speed">
+                <el-radio-group v-model="dataForm.pictureSpeed">
                     <el-radio label="1x" />
                     <el-radio label="2x" />
                     <el-radio label="3x" />
                 </el-radio-group>
             </el-form-item>
             <el-form-item label="签名滚动速度">
-                <el-radio-group v-model="form.signSpeed">
+                <el-radio-group v-model="dataForm.signSpeed">
                     <el-radio label="1x" />
                     <el-radio label="2x" />
                     <el-radio label="3x" />
                 </el-radio-group>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary">Create</el-button>
-                <el-button>Cancel</el-button>
+                <el-button type="primary">预览</el-button>
+                <el-button type="primary" @click="submitForm">创建</el-button>
             </el-form-item>
         </el-form>
     </el-scrollbar>
 </template>
 
 <script>
+import { ComponentKey } from "@/utils/Definition";
+import Request from "@/utils/Request";
 export default {
+    inject: [ComponentKey.Http],
     data() {
         return {
             accpetance: "image/png,image/jpg,image/jpeg",
-            form: {
+            dataForm: {
+                title: null,
                 titleColor: "#000",
-                pictureSpeed: null,
-                signSpeed: null,
-                logo:null,
-                background:null,
+                pictureSpeed: "1x",
+                signSpeed: "1x",
+            },
+            fileForm: {
+                file1: null,
+                file2: null,
+                files: [],
+            },
+            rules: {
+                title: [
+                    {
+                        required: true,
+                        message: "请输入活动名称",
+                        trigger: "blur",
+                    },
+                ],
             },
         };
     },
-    methods:{
-        logoUpload(file){ 
-            this.form.logo = file;
-            document.getElementById('logoUpload').parentElement.style.display = "none";
+    methods: {
+        logoUpload(file) {
+            this.fileForm.logo = file.raw;
+            document.getElementById("logoUpload").parentElement.style.display =
+                "none";
         },
-        logoRemove(){ 
-            this.form.logo = null;
-            document.getElementById('logoUpload').parentElement.style.display = "";
+        logoRemove() {
+            this.fileForm.logo = null;
+            document.getElementById("logoUpload").parentElement.style.display =
+                "";
         },
-        backgroundUpload(file){
-            this.form.background = file;
-            document.getElementById('backgroundUpload').parentElement.style.display = "none";
+        pictureUpload(file) {
+            this.fileForm.pages.push(file.raw);
         },
-        backgroundRemove(){
-            this.form.background = null;
-            document.getElementById('backgroundUpload').parentElement.style.display = "";
-        }
-    }
+        pictureRemove(file) {
+            let index = this.fileForm.pages.findIndex(
+                (x) => x.uid == file.raw.uid
+            );
+            this.fileForm.pages.splice(index, 1);
+        },
+        backgroundUpload(file) {
+            this.fileForm.background = file.raw;
+            document.getElementById(
+                "backgroundUpload"
+            ).parentElement.style.display = "none";
+        },
+        backgroundRemove() {
+            this.fileForm.background = null;
+            document.getElementById(
+                "backgroundUpload"
+            ).parentElement.style.display = "";
+        },
+        submitForm() {
+            console.log(this.dataForm);
+            Request.post(
+                "http://192.168.101.32:9898/signservice/file/uploadFile",
+                Request.form(this.fileForm),
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "multipart/form-data" },
+                    params: this.dataForm,
+                }
+            )
+                .then((t) => console.log(t))
+                .catch((e) => console.log(e));
+        },
+    },
 };
 </script>
 
@@ -112,7 +184,16 @@ export default {
 .el-form-item {
     margin-top: 20px !important;
 }
+
 .el-upload-list--picture-card {
     --el-upload-list-picture-card-size: 100px !important;
+}
+
+.el-upload--picture-card {
+    --el-upload-picture-card-size: 100px !important;
+}
+
+.el-popover.el-popper {
+    min-width: 50px !important;
 }
 </style>
