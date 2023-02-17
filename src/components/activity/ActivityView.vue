@@ -9,24 +9,20 @@
                 src="../../assets/Main/Activity/None.svg" />
         </template>
     </el-empty>
-    <el-col  id="ActivityView" v-else style="height: 100%; width: 100%">
+    <el-col id="ActivityView" v-else style="height: 100%; width: 100%">
         <el-row justify="center" style="height: 50px; padding: 10px">
             <el-autocomplete
                 id="AutoComplete"
                 style="box-shadow: var(--el-box-shadow-light); width: 80%"
-                v-model="state"
-                :fetch-suggestions="querySearch"
+                v-model="searchPattern"
+                :fetch-suggestions="getSuggests"
+                clearable
                 popper-class="my-autocomplete"
                 placeholder="搜索活动"
-                @select="handleSelect">
+                @select="selectHandler">
                 <template #prefix>
                     <el-icon class="el-input__icon">
                         <search />
-                    </el-icon>
-                </template>
-                <template #suffix>
-                    <el-icon class="el-input__icon" @click="handleIconClick">
-                        <edit />
                     </el-icon>
                 </template>
                 <template #default="{ item }">
@@ -36,30 +32,109 @@
             </el-autocomplete>
         </el-row>
         <el-row id="MainList">
-            <el-scrollbar>
-                <ul class="infinite-list" style="overflow: auto">
-                    <li
-                        v-for="i in activities"
-                        :key="i"
-                        class="infinite-list-item">
-                        <el-descriptions title="">
-                            <el-descriptions-item label="">
-                                <label
-                                    style="font: bolder; font-weight: 1000"
-                                    >{{ i.title }}</label
-                                >
-                            </el-descriptions-item>
-                            <el-descriptions-item label="">
-                                <el-tag size="small">{{
-                                    `| 签名${0}p | 照片${i.pictures.length}p`
-                                }}</el-tag>
-                            </el-descriptions-item>
-                            <el-descriptions-item label="">{{
-                                `${i.createTime.getFullYear()}/${i.createTime.getMonth()}/${i.createTime.getDate()}`
-                            }}</el-descriptions-item>
-                        </el-descriptions>
-                    </li>
-                </ul>
+            <el-scrollbar style="width: 100%; padding-right: 10px">
+                <el-table stripe :data="activities" style="width: 100%">
+                    <el-table-column>
+                        <template #default="scope">
+                            <el-button text style="margin-right: 10px">
+                                <img
+                                    class="icon-small"
+                                    src="../../assets/Main/Activity/Activity.svg" />
+                            </el-button>
+                            <span style="user-select: none; font-weight: 1000">
+                                {{ scope.row.title }}
+                            </span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column width="120">
+                        <template #default="scope">
+                            <el-tag style="user-select: none" size="small">{{
+                                `| 签名${0}p | 照片${
+                                    scope.row.pictures.length
+                                }p`
+                            }}</el-tag>
+                        </template>
+                    </el-table-column>
+                    <el-table-column width="100">
+                        <template #default="scope">
+                            <span style="user-select: none">
+                                {{
+                                    `${scope.row.createTime.getFullYear()}/${scope.row.createTime.getMonth()}/${scope.row.createTime.getDate()}`
+                                }}
+                            </span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column width="50">
+                        <template #default="scope">
+                            <el-button class="iconButton" circle>
+                                <img
+                                    class="icon-small icon-canClick"
+                                    src="../../assets/Main/Activity/Play.svg" />
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                    <el-table-column width="50">
+                        <template #default="scope">
+                            <el-button class="iconButton" circle>
+                                <img
+                                    class="icon-small icon-canClick"
+                                    src="../../assets/Main/Activity/Copy.svg" />
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="" width="50">
+                        <template #default="scope">
+                            <el-popover
+                                placement="bottom"
+                                :width="'auto'"
+                                trigger="click">
+                                <template #reference>
+                                    <el-button circle>
+                                        <el-icon>
+                                            <MoreFilled />
+                                        </el-icon>
+                                    </el-button>
+                                </template>
+                                <el-row>
+                                    <el-button class="iconButton" circle>
+                                        <img
+                                            style="width: 20px; height: 20px"
+                                            class="icon-small icon-canClick"
+                                            src="../../assets/Main/Activity/Edit.svg" />
+                                    </el-button>
+                                </el-row>
+                                <el-row>
+                                    <el-button class="iconButton" circle>
+                                        <img
+                                            style="width: 20px; height: 20px"
+                                            class="icon-small icon-canClick"
+                                            src="../../assets/Main/Activity/Share.svg" />
+                                    </el-button>
+                                </el-row>
+                                <el-row>
+                                    <el-button class="iconButton" circle>
+                                        <img
+                                            style="width: 20px; height: 20px"
+                                            class="icon-small icon-canClick"
+                                            src="../../assets/Main/Activity/Resource.svg" />
+                                    </el-button>
+                                </el-row>
+                                <el-row>
+                                    <el-button
+                                        class="iconButton"
+                                        plain
+                                        type="danger"
+                                        circle>
+                                        <el-icon
+                                            style="width: 20px; height: 20px">
+                                            <Delete />
+                                        </el-icon>
+                                    </el-button>
+                                </el-row>
+                            </el-popover>
+                        </template>
+                    </el-table-column>
+                </el-table>
             </el-scrollbar>
         </el-row>
     </el-col>
@@ -71,13 +146,26 @@ export default {
     inject: [ComponentKey.Activities],
     data() {
         return {
+            styles: {
+                smallButton: "border:none;padding:0;",
+            },
             activities: this[ComponentKey.Activities],
+            searchPattern: null,
         };
+    },
+    methods: {
+        selectHandler() {},
+        getSuggests() {},
     },
 };
 </script>
 
 <style lang="scss">
+.iconButton {
+    padding: 0;
+    border: none !important;
+    margin: 1px;
+}
 #ActivityView {
     #MainList {
         height: calc(100% - 50px);
@@ -88,16 +176,40 @@ export default {
         width: 100%;
     }
 
+    .description {
+        img {
+            width: 40px;
+            height: 40px;
+        }
+    }
+
+    .el-table__row {
+        .el-button {
+            padding: 0;
+            border-width: 0;
+        }
+    }
+
     .el-empty {
         user-select: none;
     }
 
-        .el-input__wrapper {
-            border-radius: 20px !important;
-        }
+    .el-input__wrapper {
+        border-radius: 20px !important;
+    }
 
     .el-empty__description {
         margin-top: 0;
+    }
+
+    .icon-small {
+        height: 20px;
+        width: 20px;
+    }
+
+    .icon-canClick:hover {
+        filter: drop-shadow(10000px 0 0 white);
+        transform: translate(-10000px);
     }
 }
 </style>
