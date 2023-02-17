@@ -5,8 +5,8 @@
                 <el-aside style="overflow:hidden">
                     <div style="width: 100%; ">
                         <div style="padding:20px">
-                            <el-row>
-                                <img src="../assets/Main/Logo.svg"/>
+                            <el-row style="user-select: none;">
+                                <img src="../assets/Main/Logo.svg" />
                             </el-row>
                             <el-row justify="center">
                                 <el-col :span="8">
@@ -18,7 +18,7 @@
                             </el-row>
                         </div>
                     </div>
-                    <el-menu  default-active="1" @select="selectMenu">
+                    <el-menu default-active="1" @select="selectMenu">
                         <el-menu-item-group>
                             <el-menu-item index="1">
                                 <el-row justify="center">
@@ -55,28 +55,31 @@
                 </el-aside>
                 <el-main>
                     <div id="MainCard">
-                        <ActivityView v-if="this.select == this.menu[0]" />
+                        <NewActivityView v-if="this.select == this.menu[0]" />
+                        <ActivityView v-if="this.select==this.menu[1]"/>
                     </div>
                 </el-main>
             </el-container>
         </div>
         <div id="Back"></div>
-    </div>
+</div>
 </template>
 <script>
 import { ComponentKey } from "@/utils/Definition";
-import ActivityView from "./formview/ActivityView.vue";
+import ActivityView from "./activity/ActivityView.vue";
+import NewActivityView from "./activity/NewActivityView.vue";
 export default {
     components: {
-        ActivityView,
+        NewActivityView,
+        ActivityView
     },
-    inject:[ComponentKey.User],
+    inject: [ComponentKey.User],
     data() {
         this[ComponentKey.User].phoneNumber = "1771***807";
         return {
             menu: ['新建活动', '活动列表', '智能笔'],
             select: '新建活动',
-            user : this[ComponentKey.User]
+            user: this[ComponentKey.User]
         }
     },
     methods: {
@@ -90,6 +93,7 @@ export default {
 <style scoped lang="scss">
 img {
     position: unset !important;
+    pointer-events: none;
 }
 
 svg {
@@ -120,6 +124,12 @@ svg {
     right: 0;
     float: right;
     background-image: url(../assets/Main/Dot.svg);
+}
+
+.el-menu-item {
+    .el-row {
+        user-select: none;
+    }
 }
 
 .el-container {

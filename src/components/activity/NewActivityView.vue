@@ -1,16 +1,18 @@
 <template>
     <el-scrollbar style="margin-right: 1px">
         <el-form
-            :model="dataForm"
+            :model="form.dataForm"
             :rules="rules"
             label-width="120px"
             ref="activeForm"
             style="margin-right: 20px">
             <el-form-item prop="title" label="活动标题">
-                <el-input placeholder="请输入文字" v-model="dataForm.title" />
+                <el-input
+                    placeholder="请输入文字"
+                    v-model="this.form.dataForm.title" />
             </el-form-item>
             <el-form-item label="标题颜色">
-                <el-color-picker v-model="dataForm.titleColor" />
+                <el-color-picker v-model="this.form.dataForm.titleColor" />
             </el-form-item>
             <el-form-item prop="logo" label="活动LOGO">
                 <el-upload
@@ -56,7 +58,7 @@
                             @click="
                                 () => {
                                     this.$refs.pictureWall.clearFiles();
-                                    this.fileForm.files = [];
+                                    this.form.fileForm.files = [];
                                 }
                             "
                             type="danger"
@@ -79,14 +81,14 @@
                 </el-upload>
             </el-form-item>
             <el-form-item label="照片滚动速度">
-                <el-radio-group v-model="dataForm.pictureSpeed">
+                <el-radio-group v-model="this.form.dataForm.pictureSpeed">
                     <el-radio label="1x" />
                     <el-radio label="2x" />
                     <el-radio label="3x" />
                 </el-radio-group>
             </el-form-item>
             <el-form-item label="签名滚动速度">
-                <el-radio-group v-model="dataForm.signSpeed">
+                <el-radio-group v-model="this.form.dataForm.signSpeed">
                     <el-radio label="1x" />
                     <el-radio label="2x" />
                     <el-radio label="3x" />
@@ -108,16 +110,18 @@ export default {
     data() {
         return {
             accpetance: "image/png,image/jpg,image/jpeg",
-            dataForm: {
-                title: null,
-                titleColor: "#000",
-                pictureSpeed: "1x",
-                signSpeed: "1x",
-            },
-            fileForm: {
-                file1: null,
-                file2: null,
-                files: [],
+            form: {
+                dataForm: {
+                    title: null,
+                    titleColor: "#000",
+                    pictureSpeed: "1x",
+                    signSpeed: "1x",
+                },
+                fileForm: {
+                    file1: null,
+                    file2: null,
+                    files: [],
+                },
             },
             rules: {
                 title: [
@@ -132,45 +136,45 @@ export default {
     },
     methods: {
         logoUpload(file) {
-            this.fileForm.logo = file.raw;
+            this.form.fileForm.logo = file.raw;
             document.getElementById("logoUpload").parentElement.style.display =
                 "none";
         },
         logoRemove() {
-            this.fileForm.logo = null;
+            this.form.fileForm.logo = null;
             document.getElementById("logoUpload").parentElement.style.display =
                 "";
         },
         pictureUpload(file) {
-            this.fileForm.pages.push(file.raw);
+            this.form.fileForm.pages.push(file.raw);
         },
         pictureRemove(file) {
-            let index = this.fileForm.pages.findIndex(
+            let index = this.form.fileForm.pages.findIndex(
                 (x) => x.uid == file.raw.uid
             );
-            this.fileForm.pages.splice(index, 1);
+            this.form.fileForm.pages.splice(index, 1);
         },
         backgroundUpload(file) {
-            this.fileForm.background = file.raw;
+            this.form.fileForm.background = file.raw;
             document.getElementById(
                 "backgroundUpload"
             ).parentElement.style.display = "none";
         },
         backgroundRemove() {
-            this.fileForm.background = null;
+            this.form.fileForm.background = null;
             document.getElementById(
                 "backgroundUpload"
             ).parentElement.style.display = "";
         },
         submitForm() {
-            console.log(this.dataForm);
+            console.log(this.form.dataForm);
             Request.post(
                 "http://192.168.101.32:9898/signservice/file/uploadFile",
-                Request.form(this.fileForm),
+                Request.form(this.form.fileForm),
                 {
                     method: "POST",
                     headers: { "Content-Type": "multipart/form-data" },
-                    params: this.dataForm,
+                    params: this.form.dataForm,
                 }
             )
                 .then((t) => console.log(t))
