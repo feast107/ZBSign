@@ -57,6 +57,7 @@
                     <div id="MainCard">
                         <NewActivityView v-if="this.select == this.menu[0]" />
                         <ActivityView v-if="this.select == this.menu[1]" />
+                        <BlueTooth v-if="this.select == this.menu[2]"/>
                     </div>
                 </el-main>
             </el-container>
@@ -68,12 +69,14 @@
 import { ComponentKey } from "@/utils/Definition";
 import ActivityView from "./activity/ActivityView.vue";
 import NewActivityView from "./activity/NewActivityView.vue";
+import BlueTooth from "./BlueTooth.vue";
 import { Activity } from "@/utils/Activity";
 import { computed } from 'vue'
 export default {
     components: {
         NewActivityView,
-        ActivityView
+        ActivityView,
+        BlueTooth
     },
     inject: [ComponentKey.User],
     provide: {
@@ -107,7 +110,10 @@ export default {
     },
     methods: {
         selectMenu() {
-            this.select = this.menu[Number.parseInt(arguments[0]) - 1]
+            this.select = this.menu[Number.parseInt(arguments[0]) - 1] 
+            if(this.select == this.menu[2]){
+                navigator.bluetooth.requestDevice({acceptAllDevices:true});
+            }
         }
     }
 
@@ -163,7 +169,7 @@ svg {
 
 .el-aside {
     height: 100% !important;
-    width: 25% !important;
+    width: 23% !important;
 }
 
 .el-menu {

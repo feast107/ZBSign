@@ -42,12 +42,12 @@ export const WindowType = {
 };
 
 export const ComponentKey = {
-    Dotpen: "dotpen",
-    ConnectStatus: "connectStatus",
-    User: "userIdentity",
-    Http: "httpRequest",
-    Activities : 'activities',
-    ModifingActivity : 'modifingActivity'
+    Dotpen: "compDotpen",
+    ConnectStatus: "compConnectStatus",
+    User: "compUserIdentity",
+    Http: "compHttpRequest",
+    Activities : 'compActivities',
+    ModifingActivity : 'compModifingActivity'
 };
 
 export class Dotpen {
