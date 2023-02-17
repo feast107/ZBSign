@@ -23,16 +23,16 @@
                     </el-icon>
                 </el-upload>
             </el-form-item>
-            <el-form-item label="上传照片墙">
+            <el-form-item  label="上传照片墙">
                 <template #label>
                     <el-popover placement="left" :width="'auto'" trigger="hover">
                         <template #reference>
-                            <label>上传照片墙</label>
+                            <label style="user-select:auto;pointer-events: all;">上传照片墙</label>
                         </template>
                         <el-button id="PopRemoveAll" @click="
                             () => {
                                 this.$refs.pictureWall.clearFiles();
-                                this.model.files = [];
+                                this.model.pictures = [];
                             }
                         " type="danger">清空</el-button>
                     </el-popover>
@@ -99,13 +99,13 @@ export default {
                 "";
         },
         pictureUpload(file) {
-            this.model.pages.push(file.raw);
+            this.model.pictures.push(file.raw);
         },
         pictureRemove(file) {
-            let index = this.model.pages.findIndex(
+            let index = this.model.pictures.findIndex(
                 (x) => x.uid == file.raw.uid
             );
-            this.model.pages.splice(index, 1);
+            this.model.pictures.splice(index, 1);
         },
         backgroundUpload(file) {
             this.model.background = file.raw;
