@@ -80,4 +80,14 @@ body {
 	width: 100%;
 	margin: 0;
 }
+
+img{
+    position: unset;
+    pointer-events: none;
+}
+
+.el-form-item__label{
+    user-select: none;
+    pointer-events: none;
+}
 </style>
