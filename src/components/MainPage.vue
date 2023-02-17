@@ -57,7 +57,7 @@
                     <div id="MainCard">
                         <NewActivityView v-if="this.select == this.menu[0]" />
                         <ActivityView v-if="this.select == this.menu[1]" />
-                        <BlueTooth v-if="this.select == this.menu[2]"/>
+                        <BlueTooth v-if="this.select == this.menu[2]" />
                     </div>
                 </el-main>
             </el-container>
@@ -66,7 +66,7 @@
 </div>
 </template>
 <script>
-import { ComponentKey } from "@/utils/Definition";
+import { ComponentKey , Bridges , IpcMessage} from "@/utils/Definition";
 import ActivityView from "./activity/ActivityView.vue";
 import NewActivityView from "./activity/NewActivityView.vue";
 import BlueTooth from "./BlueTooth.vue";
@@ -80,6 +80,7 @@ export default {
     },
     inject: [ComponentKey.User],
     provide: {
+        [ComponentKey.ScanList]: computed(() => this.scanList),
         [ComponentKey.Activities]: computed(() => [
             Activity.Default(),
             Activity.Default(),
@@ -100,9 +101,15 @@ export default {
         ]),
         [ComponentKey.ModifingActivity]: computed(() => { return null; }),
     },
+    created(){
+        window[Bridges.Dispatcher].listen(IpcMessage.BlueToothList, (list) => {
+            this.scanList = list[0];
+        });
+    },
     data() {
         this[ComponentKey.User].phoneNumber = "1771***807";
         return {
+            scanList: [],
             menu: ['新建活动', '活动列表', '智能笔'],
             select: '新建活动',
             user: this[ComponentKey.User]
@@ -110,9 +117,9 @@ export default {
     },
     methods: {
         selectMenu() {
-            this.select = this.menu[Number.parseInt(arguments[0]) - 1] 
-            if(this.select == this.menu[2]){
-                navigator.bluetooth.requestDevice({acceptAllDevices:true});
+            this.select = this.menu[Number.parseInt(arguments[0]) - 1]
+            if (this.select == this.menu[2]) {
+                navigator.bluetooth.requestDevice({ acceptAllDevices: true });
             }
         }
     }

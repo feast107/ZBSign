@@ -41,7 +41,7 @@
                                     class="icon-small"
                                     src="../../assets/Main/Activity/Activity.svg" />
                             </el-button>
-                            <span style="user-select: none; font-weight: 1000">
+                            <span style="user-select: none; font-weight: 1000;vertical-align: middle;">
                                 {{ scope.row.title }}
                             </span>
                         </template>

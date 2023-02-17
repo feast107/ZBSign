@@ -26,6 +26,7 @@ export const WindowMessage = {
 export const Bridges = {
     Dispatcher: "$Dispatcher",
     File: "$File",
+    Navigator: "$Navigator"
 };
 
 export const LogLevel = {
@@ -45,9 +46,9 @@ export const ComponentKey = {
     Dotpen: "compDotpen",
     ConnectStatus: "compConnectStatus",
     User: "compUserIdentity",
-    Http: "compHttpRequest",
     Activities : 'compActivities',
-    ModifingActivity : 'compModifingActivity'
+    ModifingActivity : 'compModifingActivity',
+    ScanList: 'compScanList'
 };
 
 export class Dotpen {
