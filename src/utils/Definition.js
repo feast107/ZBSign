@@ -45,7 +45,9 @@ export const ComponentKey = {
     Dotpen: "dotpen",
     ConnectStatus: "connectStatus",
     User: "userIdentity",
-    Http: "httpRequest"
+    Http: "httpRequest",
+    Activities : 'activities',
+    ModifingActivity : 'modifingActivity'
 };
 
 export class Dotpen {

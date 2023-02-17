@@ -56,7 +56,7 @@
                 <el-main>
                     <div id="MainCard">
                         <NewActivityView v-if="this.select == this.menu[0]" />
-                        <ActivityView v-if="this.select==this.menu[1]"/>
+                        <ActivityView v-if="this.select == this.menu[1]" />
                     </div>
                 </el-main>
             </el-container>
@@ -68,12 +68,35 @@
 import { ComponentKey } from "@/utils/Definition";
 import ActivityView from "./activity/ActivityView.vue";
 import NewActivityView from "./activity/NewActivityView.vue";
+import { Activity } from "@/utils/Activity";
+import { computed } from 'vue'
 export default {
     components: {
         NewActivityView,
         ActivityView
     },
     inject: [ComponentKey.User],
+    provide: {
+        [ComponentKey.Activities]: computed(() => [
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+            Activity.Default(),
+        ]),
+        [ComponentKey.ModifingActivity]: computed(() => { return null; }),
+    },
     data() {
         this[ComponentKey.User].phoneNumber = "1771***807";
         return {
