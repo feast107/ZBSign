@@ -57,59 +57,67 @@
                     <div id="MainCard">
                         <NewActivityView v-if="this.select == this.menu[0]" />
                         <ActivityView v-if="this.select == this.menu[1]" />
-                        <BlueTooth v-if="this.select == this.menu[2]" />
+                        <KeepAlive>
+                            <SmartPenView v-if="this.select == this.menu[2]" />
+                        </KeepAlive>
                     </div>
                 </el-main>
             </el-container>
         </div>
         <div id="Back"></div>
-</div>
+    </div>
 </template>
 <script>
-import { ComponentKey , Bridges , IpcMessage} from "@/utils/Definition";
+import { ComponentKey, Bridges, IpcMessage, Dotpen, BlueTooth } from "@/utils/Definition";
 import ActivityView from "./activity/ActivityView.vue";
 import NewActivityView from "./activity/NewActivityView.vue";
-import BlueTooth from "./BlueTooth.vue";
 import { Activity } from "@/utils/Activity";
 import { computed } from 'vue'
+import SmartPenView from "./SmartPenView.vue";
 export default {
     components: {
         NewActivityView,
         ActivityView,
-        BlueTooth
+        SmartPenView
     },
     inject: [ComponentKey.User],
-    provide: {
-        [ComponentKey.ScanList]: computed(() => this.scanList),
-        [ComponentKey.Activities]: computed(() => [
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-            Activity.Default(),
-        ]),
-        [ComponentKey.ModifingActivity]: computed(() => { return null; }),
+    provide() {
+        return {
+            [ComponentKey.Dotpen]: computed(() => this.dotpen),
+            [ComponentKey.Activities]: computed(() => [
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+                Activity.Default(),
+            ]),
+            [ComponentKey.ModifingActivity]: computed(() => { return null; }),
+        }
     },
-    created(){
+    created() {
         window[Bridges.Dispatcher].listen(IpcMessage.BlueToothList, (list) => {
-            this.scanList = list[0];
+            this.dotpen.$ScanList = list[0];
         });
+        window[Bridges.Navigator] = document[Bridges.Navigator] = {
+            [Bridges.BlueTooth]: this.bluetooth,
+        };
     },
     data() {
         this[ComponentKey.User].phoneNumber = "1771***807";
         return {
-            scanList: [],
+            dotpen: new Dotpen(),
+            bluetooth: BlueTooth,
             menu: ['新建活动', '活动列表', '智能笔'],
             select: '新建活动',
             user: this[ComponentKey.User]
@@ -118,8 +126,17 @@ export default {
     methods: {
         selectMenu() {
             this.select = this.menu[Number.parseInt(arguments[0]) - 1]
-            if (this.select == this.menu[2]) {
-                navigator.bluetooth.requestDevice({ acceptAllDevices: true });
+            if (this.select == this.menu[2] && !BlueTooth.requesting()) {
+                BlueTooth.requestDevice({
+                    filters: [
+                        {
+                            namePrefix: "TD",
+                            services: [
+                                "0000fff0-0000-1000-8000-00805f9b34fb",
+                            ],
+                        },
+                    ],
+                })
             }
         }
     }

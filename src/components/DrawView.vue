@@ -187,7 +187,6 @@
 import { ComponentKey, ConnectStatus } from "@/utils/Definition";
 import { license, signature } from "../driver/MyLicense";
 import TStudyDigitalPen from "../driver/PenDriver.js";
-import Request from '../utils/Request';
 
 export default {
     name: 'DrawView',
