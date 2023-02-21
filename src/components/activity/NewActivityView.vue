@@ -68,7 +68,6 @@
 
 <script>
 import { Activity } from "@/utils/Activity";
-import { ComponentKey } from "@/utils/Definition";
 import Request from "@/utils/Request";
 export default {
     data() {

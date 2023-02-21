@@ -11,7 +11,7 @@
                 <el-table :data="BlueTooth" max-height="250">
                     <el-table-column prop="deviceId" label="编号" width="150" />
                     <el-table-column prop="deviceName" label="名称" width="150" />
-                    <el-table-column prop="deviceName" label="操作" width="100">
+                    <el-table-column  label="操作" width="100">
                         <template #default="scope">
                             <el-button type="primary" plain style="width:100%;"
                             :disabled="this.TryingToConnect"
