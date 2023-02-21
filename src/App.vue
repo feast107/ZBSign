@@ -1,26 +1,29 @@
 <template>
-	<MainPage v-if="this.user != null && this.user.isLogin" />
-<HomePage v-else />
+	<PlayPage v-if="this.user != null && this.user.isLogin" />
+	<HomePage v-else />
 </template>
 
 <script>
 import HomePage from "./components/HomePage.vue";
 import MainPage from "./components/MainPage.vue";
 import BlueTooth from "./components/BlueTooth.vue";
+import PlayPage from "./components/animations/PlayPage.vue";
 import { User } from './utils/User';
-import { Bridges, ComponentKey, Dotpen } from "./utils/Definition";
+import { ComponentKey } from "./utils/Definition";
 import { computed } from 'vue'
 export default {
 	name: "App",
 	components: {
-		HomePage,
-		MainPage,
-		BlueTooth,
-	},
+    HomePage,
+    MainPage,
+    BlueTooth,
+    PlayPage,
+},
 	provide() {
 		return {
 			[ComponentKey.User]: computed(() => this.user),
-			[ComponentKey.Dotpen]: computed(() => new Dotpen()),
+			[ComponentKey.GlobalHandler]:computed(()=> function(handler){
+			})
 		}
 	},
 	data() {
@@ -30,17 +33,6 @@ export default {
 	},
 	created() {
 		this.user.isLogin = true;
-		window[Bridges.Navigator] = document[Bridges.Navigator] = {
-			$BlueTooth: {
-				requestDevice(config) {
-					if (this.$Promise) return this.$Promise;
-					const ret = (this.$Promise = navigator.bluetooth.requestDevice(config));
-					return ret.catch(e => console.log(e)).finally(() => {
-						delete this.$Promise;
-					});
-				},
-			},
-		};
 	}
 };
 </script>
