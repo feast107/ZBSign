@@ -1,6 +1,6 @@
 <template>
     <el-empty
-        v-if="this.activities.length == 0"
+        v-if="this.preload.length == 0"
         style="height: 100%"
         description="暂无记录">
         <template #image>
@@ -32,8 +32,11 @@
             </el-autocomplete>
         </el-row>
         <el-row id="MainList">
-            <el-scrollbar style="width: 100%; padding-right: 10px">
-                <el-table stripe :data="activities" style="width: 100%">
+            <el-scrollbar v-loading="this.loading" style="width: 100%; padding-right: 10px">
+                <el-table
+                    stripe
+                    :data="activities"
+                    style="width: 100%">
                     <el-table-column>
                         <template #default="scope">
                             <el-button text style="margin-right: 10px">
@@ -41,7 +44,12 @@
                                     class="icon-small"
                                     src="../../assets/Main/Activity/Activity.svg" />
                             </el-button>
-                            <span style="user-select: none; font-weight: 1000;vertical-align: middle;">
+                            <span
+                                style="
+                                    user-select: none;
+                                    font-weight: 1000;
+                                    vertical-align: middle;
+                                ">
                                 {{ scope.row.title }}
                             </span>
                         </template>
@@ -73,18 +81,39 @@
                             </el-button>
                         </template>
                     </el-table-column>
-                    <el-table-column width="50">
+                    <el-table-column width="50"
+                        ><!--Copy-->
                         <template #default="scope">
-                            <el-button class="iconButton" circle>
-                                <img
-                                    class="icon-small icon-canClick"
-                                    src="../../assets/Main/Activity/Copy.svg" />
-                            </el-button>
+                            <el-popover placement="top" trigger="hover">
+                                <el-button
+                                    @click="
+                                        () => {
+                                            copySharedLink(scope.row);
+                                        }
+                                    "
+                                    >复制分享码</el-button
+                                >
+                                <template #reference>
+                                    <el-button
+                                        class="iconButton"
+                                        @click="
+                                            () => {
+                                                copySharedLink(scope.row);
+                                            }
+                                        "
+                                        circle>
+                                        <img
+                                            class="icon-small icon-canClick"
+                                            src="../../assets/Main/Activity/Copy.svg" />
+                                    </el-button>
+                                </template>
+                            </el-popover>
                         </template>
                     </el-table-column>
                     <el-table-column label="" width="50">
                         <template #default="scope">
                             <el-popover
+                                style="box-shadow: var(--el-box-shadow-dark)"
                                 placement="bottom"
                                 :width="'auto'"
                                 trigger="click">
@@ -144,18 +173,41 @@
 import { ComponentKey } from "@/utils/Definition";
 export default {
     inject: [ComponentKey.Activities],
+    beforeMount() {
+        if (this.preload.length > 0) {
+            this.loading = true;
+            setTimeout(() => {
+                this.preload.forEach((x) => {
+                    this.activities.push(x);
+                });
+                this.loading = false;
+            }, 500);
+        }
+    },
     data() {
         return {
+            loading: false,
             styles: {
                 smallButton: "border:none;padding:0;",
             },
-            activities: this[ComponentKey.Activities],
+            preload: this[ComponentKey.Activities],
+            activities: [],
             searchPattern: null,
         };
     },
     methods: {
         selectHandler() {},
         getSuggests() {},
+        async copySharedLink(target) {
+            try {
+                await navigator.clipboard.writeText(target.sharedLink);
+                this.$message.success(`复制成功`);
+            } catch {
+                this.$message.error(
+                    `复制失败，请手动尝试:${target.sharedLink}`
+                );
+            }
+        },
     },
 };
 </script>
@@ -166,6 +218,7 @@ export default {
     border: none !important;
     margin: 1px;
 }
+
 #ActivityView {
     #MainList {
         height: calc(100% - 50px);
