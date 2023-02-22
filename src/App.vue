@@ -1,5 +1,5 @@
 <template>
-	<PlayPage v-if="this.user != null && this.user.isLogin" />
+	<MainPage v-if="this.user != null && this.user.isLogin" />
 	<HomePage v-else />
 </template>
 
@@ -67,5 +67,9 @@ img {
 .el-form-item__label {
 	user-select: none;
 	pointer-events: none;
+}
+
+.el-popover{
+	width : auto !important;
 }
 </style>
