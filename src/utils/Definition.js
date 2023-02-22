@@ -102,7 +102,9 @@ export class GlobalEvent {
         if (typeof event != "function") {
             throw `event ${event} should be function`;
         }
-        if(!this.Handlers){ this.Handlers = {}; }
+        if (!this.Handlers) {
+            this.Handlers = {};
+        }
         if (!this.Handlers[handler]) {
             this.Handlers[handler] = [];
         } else if (this.Handlers.findIndex((x) => x == event) != -1) {
@@ -134,5 +136,17 @@ export class GlobalEvent {
                 event(args);
             });
         }
+    }
+}
+
+export class GUID {
+    static NewGuid() {
+        let txt = "1234567890";
+        let len = 13;
+        let pwd = "";
+        for (let i = 0; i < len; i++) {
+            pwd += txt.charAt(Math.floor(Math.random() * txt.length));
+        }
+        return new Date().valueOf() + pwd;
     }
 }
