@@ -56,7 +56,9 @@
                 <el-main>
                     <div id="MainCard">
                         <NewActivityView v-if="this.select == this.menu[0]" />
-                        <ActivityView v-if="this.select == this.menu[1]" />
+                        <KeepAlive>
+                            <ActivityView v-if="this.select == this.menu[1]" />
+                        </KeepAlive>
                         <KeepAlive>
                             <SmartPenView v-if="this.select == this.menu[2]" />
                         </KeepAlive>
