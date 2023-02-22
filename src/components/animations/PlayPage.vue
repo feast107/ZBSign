@@ -2,28 +2,43 @@
     <div id="PlayMain">
         <div id="Foreground">
             <el-container id="Container">
-                <el-header style="height:20%;">
-                    <div style="background-color:#0934df"></div>
+                <el-header style="height: 20%">
+                    <el-row>
+                        <el-col :span="8">
+                            <img @src="this.getUrl(5)">
+                        </el-col>
+                        <el-col :offset="2" :span="14">
+                            <h1 style="font-size: 45px;">某某企业活动主题</h1>
+                        </el-col>
+                    </el-row>
                 </el-header>
-                <el-container style="height:75%;">
-                    <el-aside style="width:40%;padding: 20px;">
+                <el-container style="height: 75%">
+                    <el-aside style="width: 40%; padding: 20px">
                         <div id="Pictures">
                             <ul>
-                                <li v-for="url in this.urls" :key="url" >
+                                <li v-for="url in this.urls" :key="url">
                                     <img :src="url" />
                                 </li>
                             </ul>
                         </div>
                     </el-aside>
-                    <el-main style="width:60%">
-                        <div style="background-color:white;width: 100%;height: 100%;">
-
-                        </div>
+                    <el-main style="width: 60%">
+                        <div style="
+                                                background-color: white;
+                                                width: 100%;
+                                                height: 100%;
+                                            "></div>
                     </el-main>
-                    
                 </el-container>
-                <el-footer style="height: 5%;">
-                    
+                <el-footer style="height: 5%; text-align: end">
+                    <label style="
+                                            color: white;
+                                            font-family: 'Helvetica Neue', Helvetica,
+                                                'PingFang SC', 'Hiragino Sans GB',
+                                                'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                                        ">
+                        技术支持：南京孜博汇信息科技有限公司
+                    </label>
                 </el-footer>
             </el-container>
         </div>
@@ -32,27 +47,22 @@
 </template>
 
 <script>
-import "animate.css"
+import "animate.css";
 import { Animation } from "@/utils/Animation";
 export default {
     beforeCreate() {
-        document.addEventListener('keyup', function (e) {
-            e.key
+        document.addEventListener("keyup", function (e) {
+            e.key;
         });
     },
     data() {
-        let getUrl = (num) => `http://47.93.86.37:8686/taskFile/sign/${num}.JPG`;
         return {
             stylePair: Animation.getOpposite("fade", "Up"),
             index: 0,
             interval: null,
             pictures: [],
-            urls: [
-                getUrl(1),
-                getUrl(2),
-                getUrl(3),
-            ]
-        }
+            urls: [this.getUrl(1), this.getUrl(2), this.getUrl(3)],
+        };
     },
     created() {
         window.StylePair = this.stylePair;
@@ -62,18 +72,21 @@ export default {
         this.scrollImage(20);
     },
     methods: {
-        animate(feature) { this.stylePair = Animation.getOpposite(feature, "Up") },
+        getUrl: (num) => `http://47.93.86.37:8686/taskFile/sign/${num}.JPG`,
+        animate(feature) {
+            this.stylePair = Animation.getOpposite(feature, "Up");
+        },
         playImage(timeout) {
             if (this.interval) {
-                clearInterval(this.interval)
+                clearInterval(this.interval);
             }
-            let pictures = document.querySelectorAll('.item');
+            let pictures = document.querySelectorAll(".item");
             let nextImage = () => {
                 pictures[this.index].className = this.stylePair[1]; //当前图片淡出
                 this.index++;
                 this.index = this.index % pictures.length;
                 pictures[this.index].className = this.stylePair[0]; //下一张图片淡出
-            }
+            };
             this.interval = setInterval(nextImage, timeout * 1000);
         },
         scrollImage(timeout) {
@@ -81,22 +94,21 @@ export default {
                 clearInterval(this.interval);
             }
             var iSpeed = -1;
-            let cont = document.getElementById('Pictures');
-            let ul = cont.getElementsByTagName('ul')[0];
+            let cont = document.getElementById("Pictures");
+            let ul = cont.getElementsByTagName("ul")[0];
             ul.innerHTML += ul.innerHTML;
             let scroll = () => {
                 ul.style.top = `${ul.offsetTop + iSpeed}px`;
                 if (ul.offsetTop < -ul.offsetHeight / 2) {
-                    ul.style.top = '0px';
+                    ul.style.top = "0px";
                 } else if (ul.offsetTop > 0) {
-                    ul.style.top = `${(-ul.offsetHeight) / 2}px`;
+                    ul.style.top = `${-ul.offsetHeight / 2}px`;
                 }
-
-            }
+            };
             this.interval = setInterval(scroll, timeout);
-        }
-    }
-}
+        },
+    },
+};
 </script>
 
 <style lang="scss">
@@ -129,7 +141,6 @@ export default {
                     background-size: cover;
                     background-repeat: no-repeat;
                 }
-
 
                 ul {
                     position: absolute;
