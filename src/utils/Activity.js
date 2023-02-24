@@ -2,16 +2,23 @@ import { GUID } from "./Definition";
 import Request from "./Request";
 export class Activity {
     constructor(id) {
-        this.id = id ?? null;
-        this.title = null;
+        this.id = id ?? "";
+        this.title = "";
         this.titleColor = "#000";
+
         this.logo = null;
         this.background = null;
         this.pictures = [];
-        this.pictureSpeed = null;
-        this.signSpeed = null;
-        this.createTime = null;
-        this.sharedLink = null;
+
+        this.logoUrl = "";
+        this.backgroundUrl = "";
+        this.pictureUrls = [];
+
+        this.pictureSpeed = "";
+        this.signSpeed = "";
+        this.createTime = "";
+        this.sharedLink = "";
+
     }
     getFileForm() {
         return Request.form({
@@ -31,7 +38,8 @@ export class Activity {
     static Default() {
         let ret = new Activity();
         ret.id = "123456789";
-        ret.title = "活动1";
+        ret.title = "南京孜博汇信息科技有限公司南京孜博汇信123";
+        ret.titleColor = "#faf";
         ret.createTime = new Date();
         ret.sharedLink = GUID.NewGuid();
         return ret;
