@@ -69,6 +69,7 @@
 <script>
 import { Activity } from "@/utils/Activity";
 import Request from "@/utils/Request";
+import 'default-passive-events';
 export default {
     data() {
         return {
@@ -120,7 +121,7 @@ export default {
         submitForm() {
             console.log(this.model);
             Request.post(
-                "http://192.168.101.32:9898/signservice/file/uploadFile",
+                "/Picture/CreateActivity",
                 this.model.getFileForm(),
                 {
                     method: "POST",
