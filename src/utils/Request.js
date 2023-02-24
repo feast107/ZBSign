@@ -2,10 +2,10 @@ import axios from "axios";
 /*创建axios 实例*/
 const Request = axios.create({
     /*api的baseURL*/
-    /*baseURL:
+    baseURL:
         process.env.NODE_ENV === "production"
             ? process.env.VUE_APP_REQUEST_URL
-            : "/",*/
+            : "https://localhost:7201",
     /*请求超时时间*/
     timeout: 60000,
 });
