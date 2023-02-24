@@ -14,7 +14,7 @@
     :list-type="'picture-card'" 
     :limit="3"
     :auto-upload="true" :on-preview="(file) => { this.Preview(file) }"
-    :on-exceed="() => { debugger; this.log(arguments) }">
+    :on-exceed="() => {  this.log(arguments) }">
         <el-icon  class="el-icon--upload"><PictureFilled /></el-icon>
         <template #tip>
             <div class="el-upload__tip">
@@ -42,11 +42,11 @@ export default {
         }
     },
     methods: {
-        log(...args) { debugger; console.log(args[0]) },
-        HandlePreview() { debugger; console.log(arguments) },
-        HandleRemove() { debugger; console.log(arguments) },
-        BeforeRemove() { debugger; console.log(arguments) },
-        HandleExceed() { debugger; console.log(arguments) },
+        log(...args) {  console.log(args[0]) },
+        HandlePreview() { console.log(arguments) },
+        HandleRemove() { console.log(arguments) },
+        BeforeRemove() { console.log(arguments) },
+        HandleExceed() { console.log(arguments) },
         Preview(file) {
             this.Previewer.Url = file.url;
             this.Previewer.Visible = true;
