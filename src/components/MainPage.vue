@@ -1,5 +1,6 @@
 <template>
-    <div class="Main">
+    <KeepAlive >
+        <div v-if="this.playingActivity == null" class="Main">
         <div id="Fore">
             <el-container>
                 <el-aside style="overflow:hidden">
@@ -18,7 +19,7 @@
                             </el-row>
                         </div>
                     </div>
-                    <el-menu default-active="1" @select="selectMenu">
+                    <el-menu :default-active="this.defaultSelect"  @select="selectMenu">
                         <el-menu-item-group>
                             <el-menu-item index="1">
                                 <el-row justify="center">
@@ -57,7 +58,7 @@
                     <div id="MainCard">
                         <NewActivityView v-if="this.select == this.menu[0]" />
                         <KeepAlive>
-                            <ActivityView v-if="this.select == this.menu[1]" />
+                            <ActivityView @onSetActivity="onSetActivity" v-if="this.select == this.menu[1]" />
                         </KeepAlive>
                         <KeepAlive>
                             <SmartPenView v-if="this.select == this.menu[2]" />
@@ -67,11 +68,16 @@
             </el-container>
         </div>
         <div id="Back"></div>
+        </div>
+    </KeepAlive>
+    <div v-if="this.playingActivity != null" class="Main">
+        <PlayPage @onEscapePreview="onEscapePreview"/>
     </div>
 </template>
 <script>
 import { ComponentKey, Bridges, IpcMessage, Dotpen, BlueTooth } from "@/utils/Definition";
 import ActivityView from "./activity/ActivityView.vue";
+import PlayPage from "./animations/PlayPage.vue";
 import NewActivityView from "./activity/NewActivityView.vue";
 import { Activity } from "@/utils/Activity";
 import { computed } from 'vue'
@@ -80,7 +86,8 @@ export default {
     components: {
         NewActivityView,
         ActivityView,
-        SmartPenView
+        SmartPenView,
+        PlayPage,
     },
     inject: [ComponentKey.User],
     provide() {
@@ -105,6 +112,7 @@ export default {
                 Activity.Default(),
             ]),
             [ComponentKey.ModifingActivity]: computed(() => { return null; }),
+            [ComponentKey.PlayActicity]: computed(() => this.playingActivity)
         }
     },
     created() {
@@ -118,14 +126,27 @@ export default {
     data() {
         this[ComponentKey.User].phoneNumber = "1771***807";
         return {
+            /**
+             * @param {Reference}
+             */
+            playingActivity: null,
             dotpen: new Dotpen(),
             bluetooth: BlueTooth,
             menu: ['新建活动', '活动列表', '智能笔'],
             select: '新建活动',
+            defaultSelect:'1',
             user: this[ComponentKey.User]
         }
     },
     methods: {
+        onSetActivity(e) {
+            this.playingActivity = e
+        },
+        onEscapePreview(){
+            this.playingActivity = null;
+            this.select = '活动列表';
+            this.defaultSelect = '2';
+        },
         selectMenu() {
             this.select = this.menu[Number.parseInt(arguments[0]) - 1]
             if (this.select == this.menu[2] && !BlueTooth.requesting()) {
