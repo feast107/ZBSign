@@ -4,11 +4,15 @@
             <el-container id="Container">
                 <el-header style="height: 20%">
                     <el-row>
-                        <el-col :span="8">
-                            <img @src="this.getUrl(5)">
+                        <el-col :span="3">
+                            <img class="logo" :src="this.activity.logoUrl" />
                         </el-col>
-                        <el-col :offset="2" :span="14">
-                            <h1 style="font-size: 45px;">某某企业活动主题</h1>
+                        <el-col :span="21">
+                            <label
+                                class="title"
+                                :style="`color:${this.activity.titleColor};font-size:${this.fontSize}px`">
+                                {{ this.activity.title }}
+                            </label>
                         </el-col>
                     </el-row>
                 </el-header>
@@ -23,20 +27,25 @@
                         </div>
                     </el-aside>
                     <el-main style="width: 60%">
-                        <div style="
-                                                background-color: white;
-                                                width: 100%;
-                                                height: 100%;
-                                            "></div>
+                        <div
+                            style="
+                                background-color: white;
+                                width: 100%;
+                                height: 100%;
+                            ">
+                            <canvas>
+                                
+                            </canvas></div>
                     </el-main>
                 </el-container>
                 <el-footer style="height: 5%; text-align: end">
-                    <label style="
-                                            color: white;
-                                            font-family: 'Helvetica Neue', Helvetica,
-                                                'PingFang SC', 'Hiragino Sans GB',
-                                                'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-                                        ">
+                    <label
+                        style="
+                            color: white;
+                            font-family: 'Helvetica Neue', Helvetica,
+                                'PingFang SC', 'Hiragino Sans GB',
+                                'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                        ">
                         技术支持：南京孜博汇信息科技有限公司
                     </label>
                 </el-footer>
@@ -49,30 +58,45 @@
 <script>
 import "animate.css";
 import { Animation } from "@/utils/Animation";
+import { ComponentKey } from "@/utils/Definition";
+import { ResizeEvent } from "@/utils/Events";
 export default {
     beforeCreate() {
-        document.addEventListener("keyup", function (e) {
-            e.key;
-        });
+        
     },
+    inject: [ComponentKey.PlayActicity],
     data() {
         return {
+            activity: this[ComponentKey.PlayActicity],
             stylePair: Animation.getOpposite("fade", "Up"),
             index: 0,
             interval: null,
+            fontSize: 40,
             pictures: [],
             urls: [this.getUrl(1), this.getUrl(2), this.getUrl(3)],
         };
     },
     created() {
+        var vue = this;
+        document.addEventListener("keyup",  (e) => {
+            if(e.key == "Escape"){
+                vue.$emit('onEscapePreview',null);
+            }
+        });
+        this.activity.logoUrl = this.getLogo();
         window.StylePair = this.stylePair;
         window.Animations = Animation;
+        ResizeEvent.on((width, height) => {
+            console.log(`${width}   ${height}`);
+        });
     },
     mounted() {
         this.scrollImage(20);
+        
     },
     methods: {
         getUrl: (num) => `http://47.93.86.37:8686/taskFile/sign/${num}.JPG`,
+        getLogo: (num) => `http://47.93.86.37:8686/taskFile/sign/logo.png`,
         animate(feature) {
             this.stylePair = Animation.getOpposite(feature, "Up");
         },
@@ -125,10 +149,39 @@ export default {
         height: 100%;
         width: 100%;
 
+        .el-row {
+            height: 100%;
+
+            .el-col {
+                height: 100%;
+            }
+        }
+
+        .logo {
+            height: 66.6%;
+        }
+
         #Container {
             margin: 50px;
             height: calc(100% - 100px);
             width: calc(100% - 100px);
+
+            .title {
+                font-weight: 1000;
+                margin: 0 !important;
+                height: 100%;
+                user-select: none;
+                letter-spacing: 10px;
+                pointer-events: none;
+                vertical-align: middle;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 1;
+                word-break: break-all;
+                white-space: nowrap;
+                line-height: 200%;
+            }
 
             #Pictures {
                 padding: 0;
@@ -140,6 +193,7 @@ export default {
                 li {
                     background-size: cover;
                     background-repeat: no-repeat;
+                    user-select: none;
                 }
 
                 ul {
@@ -156,6 +210,10 @@ export default {
                 ul li img {
                     width: 100%;
                 }
+            }
+
+            label {
+                user-select: none;
             }
         }
     }
