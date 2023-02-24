@@ -32,11 +32,10 @@
             </el-autocomplete>
         </el-row>
         <el-row id="MainList">
-            <el-scrollbar v-loading="this.loading" style="width: 100%; padding-right: 10px">
-                <el-table
-                    stripe
-                    :data="activities"
-                    style="width: 100%">
+            <el-scrollbar
+                v-loading="this.loading"
+                style="width: 100%; padding-right: 10px">
+                <el-table stripe :data="activities" style="width: 100%">
                     <el-table-column>
                         <template #default="scope">
                             <el-button text style="margin-right: 10px">
@@ -74,18 +73,37 @@
                     </el-table-column>
                     <el-table-column width="50">
                         <template #default="scope">
-                            <el-button class="iconButton" circle>
-                                <img
-                                    class="icon-small icon-canClick"
-                                    src="../../assets/Main/Activity/Play.svg" />
-                            </el-button>
+                            <el-popover placement="top" trigger="hover">
+                                <el-button type="primary" plain
+                                    @click=" 
+                                        () => {
+                                            previewPlay(scope.row);
+                                        }
+                                    "
+                                    >播放</el-button
+                                >
+                                <template #reference>
+                                    <el-button
+                                        class="iconButton"
+                                        @click="
+                                            () => {
+                                                previewPlay(scope.row);
+                                            }
+                                        "
+                                        circle>
+                                        <img
+                                            class="icon-small icon-canClick"
+                                            src="../../assets/Main/Activity/Play.svg" />
+                                    </el-button>
+                                </template>
+                            </el-popover>
                         </template>
                     </el-table-column>
                     <el-table-column width="50"
                         ><!--Copy-->
                         <template #default="scope">
                             <el-popover placement="top" trigger="hover">
-                                <el-button
+                                <el-button type="primary" plain
                                     @click="
                                         () => {
                                             copySharedLink(scope.row);
@@ -172,7 +190,19 @@
 <script>
 import { ComponentKey } from "@/utils/Definition";
 export default {
-    inject: [ComponentKey.Activities],
+    inject: [ComponentKey.Activities, ComponentKey.PlayActicity],
+    data() {
+        return {
+            loading: false,
+            styles: {
+                smallButton: "border:none;padding:0;",
+            },
+            preload: this[ComponentKey.Activities],
+            preview: this[ComponentKey.PlayActicity],
+            activities: [],
+            searchPattern: null,
+        };
+    },
     beforeMount() {
         if (this.preload.length > 0) {
             this.loading = true;
@@ -181,19 +211,8 @@ export default {
                     this.activities.push(x);
                 });
                 this.loading = false;
-            }, 500);
+            }, 1000);
         }
-    },
-    data() {
-        return {
-            loading: false,
-            styles: {
-                smallButton: "border:none;padding:0;",
-            },
-            preload: this[ComponentKey.Activities],
-            activities: [],
-            searchPattern: null,
-        };
     },
     methods: {
         selectHandler() {},
@@ -207,6 +226,10 @@ export default {
                     `复制失败，请手动尝试:${target.sharedLink}`
                 );
             }
+        },
+        previewPlay(target) {
+            this.preview = target;
+            this.$emit(`onSetActivity`, target);
         },
     },
 };
