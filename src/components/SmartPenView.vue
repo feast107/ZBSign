@@ -4,9 +4,15 @@
             <el-table-column prop="deviceName" label="名称" />
             <el-table-column label="操作">
                 <template #default="scope">
-                    <el-button type="primary" plain :disabled="this.trying" :loading="scope.row.IsConnecting"
-                        @click="SelectDevice(scope.row)">
+                    <el-button v-if="!this.dotpen.isSameDevice(scope.row)" type="primary" plain
+                        :disabled="this.dotpen.$ConnectStatus == 'connecting'" :loading="scope.row.connecting"
+                        @click="scanAndConnect(scope.row)">
                         连接
+                    </el-button>
+
+                    <el-button v-else type="danger" plain :disabled="this.dotpen.$ConnectStatus == 'connecting'"
+                        :loading="scope.row.connecting" @click="disconnect(scope.row)">
+                        断开
                     </el-button>
                 </template>
             </el-table-column>
@@ -15,14 +21,15 @@
 </template>
 
 <script>
-import { ComponentKey, Bridges, IpcMessage } from '@/utils/Definition';
+import { ComponentKey, Bridges, IpcMessage, Dotpen, ConnectStatus, BlueTooth } from "@/utils/Definition";
 import TStudyDigitalPen from "../driver/PenDriver.js";
 export default {
-    inject: [
-        ComponentKey.Dotpen,
-    ],
+    inject: [ComponentKey.Dotpen],
     data() {
         return {
+            /**
+             * @type {Dotpen}
+             */
             dotpen: this[ComponentKey.Dotpen],
             connectionStatus: "未连接",
             penName: "",
@@ -40,87 +47,125 @@ export default {
             rawResult: "",
             lastPt: {},
             trying: false,
-        }
+        };
     },
     mounted() {
         TStudyDigitalPen.getInstance().loadLicense("", "");
     },
     methods: {
-        SelectDevice(device) {
-            this.trying = true;
-            device.IsConnecting = true;
-            this.scanAndConnect(device);
-            window[Bridges.Dispatcher].invoke(IpcMessage.BlueToothSelect, device.deviceId);
-        },
-        scanAndConnect: function (device) {
-            TStudyDigitalPen.getInstance().setCallbackDelegate(
-                this.callbacks()
-            );
-            let date = new Date();
-            TStudyDigitalPen.getInstance().scanAndConnectPen()
+        scanAndConnect(device) {
+            this.dotpen.setConnecting(device);
+            TStudyDigitalPen
+                .getInstance()
+                .setCallbackDelegate(
+                    this.callbacks()
+                );
+            TStudyDigitalPen
+                .getInstance()
+                .scanAndConnectPen()
                 .then((ret) => {
-                    if (ret) {
-                        this.trying = false;
-                        device.IsConnecting = false;
-                        console.log("--连接成功--");
-                        TStudyDigitalPen.getInstance()
-                            .getPenInfo()
-                            .then(() => {
-                                TStudyDigitalPen.getInstance().getPenMACAddress();
-                            });
+                    if (!ret) {
+                        this.dotpen.setDisconnect();
+                        device.connecting = false; return
                     }
+                    this.dotpen
+                        .setConnect(device, TStudyDigitalPen.getInstance());
+                    console.log("--连接成功--");
+
+                    let coldDown = 25;
+                    setTimeout(() => {
+                        TStudyDigitalPen.getInstance().clearPenOfflineData();
+                        setTimeout(() => {
+                            TStudyDigitalPen.getInstance().getPenInfo();
+                            setTimeout(() => {
+                                TStudyDigitalPen.getInstance().getPenMACAddress();
+                                setTimeout(() => {
+                                    TStudyDigitalPen.getInstance().receiveRealtimeMode();
+                                }, coldDown);
+                            }, coldDown);
+                        }, coldDown);
+                    }, coldDown);
+                    // TStudyDigitalPen.getInstance()
+                    //     .getPenInfo()
+                    //     .then(() => {
+                    //         TStudyDigitalPen
+                    //             .getInstance()
+                    //             .getPenMACAddress();
+                    //         TStudyDigitalPen.getInstance().receiveRealtimeMode();
+                    //     });
                 })
                 .catch((error) => {
-                    console.log('No result of bluetooth Expired in:' + new String((new Date() - date) / 1000));
                     this.rawResult = error.toString();
-                    this.trying = false;
-                    device.IsConnecting = false;
+                    this.dotpen.setDisconnect();
+                    device.connecting = false;
                 });
+            window[Bridges.Dispatcher].invoke(
+                IpcMessage.BlueToothSelect,
+                device.deviceId
+            );
+        },
+        disconnect() {
+            if (!this.dotpen.isConnected()) return;
+            this.dotpen.setDisconnect();
+            TStudyDigitalPen.getInstance().disconnectPen();
+            this.functionDisabled = true;
+            this.scannDisabled = false;
+            BlueTooth.requestDevice({
+                filters: [
+                    {
+                        namePrefix: "TD",
+                        services: [
+                            "0000fff0-0000-1000-8000-00805f9b34fb",
+                        ],
+                    },
+                ],
+            })
         },
         callbacks: function () {
-            var vueapp = this;
+            var data = this;
             return {
                 onPenConnectionStateChange: function ({ name, connect }) {
                     console.log("onPenConnectionStateChange: ", name, connect);
-                    vueapp.connectionStatus = `${connect ? "已连接" : "未连接"
+                    data.connectionStatus = `${connect ? "已连接" : "未连接"
                         }`;
                     if (!connect) {
-                        vueapp.functionDisabled = true;
-                        vueapp.scanDisabled = false;
-                        vueapp.penName = "";
-                        vueapp.penSerial = "";
-                    } else {
-                        vueapp.functionDisabled = false;
-                        vueapp.scanDisabled = true;
+                        data.dotpen.setDisconnect();
 
-                        vueapp.penName = name;
+                        data.functionDisabled = true;
+                        data.scanDisabled = false;
+                        data.penName = "";
+                        data.penSerial = "";
+                    } else {
+                        data.functionDisabled = false;
+                        data.scanDisabled = true;
+                        data.penName = name;
                     }
                 },
                 onReceivePenInfo: function (info) {
                     console.log(info);
-                    vueapp.rawResult = info;
-                    vueapp.penSerial = info.PEN_ID;
-                    vueapp.rawResult =
+                    data.rawResult = info;
+                    data.penSerial = info.PEN_ID;
+                    data.rawResult =
                         "onReceivePenInfo:" + JSON.stringify(info);
                 },
                 onReceivePenMACAddress: function (MAC) {
                     console.log(MAC);
-                    vueapp.rawResult =
+                    data.rawResult =
                         "onReceivePenMACAddress:" + JSON.stringify(MAC);
                 },
                 onReceivePenBatteryInfo: function (battery) {
                     console.log(battery);
-                    vueapp.rawResult =
+                    data.rawResult =
                         "onReceivePenBatteryInfo:" + JSON.stringify(battery);
                 },
                 onReceivePenRTC: function (timestamp) {
                     console.log(timestamp);
-                    vueapp.rawResult =
+                    data.rawResult =
                         "onReceivePenRTC:" + JSON.stringify(timestamp);
                 },
                 onReceivePenPowerOffTime: function (time) {
                     console.log(time);
-                    vueapp.rawResult =
+                    data.rawResult =
                         "onReceivePenPowerOffTime:" + JSON.stringify(time);
                 },
                 onReceivePen_Warning: function (warning) {
@@ -132,18 +177,18 @@ export default {
                             "当电池电量低于 20%时将每隔 1 分钟上报一次警告";
                     }
                     console.log(content);
-                    vueapp.rawResult =
+                    data.rawResult =
                         "onReceivePen_Warning:" + JSON.stringify(warning);
                 },
                 onReceivePenOfflineDataInfo: function ({ size, percent }) {
                     console.log(`总大小: ${size}字节; 百分比: ${percent}%`);
-                    vueapp.rawResult =
+                    data.rawResult =
                         "onReceivePenOfflineDataInfo:" +
                         JSON.stringify({ size, percent });
                 },
                 onClearPenOfflineData: function () {
                     console.log("清空离线数据");
-                    vueapp.rawResult = "onClearPenOfflineData:";
+                    data.rawResult = "onClearPenOfflineData:";
                 },
                 onReceivePenStrokeData: function ({
                     coordX,
@@ -153,8 +198,8 @@ export default {
                     time,
                     coordMode,
                 }) {
-                    vueapp.coorInfo = `[${coordX},${coordY}] ${pageAddress}`;
-                    vueapp.rawResult =
+                    data.coorInfo = `[${coordX},${coordY}] ${pageAddress}`;
+                    data.rawResult =
                         "onReceivePenStrokeData:" +
                         JSON.stringify({
                             coordX,
@@ -164,39 +209,37 @@ export default {
                             time,
                             coordMode,
                         });
-                    if (vueapp.isPenDown == true) {
+                    if (data.isPenDown == true) {
                         var can = document.getElementById("myCanvas");
-                        var x = (can.width / vueapp.dotwdith) * coordX;
-                        var y = (can.height / vueapp.dotheight) * coordY;
+                        var x = (can.width / data.dotwdith) * coordX;
+                        var y = (can.height / data.dotheight) * coordY;
                         //vueapp.points.push({x,y});
-                        vueapp.drawStrokeDynamic({ x, y }, 0.8);
+                        data.drawStrokeDynamic({ x, y }, 0.8);
                     }
                 },
                 onPenDown: function ({ coordMode }) {
                     console.log("下笔" + coordMode);
-                    vueapp.writeStatus = "落笔";
-                    vueapp.isPenDown = true;
+                    data.writeStatus = "落笔";
+                    data.isPenDown = true;
 
-                    vueapp.rawResult = "onPenDown:";
-                    vueapp.lastPt = null;
+                    data.rawResult = "onPenDown:";
+                    data.lastPt = null;
                 },
-
                 onPenUp: function ({ coordMode }) {
                     console.log("抬笔" + coordMode);
-                    vueapp.writeStatus = "抬笔";
+                    data.writeStatus = "抬笔";
                     //var lineStroke=vueapp.points.slice()
                     //vueapp.points.length=0
                     //vueapp.drawStrokeLine(lineStroke)
-                    vueapp.rawResult = "onPenUp:";
+                    data.rawResult = "onPenUp:";
 
-                    vueapp.isPenDown = false;
-                    vueapp.lastPt = null;
+                    data.isPenDown = false;
+                    data.lastPt = null;
                 },
                 onStartReceivePenOfflineData: function () {
                     console.log("onStartReceivePenOfflineData");
-                    vueapp.rawResult = "onStartReceivePenOfflineData:";
+                    data.rawResult = "onStartReceivePenOfflineData:";
                 },
-
                 onReceivedPenOfflineData: function ({
                     totalSize,
                     receiveSize,
@@ -206,23 +249,23 @@ export default {
                         totalSize,
                         receiveSize
                     );
-                    vueapp.rawResult =
+                    data.rawResult =
                         "onReceivedPenOfflineData:" +
                         JSON.stringify({ totalSize, receiveSize });
                 },
                 onFinishReceivePenOfflineData: function () {
                     console.log("onFinishReceivePenOfflineData");
-                    vueapp.rawResult = "onFinishReceivePenOfflineData:";
+                    data.rawResult = "onFinishReceivePenOfflineData:";
                 },
                 onPenPageChange: function ({ pageAddress }) {
                     console.log("onPenPageChange");
-                    vueapp.rawResult =
+                    data.rawResult =
                         "onPenPageChange:" + JSON.stringify({ pageAddress });
                 },
             };
         },
-    }
-}
+    },
+};
 </script>
 
 <style lang="scss"></style>
