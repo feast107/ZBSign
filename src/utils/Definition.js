@@ -50,9 +50,20 @@ export const ComponentKey = {
     User: "C-UserIdentity",
     Activities: "C-Activities",
     ModifingActivity: "C-ModifingActivity",
+    PlayActicity: "C-PlayActivity",
     ScanList: "C-ScanList",
     GlobalHandler: "C-GlobalHandler",
 };
+
+export class Reference{
+    constructor(ref){
+        this.isEmpty = true;
+        if(ref){
+            this.ref = ref;
+            this.isEmpty = false;
+        }
+    }
+}
 
 export class Dotpen {
     constructor() {
@@ -60,6 +71,53 @@ export class Dotpen {
         this.$Name = null;
         this.$Pen = null;
         this.$ScanList = [];
+        this.$Device = null;
+        this.$Handler = [];
+        this.$DrawCall = () => {};
+    }
+    /**
+     * 监听绘制
+     * @param {function} handler 
+     */
+    onDraw(handler) {
+        this.$DrawCall = handler;
+    }
+    listen(handler) {
+        this.$Handler.push(handler);
+    }
+    trigger(args) {
+        if(this.$DrawCall){
+            this.$DrawCall(args);
+        }
+        this.$Handler.forEach((x) => x(args));
+    }
+    isSameDevice(device) {
+        return this.$Device ? this.$Device.deviceId == device.deviceId : false;
+    }
+    isConnecting() {
+        return this.$ConnectStatus == ConnectStatus.Connecting;
+    }
+    isConnected() {
+        return this.$ConnectStatus == ConnectStatus.Connected;
+    }
+    setConnecting(device) {
+        this.$ConnectStatus = ConnectStatus.Connecting;
+        device.connecting = true;
+    }
+    setConnect(device, pen) {
+        this.$ConnectStatus = ConnectStatus.Connected;
+        device.connecting = false;
+        device.connected = true;
+        this.$Device = device;
+        this.$Pen = pen;
+    }
+    setDisconnect() {
+        this.$ConnectStatus = ConnectStatus.Disconnected;
+        if (this.$Device) {
+            this.$Device.connected = false;
+            this.$Device = null;
+        }
+        this.$Pen = null;
     }
 }
 
