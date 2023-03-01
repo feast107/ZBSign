@@ -485,6 +485,14 @@ export default {
                         //vueapp.points.push({x,y});
                         vueapp.drawStrokeDynamic({ x, y }, 0.8);
                     }
+                    console.log({
+                        coordX,
+                        coordY,
+                        coordForce,
+                        pageAddress,
+                        time,
+                        coordMode,
+                    })
                 },
                 onPenDown: function ({ coordMode }) {
                     console.log("下笔" + coordMode);
