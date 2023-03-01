@@ -190,22 +190,13 @@ export default {
                     time,
                     coordMode,
                 }) {
-                    console.log(arguments);
-                    data.coorInfo = `[${coordX},${coordY}] ${pageAddress}`;
-                    if (data.isPenDown == true) {
-                        data.dotpen.trigger({ x:coordX,y:coordY });
-                        // var can = document.getElementById("myCanvas");
-                        // var x = (can.width / data.dotwdith) * coordX;
-                        // var y = (can.height / data.dotheight) * coordY;
-                        //vueapp.points.push({x,y});
-                        //data.drawStrokeDynamic({ x, y }, 0.8);
-                    }
+                    data.dotpen.trigger({ x:coordX,y:coordY ,type:"move"});
                 },
                 onPenDown: function ({ coordMode }) {
                     console.log("下笔" + coordMode);
                     data.writeStatus = "落笔";
                     data.isPenDown = true;
-
+                    data.dotpen.trigger({ type:"down"});
                     data.rawResult = "onPenDown:";
                     data.lastPt = null;
                 },
@@ -213,6 +204,7 @@ export default {
                     console.log("抬笔" + coordMode);
                     data.writeStatus = "抬笔";
                     data.rawResult = "onPenUp:";
+                    data.dotpen.trigger({ type:"up"});
                     data.isPenDown = false;
                     data.lastPt = null;
                 },
