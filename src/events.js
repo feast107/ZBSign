@@ -26,7 +26,7 @@ export const Events = {
             this.bluetoothPinCallback(args);
         });
         ipcMain.on(IpcMessage.FullScreen, (e) => {
-            e.sender.setFullScreen(!e.sender.isFullScreen());
+            e.sender.$Scope.setFullScreen();
         });
 
         ipcMain.on(IpcMessage.FileRead, (e, type, name) => {
@@ -51,11 +51,18 @@ export const Events = {
                         //首先创建buffer，文件读取到buffer中
                         let size = fs.statSync(name).size; //计算文件长度
                         let buf = Buffer.alloc(size);
-                        fs.read(fd,buf,0,size,0,
+                        fs.read(
+                            fd,
+                            buf,
+                            0,
+                            size,
+                            0,
                             function (err, bytesRead, buffer) {
                                 console.log(buffer.buffer);
                                 e.sender.send(
-                                    IpcMessage.FileRead, name,type,
+                                    IpcMessage.FileRead,
+                                    name,
+                                    type,
                                     err ? null : buffer.buffer
                                 );
                             }
