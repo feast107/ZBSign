@@ -85,14 +85,6 @@ export default {
                             }, coldDown);
                         }, coldDown);
                     }, coldDown);
-                    // TStudyDigitalPen.getInstance()
-                    //     .getPenInfo()
-                    //     .then(() => {
-                    //         TStudyDigitalPen
-                    //             .getInstance()
-                    //             .getPenMACAddress();
-                    //         TStudyDigitalPen.getInstance().receiveRealtimeMode();
-                    //     });
                 })
                 .catch((error) => {
                     this.rawResult = error.toString();
@@ -198,23 +190,15 @@ export default {
                     time,
                     coordMode,
                 }) {
+                    console.log(arguments);
                     data.coorInfo = `[${coordX},${coordY}] ${pageAddress}`;
-                    data.rawResult =
-                        "onReceivePenStrokeData:" +
-                        JSON.stringify({
-                            coordX,
-                            coordY,
-                            coordForce,
-                            pageAddress,
-                            time,
-                            coordMode,
-                        });
                     if (data.isPenDown == true) {
-                        var can = document.getElementById("myCanvas");
-                        var x = (can.width / data.dotwdith) * coordX;
-                        var y = (can.height / data.dotheight) * coordY;
+                        data.dotpen.trigger({ x:coordX,y:coordY });
+                        // var can = document.getElementById("myCanvas");
+                        // var x = (can.width / data.dotwdith) * coordX;
+                        // var y = (can.height / data.dotheight) * coordY;
                         //vueapp.points.push({x,y});
-                        data.drawStrokeDynamic({ x, y }, 0.8);
+                        //data.drawStrokeDynamic({ x, y }, 0.8);
                     }
                 },
                 onPenDown: function ({ coordMode }) {
@@ -228,11 +212,7 @@ export default {
                 onPenUp: function ({ coordMode }) {
                     console.log("抬笔" + coordMode);
                     data.writeStatus = "抬笔";
-                    //var lineStroke=vueapp.points.slice()
-                    //vueapp.points.length=0
-                    //vueapp.drawStrokeLine(lineStroke)
                     data.rawResult = "onPenUp:";
-
                     data.isPenDown = false;
                     data.lastPt = null;
                 },

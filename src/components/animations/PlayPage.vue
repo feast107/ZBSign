@@ -8,9 +8,7 @@
                             <img class="logo" :src="this.activity.logoUrl" />
                         </el-col>
                         <el-col :span="21">
-                            <label
-                                class="title"
-                                :style="`color:${this.activity.titleColor};font-size:${this.fontSize}px`">
+                            <label class="title" :style="`color:${this.activity.titleColor};font-size:${this.fontSize}px`">
                                 {{ this.activity.title }}
                             </label>
                         </el-col>
@@ -27,25 +25,24 @@
                         </div>
                     </el-aside>
                     <el-main style="width: 60%">
-                        <div
-                            style="
-                                background-color: white;
-                                width: 100%;
-                                height: 100%;
-                            ">
-                            <canvas>
-                                
-                            </canvas></div>
+                        <div style="
+                                    background-color: white;
+                                    width: 100%;
+                                    height: 100%;
+                                ">
+                            <canvas id="Drawer">
+
+                            </canvas>
+                        </div>
                     </el-main>
                 </el-container>
                 <el-footer style="height: 5%; text-align: end">
-                    <label
-                        style="
-                            color: white;
-                            font-family: 'Helvetica Neue', Helvetica,
-                                'PingFang SC', 'Hiragino Sans GB',
-                                'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-                        ">
+                    <label style="
+                                color: white;
+                                font-family: 'Helvetica Neue', Helvetica,
+                                    'PingFang SC', 'Hiragino Sans GB',
+                                    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                            ">
                         技术支持：南京孜博汇信息科技有限公司
                     </label>
                 </el-footer>
@@ -58,15 +55,19 @@
 <script>
 import "animate.css";
 import { Animation } from "@/utils/Animation";
-import { ComponentKey } from "@/utils/Definition";
+import { ComponentKey , Dotpen } from "@/utils/Definition";
 import { ResizeEvent } from "@/utils/Events";
 export default {
     beforeCreate() {
-        
+
     },
-    inject: [ComponentKey.PlayActicity],
+    inject: [ComponentKey.PlayActicity, ComponentKey.Dotpen],
     data() {
         return {
+            /**
+             * @param {Dotpen}
+             */
+            dotpen: this[ComponentKey.Dotpen],
             activity: this[ComponentKey.PlayActicity],
             stylePair: Animation.getOpposite("fade", "Up"),
             index: 0,
@@ -78,9 +79,9 @@ export default {
     },
     created() {
         var vue = this;
-        document.addEventListener("keyup",  (e) => {
-            if(e.key == "Escape"){
-                vue.$emit('onEscapePreview',null);
+        document.addEventListener("keyup", (e) => {
+            if (e.key == "Escape") {
+                vue.$emit('onEscapePreview', null);
             }
         });
         this.activity.logoUrl = this.getLogo();
@@ -89,12 +90,16 @@ export default {
         ResizeEvent.on((width, height) => {
             console.log(`${width}   ${height}`);
         });
+        this.dotpen.onDraw(this.onReceiveDot);
     },
     mounted() {
         this.scrollImage(20);
-        
+
     },
     methods: {
+        onReceiveDot(dot){
+            console.log(dot)
+        },
         getUrl: (num) => `http://47.93.86.37:8686/taskFile/sign/${num}.JPG`,
         getLogo: (num) => `http://47.93.86.37:8686/taskFile/sign/logo.png`,
         animate(feature) {

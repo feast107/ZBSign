@@ -74,6 +74,8 @@ export class Dotpen {
         this.$Device = null;
         this.$Handler = [];
         this.$DrawCall = () => {};
+        this.$DotWidth = 5600;
+        this.$DotHeight = 7920;
     }
     /**
      * 监听绘制
