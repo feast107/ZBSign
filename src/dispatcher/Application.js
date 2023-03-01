@@ -21,12 +21,17 @@ export class Scope {
                 window.webContents.send(IpcMessage.Log, handler, args);
             };
         });
+        this.$IsFullScreen = false;
     }
     close() {
         this.$Window.close();
     }
     send(handler, ...args) {
         this.$Window.webContents.send(handler, args);
+    }
+    setFullScreen(){
+        this.$Window.setFullScreen(!this.$IsFullScreen);
+        this.$IsFullScreen = !this.$IsFullScreen;
     }
 }
 
