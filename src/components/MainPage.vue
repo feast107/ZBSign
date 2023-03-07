@@ -7,7 +7,8 @@
                     <div style="width: 100%; ">
                         <div style="padding:20px">
                             <el-row style="user-select: none;">
-                                <img src="../assets/Main/Logo.svg" />
+                                <img style="margin-left:10px;margin-right:10px" 
+                                src="../assets/Main/Logo-2.svg" />
                             </el-row>
                             <el-row justify="center">
                                 <el-col :span="8">
