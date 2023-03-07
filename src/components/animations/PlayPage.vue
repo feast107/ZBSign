@@ -137,7 +137,7 @@ export default {
         },
         initContext(context) {
             context.lineJoin = this.drawConfig.lineJoin;
-            context.lineWidth = this.drawConfig.lineWidth * vue.scale;
+            context.lineWidth = this.drawConfig.lineWidth * this.scale;
             context.lineCap = this.drawConfig.lineCap;
             context.strokeStyle = "rgb(0,0,0)"; // "#000"
             context.fillStyle = "rgb(0,0,255)";
