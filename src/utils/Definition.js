@@ -65,6 +65,8 @@ export class Reference{
     }
 }
 
+
+
 export class Dotpen {
     constructor() {
         this.$ConnectStatus = ConnectStatus.Disconnected;
@@ -142,6 +144,7 @@ export class BlueTooth {
         }
     }
 }
+
 export const BlueToothConnecter = new BlueTooth();
 
 export const ConnectStatus = {
