@@ -1,86 +1,89 @@
 {
-  "name": "dotpen",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "electron:build": "vue-cli-service electron:build",
-    "electron:package": "vue-cli-service electron:packager",
-    "electron:serve": "vue-cli-service electron:serve",
-    "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
-  },
-  "main": "background.js",
-  "dependencies": {
-    "@element-plus/icons-vue": "^2.0.10",
-    "animate.css": "^4.1.1",
-    "axios": "^1.3.2",
-    "core-js": "^3.8.3",
-    "default-passive-events": "^2.0.0",
-    "element-plus": "^2.2.29",
-    "flipbook-vue": "^1.0.0-beta.4",
-    "ideal-image-slider": "^1.5.1",
-    "sass": "^1.58.0",
-    "sass-loader": "^13.2.0",
-    "unzip-crx-3": "^0.2.0",
-    "vue": "^3.2.13",
-    "vue-crwopper": "next"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.12.16",
-    "@babel/eslint-parser": "^7.12.16",
-    "@vue/cli-plugin-babel": "~5.0.0",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "electron": "^21.1.0",
-    "electron-devtools-installer": "^3.1.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
-    "node-sass": "^6.0.1",
-    "sass-loader": "^10.2.0",
-    "vue-cli-plugin-electron-builder": "~2.1.1"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
+    "name": "dotpen",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "serve": "vue-cli-service serve",
+        "build": "vue-cli-service build",
+        "lint": "vue-cli-service lint",
+        "electron:build": "vue-cli-service electron:build",
+        "electron:package": "vue-cli-service electron:package",
+        "electron:serve": "vue-cli-service electron:serve",
+        "postinstall": "electron-builder install-app-deps",
+        "postuninstall": "electron-builder install-app-deps"
     },
-    "extends": [
-      "plugin:vue/vue3-essential",
-      "eslint:recommended"
+    "electronDownload": {
+        "mirror": "https://npm.taobao.org/mirrors/electron/"
+    },
+    "main": "background.js",
+    "dependencies": {
+        "@element-plus/icons-vue": "^2.0.10",
+        "animate.css": "^4.1.1",
+        "axios": "^1.3.2",
+        "core-js": "^3.8.3",
+        "default-passive-events": "^2.0.0",
+        "element-plus": "^2.2.29",
+        "flipbook-vue": "^1.0.0-beta.4",
+        "ideal-image-slider": "^1.5.1",
+        "sass": "^1.58.0",
+        "sass-loader": "^13.2.0",
+        "unzip-crx-3": "^0.2.0",
+        "vue": "^3.2.13",
+        "vue-crwopper": "next"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.12.16",
+        "@babel/eslint-parser": "^7.12.16",
+        "@vue/cli-plugin-babel": "~5.0.0",
+        "@vue/cli-plugin-eslint": "~5.0.0",
+        "@vue/cli-service": "~5.0.0",
+        "electron": "^21.1.0",
+        "electron-devtools-installer": "^3.1.0",
+        "eslint": "^7.32.0",
+        "eslint-plugin-vue": "^8.0.3",
+        "node-sass": "^6.0.1",
+        "sass-loader": "^10.2.0",
+        "vue-cli-plugin-electron-builder": "~2.1.1"
+    },
+    "eslintConfig": {
+        "root": true,
+        "env": {
+            "node": true
+        },
+        "extends": [
+            "plugin:vue/vue3-essential",
+            "eslint:recommended"
+        ],
+        "parserOptions": {
+            "parser": "@babel/eslint-parser"
+        },
+        "rules": {
+            "no-empty": "off",
+            "no-undef": "off",
+            "no-debugger": "off",
+            "no-cond-assign": "off",
+            "no-self-assign": "off",
+            "no-func-assign": "off",
+            "no-fallthrough": "off",
+            "no-unused-vars": "off",
+            "no-control-regex": "off",
+            "no-useless-escape": "off",
+            "no-unused-labels": "off",
+            "no-irregular-whitespace": "off",
+            "no-prototype-builtins": "off",
+            "no-inner-declarations": "off",
+            "no-unexpected-multiline": "off",
+            "vue/no-unused-vars": "off",
+            "vue/no-parsing-error": "off",
+            "vue/no-unused-components": "off",
+            "vue/multi-word-component-names": "off"
+        }
+    },
+    "browserslist": [
+        "> 1%",
+        "last 2 versions",
+        "not dead",
+        "not ie 11"
     ],
-    "parserOptions": {
-      "parser": "@babel/eslint-parser"
-    },
-    "rules": {
-      "no-empty": "off",
-      "no-undef": "off",
-      "no-debugger": "off",
-      "no-cond-assign": "off",
-      "no-self-assign": "off",
-      "no-func-assign": "off",
-      "no-fallthrough": "off",
-      "no-unused-vars": "off",
-      "no-control-regex": "off",
-      "no-useless-escape": "off",
-      "no-unused-labels": "off",
-      "no-irregular-whitespace": "off",
-      "no-prototype-builtins": "off",
-      "no-inner-declarations": "off",
-      "no-unexpected-multiline": "off",
-      "vue/no-unused-vars": "off",
-      "vue/no-parsing-error": "off",
-      "vue/no-unused-components": "off",
-      "vue/multi-word-component-names": "off"
-    }
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead",
-    "not ie 11"
-  ],
-  "__npminstall_done": false
+    "__npminstall_done": false
 }
