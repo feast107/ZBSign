@@ -19,7 +19,7 @@
                                                 style="
                                                     width: 20px;
                                                     height: 20px;
-                                                    margin-top: -9px;
+                                                    margin-top: 3px;
                                                 "
                                                 src="../assets/Home/Phone.svg" />
                                         </el-icon>
@@ -42,7 +42,7 @@
                                                     style="
                                                         width: 20px;
                                                         height: 20px;
-                                                        margin-top: -9px;
+                                                        margin-top:3px;
                                                     "
                                                     src="../assets/Home/Shield.svg" />
                                             </el-icon>
@@ -130,7 +130,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .background {
     height: 100%;
     width: 100%;
