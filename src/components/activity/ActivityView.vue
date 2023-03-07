@@ -74,8 +74,10 @@
                     <el-table-column width="50">
                         <template #default="scope">
                             <el-popover placement="top" trigger="hover">
-                                <el-button type="primary" plain
-                                    @click=" 
+                                <el-button
+                                    type="primary"
+                                    plain
+                                    @click="
                                         () => {
                                             previewPlay(scope.row);
                                         }
@@ -103,7 +105,9 @@
                         ><!--Copy-->
                         <template #default="scope">
                             <el-popover placement="top" trigger="hover">
-                                <el-button type="primary" plain
+                                <el-button
+                                    type="primary"
+                                    plain
                                     @click="
                                         () => {
                                             copySharedLink(scope.row);
@@ -189,6 +193,7 @@
 
 <script>
 import { ComponentKey } from "@/utils/Definition";
+import { Activity } from "@/utils/Activity";
 export default {
     inject: [ComponentKey.Activities, ComponentKey.PlayActicity],
     data() {
@@ -198,7 +203,13 @@ export default {
                 smallButton: "border:none;padding:0;",
             },
             preload: this[ComponentKey.Activities],
+            /**
+             * @type {Array<Activity>}
+             */
             preview: this[ComponentKey.PlayActicity],
+            /**
+             * @type {Array<Activity>}
+             */
             activities: [],
             searchPattern: null,
         };
@@ -216,7 +227,22 @@ export default {
     },
     methods: {
         selectHandler() {},
-        getSuggests() {},
+        /**
+         * 
+         * @param {string} queryString 
+         * @param {function} callback 
+         */
+        getSuggests(queryString, callback) {
+            let sel = [];
+            let str = queryString == "null" ? ""  : queryString.trim();
+            this.activities.forEach((x) =>
+            {
+                if(str != "" && !x.title.startsWith(str))return;
+                if(sel.findIndex(i => i.value == x.title) >= 0)return;
+                sel.push({ value: x.title, link: "" })
+            });
+            callback(sel);
+        },
         async copySharedLink(target) {
             try {
                 await navigator.clipboard.writeText(target.sharedLink);
