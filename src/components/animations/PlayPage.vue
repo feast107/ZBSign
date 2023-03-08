@@ -94,7 +94,7 @@ export default {
              */
             current: null,
             locals: {},
-            remotes: {},
+            remotes: new Map(),
             urls: [this.getUrl(1), this.getUrl(2), this.getUrl(3)],
         };
     },
@@ -109,8 +109,7 @@ export default {
         this.activity.logoUrl = this.getLogo();
         window.StylePair = this.stylePair;
         window.Animations = Animation;
-        ResizeEvent.on((width, height) => {
-        });
+        ResizeEvent.on((width, height) => {});
         this.dotpen.onDraw(this.callbackHandler());
         window.drawConfig = this.drawer;
         window.locals = this.locals;
