@@ -110,7 +110,6 @@ export default {
         window.StylePair = this.stylePair;
         window.Animations = Animation;
         ResizeEvent.on((width, height) => {
-            console.log(`${width}   ${height}`);
         });
         this.dotpen.onDraw(this.callbackHandler());
         window.drawConfig = this.drawer;
