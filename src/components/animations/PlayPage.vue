@@ -29,14 +29,18 @@
                     <el-main style="width: 60%">
                         <div
                             style="
-                                background-color : white;
+                                position: relative;
+                                background-color: white;
                                 width: 100%;
                                 height: 100%;
                             ">
                             <canvas
-                                id="Drawer"
-                                :width="this.drawWidth * this.scale"
-                                :height="this.drawHeight * this.scale">
+                                v-for="key in Object.keys(locals)"
+                                :key="key"
+                                :id="locals[key].id"
+                                class="canvas"
+                                :width="locals[key].drawWidth"
+                                :height="locals[key].drawHeight">
                             </canvas>
                         </div>
                     </el-main>
@@ -63,6 +67,7 @@ import "animate.css";
 import { Animation } from "@/utils/Animation";
 import { ComponentKey, Dotpen, IpcMessage } from "@/utils/Definition";
 import { ResizeEvent } from "@/utils/Events";
+import { Canvas, Dot } from "@/utils/Canvas";
 export default {
     beforeCreate() {
         window.$Dispatcher.invoke(IpcMessage.FullScreen);
@@ -84,18 +89,13 @@ export default {
             interval: null,
             fontSize: 40,
             pictures: [],
-            dotwdith: 5600,
-            dotheight: 7920,
-            drawWidth: 960,
-            drawHeight: 360,
-            drawConfig: {
-                lineWidth: 0.5,
-                lineJoin: "round",
-                lineCap: "round",
-                drawCount: 2,
-            },
+            /**
+             * @type {Canvas}
+             */
+            current: null,
+            locals: {},
+            remotes: {},
             urls: [this.getUrl(1), this.getUrl(2), this.getUrl(3)],
-            scale: 1.5,
         };
     },
     created() {
@@ -113,77 +113,57 @@ export default {
             console.log(`${width}   ${height}`);
         });
         this.dotpen.onDraw(this.callbackHandler());
-        window.drawConfig = this.drawConfig;
+        window.drawConfig = this.drawer;
+        window.locals = this.locals;
     },
     mounted() {
         this.scrollImage(20);
         this.canvas = document.getElementById("Drawer");
     },
     methods: {
-        scaleDot(dot) {
-            if (dot.x) {
-                var x =
-                    (this.canvas.clientWidth / this.dotwdith) *
-                    dot.x *
-                    this.scale;
-                var y =
-                    (this.canvas.clientHeight / this.dotheight) *
-                    dot.y *
-                    this.scale;
-                dot.x = x;
-                dot.y = y;
-            }
-            return dot;
-        },
-        initContext(context) {
-            context.lineJoin = this.drawConfig.lineJoin;
-            context.lineWidth = this.drawConfig.lineWidth * this.scale;
-            context.lineCap = this.drawConfig.lineCap;
-            context.strokeStyle = "rgb(0,0,0)"; // "#000"
-            context.fillStyle = "rgb(0,0,255)";
-            return context;
-        },
         callbackHandler() {
             var vue = this;
-            return (dot) => {
-                let ctx = vue.canvas.getContext("2d");
-                vue.scaleDot(dot);
-                console.log(dot);
-                switch (dot.type) {
-                    case "up":
-                        this.lastPt = null;
-                        return;
-                    case "down":
-                        return;
-                }
-                if (this.lastPt == null) {
-                    this.lastPt = dot;
-                } else {
-                    ctx.beginPath();
-                    ctx.moveTo(this.lastPt.x, this.lastPt.y);
-                    vue.initContext(ctx);
-                    let controlPt = {};
-                    let control_scale = (0.8 / 0.5) * 0.175;
-                    controlPt.x =
-                        this.lastPt.x + (dot.x - this.lastPt.x) * control_scale;
-                    controlPt.y =
-                        this.lastPt.y + (dot.y - this.lastPt.y) * control_scale;
-                    ctx.quadraticCurveTo(
-                        controlPt.x,
-                        controlPt.y,
-                        dot.x,
-                        dot.y
+            /**
+             * @param {Dot} dot
+             */
+            let createFromLocal = (dot) => {
+                /**
+                 * @type {Canvas}
+                 */
+                let c = vue.locals[dot.address];
+                if (!c) {
+                    c = vue.locals[dot.address] = new Canvas(
+                        null,
+                        null,
+                        false,
+                        dot.address
                     );
-                    this.lastPt = dot;
-                    var t = 0;
-                    while (t < vue.drawConfig.drawCount) {
-                        ctx.stroke();
-                        t++;
-                    }
+                    setTimeout(() => {
+                        c.bind(document);
+                    }, 0);
+                }
+                return c;
+            };
 
-                    ctx.closePath();
+            /**
+             * @param {Dot} dot
+             */
+            var del = (dot) => {
+                if (!dot.address) {
+                    if (vue.current) {
+                        vue.current.draw(dot);
+                    }
+                } else {
+                    if (
+                        vue.current == null ||
+                        vue.current.address != dot.address
+                    ) {
+                        vue.current = createFromLocal(dot);
+                    }
+                    vue.current.draw(dot);
                 }
             };
+            return del;
         },
         onReceiveDot(dot, canvas) {
             console.log(dot);
@@ -319,6 +299,7 @@ export default {
                     position: absolute;
                     left: 0;
                     margin: 0;
+                    padding: 0;
                 }
 
                 ul li {
@@ -331,9 +312,11 @@ export default {
                 }
             }
 
-            #Drawer {
+            .canvas {
                 height: 100%;
                 width: 100%;
+                left: 0;
+                position: absolute;
             }
 
             label {
