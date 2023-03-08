@@ -134,7 +134,7 @@
                     </el-table-column>
                     <el-table-column label="" width="50">
                         <template #default="scope">
-                            <el-popover 
+                            <el-popover
                                 style="box-shadow: var(--el-box-shadow-dark)"
                                 placement="bottom"
                                 :width="'auto'"
@@ -147,7 +147,10 @@
                                     </el-button>
                                 </template>
                                 <el-row>
-                                    <el-button class="iconButton" circle>
+                                    <el-button
+                                        class="iconButton"
+                                        @click="edit(scope.row)"
+                                        circle>
                                         <img
                                             style="width: 20px; height: 20px"
                                             class="icon-small icon-canClick"
@@ -173,7 +176,7 @@
                                 <el-row>
                                     <el-button
                                         class="iconButton"
-                                        plain 
+                                        plain
                                         type="danger"
                                         circle>
                                         <el-icon
@@ -189,6 +192,20 @@
             </el-scrollbar>
         </el-row>
     </el-col>
+    <el-dialog
+        v-model="editActivity.onEdit"
+        title="修改" align-center
+        width="30%">
+        <span>修改</span>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="cancelEdit">取消</el-button>
+                <el-button type="primary" @click="cancelEdit">
+                    确认
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
 </template>
 
 <script>
@@ -212,6 +229,13 @@ export default {
              */
             activities: [],
             searchPattern: null,
+            editActivity: {
+                onEdit: false,
+                /**
+                 * @type {Activity}
+                 */
+                target: null,
+            },
         };
     },
     beforeMount() {
@@ -228,18 +252,17 @@ export default {
     methods: {
         selectHandler() {},
         /**
-         * 
-         * @param {string} queryString 
-         * @param {function} callback 
+         *
+         * @param {string} queryString
+         * @param {function} callback
          */
         getSuggests(queryString, callback) {
             let sel = [];
-            let str = queryString == "null" ? ""  : queryString.trim();
-            this.activities.forEach((x) =>
-            {
-                if(str != "" && !x.title.startsWith(str))return;
-                if(sel.findIndex(i => i.value == x.title) >= 0)return;
-                sel.push({ value: x.title, link: "" })
+            let str = queryString == "null" ? "" : queryString.trim();
+            this.activities.forEach((x) => {
+                if (str != "" && !x.title.startsWith(str)) return;
+                if (sel.findIndex((i) => i.value == x.title) >= 0) return;
+                sel.push({ value: x.title, link: "" });
             });
             callback(sel);
         },
@@ -257,6 +280,19 @@ export default {
             this.preview = target;
             this.$emit(`onSetActivity`, target);
         },
+        edit(target){
+            console.log(target);
+            this.editActivity.onEdit = true;
+            this.editActivity.target = target;
+        },
+        cancelEdit(){
+            this.editActivity.onEdit = false;
+            this.editActivity.target = null;
+        },
+        confirmEdit(){
+            this.editActivity.target.getDataQuery();
+            this.editActivity.onEdit = false;
+        }
     },
 };
 </script>
@@ -268,10 +304,10 @@ export default {
     margin: 1px;
 }
 
-.el-popover{
-    .iconButton{
-        height:32px;
-        width:32px;
+.el-popover {
+    .iconButton {
+        height: 32px;
+        width: 32px;
     }
 }
 
