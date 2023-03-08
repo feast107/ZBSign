@@ -151,7 +151,7 @@ export default {
         selectMenu() {
             this.select = this.menu[Number.parseInt(arguments[0]) - 1]
             if (this.select == this.menu[2] && !BlueTooth.requesting()) {
-                BlueTooth.requestDevice({
+                BlueTooth.forceRequestDevice({
                     filters: [
                         {
                             namePrefix: "TD",
