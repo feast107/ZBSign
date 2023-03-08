@@ -134,7 +134,7 @@
                     </el-table-column>
                     <el-table-column label="" width="50">
                         <template #default="scope">
-                            <el-popover
+                            <el-popover 
                                 style="box-shadow: var(--el-box-shadow-dark)"
                                 placement="bottom"
                                 :width="'auto'"
@@ -173,7 +173,7 @@
                                 <el-row>
                                     <el-button
                                         class="iconButton"
-                                        plain
+                                        plain 
                                         type="danger"
                                         circle>
                                         <el-icon
@@ -266,6 +266,13 @@ export default {
     padding: 0;
     border: none !important;
     margin: 1px;
+}
+
+.el-popover{
+    .iconButton{
+        height:32px;
+        width:32px;
+    }
 }
 
 #ActivityView {
