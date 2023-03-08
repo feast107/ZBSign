@@ -55,17 +55,15 @@ export const ComponentKey = {
     GlobalHandler: "C-GlobalHandler",
 };
 
-export class Reference{
-    constructor(ref){
+export class Reference {
+    constructor(ref) {
         this.isEmpty = true;
-        if(ref){
+        if (ref) {
             this.ref = ref;
             this.isEmpty = false;
         }
     }
 }
-
-
 
 export class Dotpen {
     constructor() {
@@ -81,7 +79,7 @@ export class Dotpen {
     }
     /**
      * 监听绘制
-     * @param {function} handler 
+     * @param {function} handler
      */
     onDraw(handler) {
         this.$DrawCall = handler;
@@ -90,7 +88,7 @@ export class Dotpen {
         this.$Handler.push(handler);
     }
     trigger(args) {
-        if(this.$DrawCall){
+        if (this.$DrawCall) {
             this.$DrawCall(args);
         }
         this.$Handler.forEach((x) => x(args));
@@ -131,6 +129,9 @@ export class BlueTooth {
     }
     static async requestDevice(config) {
         if (this.promiseInternal != null) return this.promiseInternal;
+        return this.forceRequestDevice(config);
+    }
+    static async forceRequestDevice(config) {
         const ret = (this.promiseInternal =
             navigator.bluetooth.requestDevice(config));
         try {
