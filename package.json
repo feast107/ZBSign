@@ -73,6 +73,7 @@
             "no-prototype-builtins": "off",
             "no-inner-declarations": "off",
             "no-unexpected-multiline": "off",
+            "no-unreachable":"off",
             "vue/no-unused-vars": "off",
             "vue/no-parsing-error": "off",
             "vue/no-unused-components": "off",
