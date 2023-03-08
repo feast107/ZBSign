@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { Dot } from "@/utils/Canvas";
 import { ComponentKey, Bridges, IpcMessage, Dotpen, ConnectStatus, BlueTooth } from "@/utils/Definition";
 import TStudyDigitalPen from "../driver/PenDriver.js";
 export default {
@@ -190,23 +191,13 @@ export default {
                     time,
                     coordMode,
                 }) {
-                    data.dotpen.trigger({ x:coordX,y:coordY ,type:"move"});
+                    data.dotpen.trigger(new Dot(coordX,coordY,"move",pageAddress));
                 },
                 onPenDown: function ({ coordMode }) {
-                    console.log("下笔" + coordMode);
-                    data.writeStatus = "落笔";
-                    data.isPenDown = true;
-                    data.dotpen.trigger({ type:"down"});
-                    data.rawResult = "onPenDown:";
-                    data.lastPt = null;
+                    data.dotpen.trigger(Dot.Down());
                 },
                 onPenUp: function ({ coordMode }) {
-                    console.log("抬笔" + coordMode);
-                    data.writeStatus = "抬笔";
-                    data.rawResult = "onPenUp:";
-                    data.dotpen.trigger({ type:"up"});
-                    data.isPenDown = false;
-                    data.lastPt = null;
+                    data.dotpen.trigger(Dot.Up());
                 },
                 onStartReceivePenOfflineData: function () {
                     console.log("onStartReceivePenOfflineData");
