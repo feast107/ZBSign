@@ -48,4 +48,15 @@ export class Activity {
         ret.sharedLink = GUID.NewGuid();
         return ret;
     }
+    static rules(){
+        return {
+            title: [
+                {
+                    required: true,
+                    message: "请输入活动名称",
+                    trigger: "blur",
+                },
+            ],
+        }
+    }
 }
