@@ -144,27 +144,18 @@
 
 <script>
 import { Activity } from "@/utils/Activity";
-import { Effects } from "@/utils/Animation";
+import { EffectLabel, Effects } from "@/utils/Animation";
 import Request from "@/utils/Request";
 import "default-passive-events";
 export default {
     data() {
-        var list = [];
-        Object.keys(Effects).forEach((x) => list.push(Effects[x]));
+        
         return {
             accpetance: "image/png,image/jpg,image/jpeg",
             speeds: ["1x", "2x", "3x"],
-            effects: list,
+            effects: EffectLabel.getList(),
             model: new Activity(),
-            rules: {
-                title: [
-                    {
-                        required: true,
-                        message: "请输入活动名称",
-                        trigger: "blur",
-                    },
-                ],
-            },
+            rules: Activity.rules(),
         };
     },
     methods: {
