@@ -72,6 +72,11 @@ export class EffectLabel {
         this.label = label;
         this.value = value;
     }
+    static getList() {
+        var list = [];
+        Object.keys(Effects).forEach((x) => list.push(Effects[x]));
+        return list;
+    }
 }
 
 export const Effects = {
