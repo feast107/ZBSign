@@ -13,14 +13,14 @@ import { computed } from 'vue'
 export default {
 	name: "App",
 	components: {
-    HomePage,
-    MainPage,
-    BlueTooth,
-},
+		HomePage,
+		MainPage,
+		BlueTooth,
+	},
 	provide() {
 		return {
 			[ComponentKey.User]: computed(() => this.user),
-			[ComponentKey.GlobalHandler]:computed(()=> function(handler){
+			[ComponentKey.GlobalHandler]: computed(() => function (handler) {
 			})
 		}
 	},
@@ -49,12 +49,15 @@ export default {
 html {
 	height: 100%;
 	width: 100%;
+	overflow: hidden;
 }
 
 body {
 	height: 100%;
 	width: 100%;
 	margin: 0;
+	overflow: hidden;
+
 }
 
 img {
@@ -67,7 +70,7 @@ img {
 	pointer-events: none;
 }
 
-.el-popover{
-	width : auto !important;
+.el-popover {
+	width: auto !important;
 }
 </style>
