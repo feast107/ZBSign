@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import PictureCut from './PictureCut.vue'
+import PictureCut from '../back/PictureCut.vue'
 export default {
     components:{
         PictureCut
