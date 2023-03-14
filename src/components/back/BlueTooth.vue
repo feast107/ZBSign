@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { ComponentKey, IpcMessage, ConnectStatus, Bridges } from '../utils/Definition'
+import { ComponentKey, IpcMessage, ConnectStatus, Bridges } from '../../utils/Definition'
 export default {
     name: 'BlueTooth',
     inject: [ComponentKey.Dotpen],
