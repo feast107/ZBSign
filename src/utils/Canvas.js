@@ -18,6 +18,9 @@ export class Dot {
     get IsUp() {
         return this.type == "up";
     }
+    get IsMove(){ 
+        return this.type == "move";
+    }
     /**
      * @param {number} x
      * @param {number} y
@@ -86,6 +89,17 @@ export class Canvas {
         this.address = address;
         this.setScale(scale ?? 1.5);
         this.lastPoint = null;
+        /**
+         * @type {Array<Array<Dot>>}
+         */
+        this.points = new Array(new Array());
+        /**
+         * @type {Array<Stroke>}
+         */
+        this.strokes = new Array();
+    }
+    get svgs(){
+        return Stroke.PointsList2SVGList(this.points);
     }
     /**
      *
@@ -110,10 +124,18 @@ export class Canvas {
         switch (dot.type) {
             case "up":
                 this.lastPoint = null;
+                var length = this.points.length;
+                if(length == 0) return;
+                if(this.points[length - 1].length == 0) return;
+                let s = Stroke.Points2SVG(this.points[length - 1]);
+                this.strokes.push(s);
+                console.log(`${this.id} : stroke[${s}]`);
+                this.points.push(new Array());
                 return;
             case "down":
                 return;
         }
+        this.points[this.points.length - 1].push(dot);
         canvas ??= this.canvas;
         if (!canvas) return;
         this.resetDot(dot, canvas);
@@ -171,6 +193,15 @@ export class Canvas {
 }
 
 export class Stroke {
+    /**
+     * 
+     * @param {Array<Dot>} points 
+     */
+    constructor(points){
+        this.points = points;
+        this.path = Stroke.Points2SVG(points);
+    }
+
     /**
      * SVG转点集合
      * @param {string} svg
