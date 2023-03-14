@@ -50,9 +50,9 @@ export const Animation = {
         opposite(direction) {
             switch (direction) {
                 case this.up:
-                    return this.down;
-                case this.down:
                     return this.up;
+                case this.down:
+                    return this.down;
                 case this.left:
                     return this.right;
                 case this.right:
