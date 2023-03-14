@@ -6,6 +6,18 @@ export const DotInfo = {
 };
 
 export class Dot {
+    get X() {
+        return this.x;
+    }
+    get Y() {
+        return this.y;
+    }
+    get IsDown() {
+        return this.type == "down";
+    }
+    get IsUp() {
+        return this.type == "up";
+    }
     /**
      * @param {number} x
      * @param {number} y
@@ -18,11 +30,16 @@ export class Dot {
         this.type = type;
         this.address = address;
     }
-    static Down() {
-        return new Dot(null, null, "down", null);
+    static get Down() {
+        if (this.down) this.down = new Dot(null, null, "down", null);
+        return this.down;
     }
-    static Up() {
-        return new Dot(null, null, "up", null);
+    static get Up() {
+        if (this.up) this.up = new Dot(null, null, "up", null);
+        return this.up;
+    }
+    static Move(x, y, address) {
+        return new Dot(x, y, "move", address);
     }
 }
 
@@ -149,6 +166,99 @@ export class Canvas {
      */
     bind(doc) {
         this.canvas = doc.getElementById(this.id);
-         console.log(this.canvas?"绑定成功":"绑定失败");
+        console.log(this.canvas ? "绑定成功" : "绑定失败");
     }
+}
+
+export class Stroke {
+    /**
+     * SVG转点集合
+     * @param {string} svg
+     * @return {Array<Dot>}
+     */
+    static SVG2Points(svg) {
+        let ret = new Array();
+        if (svg == null || typeof svg != "string") return ret;
+        let field = svg.split("l");
+        if (field.length != 2) return ret;
+        var firstPontArray = field[0].replace("M", "").split(" ");
+        let firstX = int.Parse(firstPontArray[0].trim());
+        let firstY = int.Parse(firstPontArray[1].trim());
+        ret.Add(new Dot(firstX, firstY));
+
+        var pointsArray = field[1]
+            .replace("l", "")
+            .replace("-", " -")
+            .trim()
+            .split(" ");
+        for (let i = 0; i < pointsArray.length; i++) {
+            if (i + 1 < pointsArray.length) {
+                firstX = firstX + int.Parse(pointsArray[i].trim());
+                firstY = firstY + int.Parse(pointsArray[i + 1].trim());
+                ret.Add(new Dot(firstX, firstY));
+            }
+            i++;
+        }
+        return ret;
+    }
+
+    /**
+     * 点集合转SVG
+     * @param {Array<Dot>} points
+     * @return {string}
+     */
+    static Points2SVG(points) {
+        let ret = String();
+        if (points == null || points.length == 0) {
+            return ret;
+        }
+        let i = 0;
+        let oldX, oldY, curX, curY;
+        let point = points[0];
+        //第一个点为M起点
+        ret += `M${point.X} ${point.Y}l`;
+        oldX = point.X;
+        oldY = point.Y;
+        if (points.length > 1) {
+            i = 1;
+            //L第一个点特殊处理
+            point = points[i];
+            curX = point.X - oldX;
+            curY = point.Y - oldY;
+            oldX = point.X;
+            oldY = point.Y;
+            ret += String(curX);
+            if (curY >= 0) {
+                ret += " ";
+            }
+            ret += String(curY);
+            i++;
+
+            while (i < points.length) {
+                point = points[i];
+                curX = point.X - oldX;
+                curY = point.Y - oldY;
+                oldX = point.X;
+                oldY = point.Y;
+                if (curX == 0 && curY == 0) {
+                    i++;
+                    continue;
+                }
+
+                if (curX >= 0) {
+                    ret += " ";
+                }
+                ret += String(curX);
+
+                if (curY >= 0) {
+                    ret += " ";
+                }
+                ret += String(curY);
+                i++;
+            }
+        }
+        return ret;
+    }
+
+    static PointsList2SVGList(points) {}
 }
