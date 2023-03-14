@@ -1,93 +1,92 @@
 <template>
-    <KeepAlive >
+    <KeepAlive>
         <div v-if="this.playingActivity == null" class="Main">
-        <div id="Fore">
-            <el-container>
-                <el-aside style="overflow:hidden">
-                    <div style="width: 100%; ">
-                        <div style="padding:20px">
-                            <el-row style="user-select: none;">
-                                <img style="margin-left:10px;margin-right:10px" 
-                                src="../assets/Main/Logo-2.svg" />
-                            </el-row>
-                            <el-row justify="center">
-                                <el-col :span="8">
-                                    <el-button text style="font-size:small">当前账号:</el-button>
-                                </el-col>
-                                <el-col :span="10">
-                                    <el-button text type="primary">{{ this.user.phoneNumber }}</el-button>
-                                </el-col>
-                            </el-row>
+            <div id="Fore">
+                <el-container>
+                    <el-aside style="overflow:hidden">
+                        <div style="width: 100%; ">
+                            <div style="padding:20px">
+                                <el-row style="user-select: none;">
+                                    <img style="margin-left:10px;margin-right:10px" src="../assets/Main/Logo-2.svg" />
+                                </el-row>
+                                <el-row justify="center">
+                                    <el-col :span="8">
+                                        <el-button text style="font-size:small">当前账号:</el-button>
+                                    </el-col>
+                                    <el-col :span="10">
+                                        <el-button text type="primary">{{ this.user.phoneNumber }}</el-button>
+                                    </el-col>
+                                </el-row>
+                            </div>
                         </div>
-                    </div>
-                    <el-menu :default-active="this.defaultSelect"  @select="selectMenu">
-                        <el-menu-item-group>
-                            <el-menu-item index="1">
-                                <el-row justify="center">
+                        <el-menu :default-active="this.defaultSelect" @select="selectMenu">
+                            <el-menu-item-group>
+                                <el-menu-item index="1">
                                     <el-row justify="center">
-                                        <img class="menu-logo" src="../assets/Main/NewActive.svg" />
+                                        <el-row justify="center">
+                                            <img class="menu-logo" src="../assets/Main/NewActive.svg" />
+                                        </el-row>
+                                        <el-row justify="center">
+                                            <label class="menu-text">新建活动</label>
+                                        </el-row>
                                     </el-row>
+                                </el-menu-item>
+                                <el-menu-item index="2">
                                     <el-row justify="center">
-                                        <label class="menu-text">新建活动</label>
+                                        <el-row justify="center">
+                                            <img class="menu-logo" src="../assets/Main/ActiveList.svg" />
+                                        </el-row>
+                                        <el-row justify="center">
+                                            <label class="menu-text">活动列表</label>
+                                        </el-row>
                                     </el-row>
-                                </el-row>
-                            </el-menu-item>
-                            <el-menu-item index="2">
-                                <el-row justify="center">
+                                </el-menu-item>
+                                <el-menu-item index="3">
                                     <el-row justify="center">
-                                        <img class="menu-logo" src="../assets/Main/ActiveList.svg" />
+                                        <el-row justify="center">
+                                            <img class="menu-logo" src="../assets/Main/SmartPen.svg" />
+                                        </el-row>
+                                        <el-row justify="center">
+                                            <label class="menu-text">智能笔</label>
+                                        </el-row>
                                     </el-row>
-                                    <el-row justify="center">
-                                        <label class="menu-text">活动列表</label>
-                                    </el-row>
-                                </el-row>
-                            </el-menu-item>
-                            <el-menu-item index="3">
-                                <el-row justify="center">
-                                    <el-row justify="center">
-                                        <img class="menu-logo" src="../assets/Main/SmartPen.svg" />
-                                    </el-row>
-                                    <el-row justify="center">
-                                        <label class="menu-text">智能笔</label>
-                                    </el-row>
-                                </el-row>
-                            </el-menu-item>
-                        </el-menu-item-group>
-                    </el-menu>
-                </el-aside>
-                <el-main>
-                    <div id="MainCard">
-                        <NewActivityView v-if="this.select == this.menu[0]" />
-                        <KeepAlive>
-                            <ActivityView @onSetActivity="onSetActivity" v-if="this.select == this.menu[1]" />
-                        </KeepAlive>
-                        <KeepAlive>
-                            <SmartPenView v-if="this.select == this.menu[2]" />
-                        </KeepAlive>
-                    </div>
-                </el-main>
-            </el-container>
-        </div>
-        <div id="Back"></div>
+                                </el-menu-item>
+                            </el-menu-item-group>
+                        </el-menu>
+                    </el-aside>
+                    <el-main>
+                        <div id="MainCard">
+                            <NewActivityView v-if="this.select == this.menu[0]" />
+                            <KeepAlive>
+                                <ActivityView @onSetActivity="onSetActivity" v-if="this.select == this.menu[1]" />
+                            </KeepAlive>
+                            <KeepAlive>
+                                <SmartPen v-if="this.select == this.menu[2]" />
+                            </KeepAlive>
+                        </div>
+                    </el-main>
+                </el-container>
+            </div>
+            <div id="Back"></div>
         </div>
     </KeepAlive>
     <div v-if="this.playingActivity != null" class="Main">
-        <PlayPage @onEscapePreview="onEscapePreview"/>
+        <PlayPage @onEscapePreview="onEscapePreview" />
     </div>
 </template>
 <script>
-import { ComponentKey, Bridges, IpcMessage, Dotpen, BlueTooth } from "@/utils/Definition";
-import ActivityView from "./activity/ActivityView.vue";
-import PlayPage from "./animations/PlayPage.vue";
-import NewActivityView from "./activity/NewActivityView.vue";
-import { Activity } from "@/utils/Activity";
 import { computed } from 'vue'
-import SmartPenView from "./SmartPenView.vue";
+import { Activity } from "@/utils/Activity";
+import { ComponentKey, Bridges, IpcMessage, Dotpen, BlueTooth } from "@/utils/Definition";
+import SmartPen from "./connect/SmartPen.vue";
+import PlayPage from "./animations/PlayPage.vue";
+import ActivityView from "./activity/ActivityView.vue";
+import NewActivityView from "./activity/NewActivityView.vue";
 export default {
     components: {
         NewActivityView,
         ActivityView,
-        SmartPenView,
+        SmartPen,
         PlayPage,
     },
     inject: [ComponentKey.User],
@@ -135,7 +134,7 @@ export default {
             bluetooth: BlueTooth,
             menu: ['新建活动', '活动列表', '智能笔'],
             select: '新建活动',
-            defaultSelect:'1',
+            defaultSelect: '1',
             user: this[ComponentKey.User]
         }
     },
@@ -143,7 +142,7 @@ export default {
         onSetActivity(e) {
             this.playingActivity = e
         },
-        onEscapePreview(){
+        onEscapePreview() {
             this.playingActivity = null;
             this.select = '活动列表';
             this.defaultSelect = '2';
