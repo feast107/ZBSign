@@ -69,6 +69,7 @@
             "no-control-regex": "off",
             "no-useless-escape": "off",
             "no-unused-labels": "off",
+            "no-case-declarations": "off",
             "no-irregular-whitespace": "off",
             "no-prototype-builtins": "off",
             "no-inner-declarations": "off",
