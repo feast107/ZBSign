@@ -6,7 +6,6 @@
 <script>
 import HomePage from "./components/HomePage.vue";
 import MainPage from "./components/MainPage.vue";
-import BlueTooth from "./components/BlueTooth.vue";
 import { User } from './utils/User';
 import { ComponentKey } from "./utils/Definition";
 import { computed } from 'vue'
@@ -15,7 +14,6 @@ export default {
 	components: {
 		HomePage,
 		MainPage,
-		BlueTooth,
 	},
 	provide() {
 		return {
