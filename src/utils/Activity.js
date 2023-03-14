@@ -1,3 +1,4 @@
+import { Effects } from "./Animation";
 import { GUID } from "./Definition";
 import Request from "./Request";
 export class Activity {
@@ -46,6 +47,16 @@ export class Activity {
         ret.titleColor = "#faf";
         ret.createTime = new Date();
         ret.sharedLink = GUID.NewGuid();
+        ret.rollEffect = Effects.FadeDown.value;
+        let getUrl = (num) => `http://47.93.86.37:8686/taskFile/sign/${num}.JPG`
+        ret.pictureUrls = [
+            getUrl(1),
+            getUrl(2),
+            getUrl(3),
+            getUrl(4),
+            getUrl(5),
+        ];
+        ret.logoUrl = `http://47.93.86.37:8686/taskFile/sign/logo.png`;
         return ret;
     }
     static rules(){
