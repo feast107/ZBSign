@@ -5,13 +5,11 @@
                 <el-header style="height: 20%">
                     <el-row>
                         <el-col :span="3">
-                            <img class="logo" :src="this.activity.logoUrl" />
+                            <img class="logo" :src="activity.logoUrl" />
                         </el-col>
                         <el-col :span="21">
-                            <label
-                                class="title"
-                                :style="`color:${this.activity.titleColor};font-size:${this.fontSize}px`">
-                                {{ this.activity.title }}
+                            <label class="title" :style="`color:${activity.titleColor};font-size:${this.fontSize}px`">
+                                {{ activity.title }}
                             </label>
                         </el-col>
                     </el-row>
@@ -20,39 +18,38 @@
                     <el-aside style="width: 40%; padding: 20px">
                         <div id="Pictures">
                             <ul>
-                                <li v-for="url in this.urls" :key="url">
+                                <li v-for="url in activity.pictureUrls" :key="url">
                                     <img :src="url" />
                                 </li>
                             </ul>
                         </div>
                     </el-aside>
                     <el-main style="width: 60%">
-                        <div
-                            style="
-                                position: relative;
-                                background-color: white;
-                                width: 100%;
-                                height: 100%;
-                            ">
-                            <canvas
-                                v-for="key in Object.keys(locals)"
-                                :key="key"
-                                :id="locals[key].id"
-                                class="canvas"
-                                :width="locals[key].drawWidth"
+                        <div style="
+                                            position: relative;
+                                            background-color: transparent;
+                                            overflow: hidden;
+                                            width: 100%;
+                                            height: 100%;
+                                        ">
+                            <canvas v-for="key in Object.keys(locals)" :key="key" :id="locals[key].id" class="canvas"
+                                :style="`background-color:${key}`" :width="locals[key].drawWidth"
                                 :height="locals[key].drawHeight">
+                            </canvas>
+                            <canvas v-for="key in Object.keys(remotes)" :key="key" :id="remotes[key].id" class="canvas"
+                                :style="`background-color:${key}`" :width="remotes[key].drawWidth"
+                                :height="remotes[key].drawHeight">
                             </canvas>
                         </div>
                     </el-main>
                 </el-container>
                 <el-footer style="height: 5%; text-align: end">
-                    <label
-                        style="
-                            color: white;
-                            font-family: 'Helvetica Neue', Helvetica,
-                                'PingFang SC', 'Hiragino Sans GB',
-                                'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-                        ">
+                    <label style="
+                                        color: white;
+                                        font-family: 'Helvetica Neue', Helvetica,
+                                            'PingFang SC', 'Hiragino Sans GB',
+                                            'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                                    ">
                         技术支持：南京孜博汇信息科技有限公司
                     </label>
                 </el-footer>
@@ -68,6 +65,7 @@ import { Animation } from "@/utils/Animation";
 import { ComponentKey, Dotpen, IpcMessage } from "@/utils/Definition";
 import { ResizeEvent } from "@/utils/Events";
 import { Canvas, Dot } from "@/utils/Canvas";
+import { Activity } from "@/utils/Activity";
 export default {
     beforeCreate() {
         window.$Dispatcher.invoke(IpcMessage.FullScreen);
@@ -83,40 +81,51 @@ export default {
              */
             dotpen: this[ComponentKey.Dotpen],
             canvas: document.getElementById("Drawer"),
+            /**
+             * @type {Activity}
+             */
             activity: this[ComponentKey.PlayActicity],
-            stylePair: Animation.getOpposite("fade", "Up"),
+            stylePair: Animation.getOpposite("fade", "Right"),
             index: 0,
-            interval: null,
+            scrollInterval: null,
+            playInterval: null,
             fontSize: 40,
             pictures: [],
             /**
              * @type {Canvas}
              */
             current: null,
-            locals: {},
+            locals: {
+                "#faf": new Canvas(),
+                "#ffa": new Canvas(),
+                "#aff": new Canvas(),
+                "#aaf": new Canvas(),
+            },
             remotes: new Map(),
             urls: [this.getUrl(1), this.getUrl(2), this.getUrl(3)],
         };
     },
     created() {
-        this.canvas ??= document.getElementById("Drawer");
         var vue = this;
+        this.canvas ??= document.getElementById("Drawer");
         document.addEventListener("keyup", (e) => {
             if (e.key == "Escape") {
                 vue.$emit("onEscapePreview", null);
             }
         });
-        this.activity.logoUrl = this.getLogo();
         window.StylePair = this.stylePair;
         window.Animations = Animation;
-        ResizeEvent.on((width, height) => {});
+        ResizeEvent.on((width, height) => { });
         this.dotpen.onDraw(this.callbackHandler());
         window.drawConfig = this.drawer;
         window.locals = this.locals;
+        setTimeout(() => { vue.playImage(2); }, 500);
+
     },
     mounted() {
         this.scrollImage(20);
         this.canvas = document.getElementById("Drawer");
+
     },
     methods: {
         callbackHandler() {
@@ -163,56 +172,27 @@ export default {
             };
             return del;
         },
-        onReceiveDot(dot, canvas) {
-            console.log(dot);
-            console.log(canvas);
-            let ctx = canvas.getContext("2d");
-            debugger;
-            if (this.lastPt == null) {
-                this.lastPt = dot;
-            } else {
-                ctx.beginPath();
-                ctx.moveTo(this.lastPt.x, this.lastPt.y);
-
-                ctx.lineJoin = "round";
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = "rgb(199,116,99)"; // "#000"
-                ctx.fillStyle = "rgb(0,0,255)";
-                let controlPt = {};
-                let control_scale = (tension / 0.5) * 0.175;
-                controlPt.x =
-                    this.lastPt.x + (pt.x - this.lastPt.x) * control_scale;
-                controlPt.y =
-                    this.lastPt.y + (pt.y - this.lastPt.y) * control_scale;
-                ctx.quadraticCurveTo(controlPt.x, controlPt.y, pt.x, pt.y);
-                this.lastPt = pt;
-                ctx.stroke();
-
-                ctx.stroke();
-                ctx.closePath();
-            }
-        },
         getUrl: (num) => `http://47.93.86.37:8686/taskFile/sign/${num}.JPG`,
         getLogo: (num) => `http://47.93.86.37:8686/taskFile/sign/logo.png`,
         animate(feature) {
             this.stylePair = Animation.getOpposite(feature, "Up");
         },
         playImage(timeout) {
-            if (this.interval) {
-                clearInterval(this.interval);
+            if (this.playInterval) {
+                clearInterval(this.playInterval);
             }
-            let pictures = document.querySelectorAll(".item");
+            let pictures = document.querySelectorAll(".canvas");
             let nextImage = () => {
-                pictures[this.index].className = this.stylePair[1]; //当前图片淡出
+                pictures[this.index].className = `canvas ${this.stylePair[1]}`; //当前图片淡出
                 this.index++;
                 this.index = this.index % pictures.length;
-                pictures[this.index].className = this.stylePair[0]; //下一张图片淡出
+                pictures[this.index].className = `canvas ${this.stylePair[0]}`; //下一张图片淡出
             };
-            this.interval = setInterval(nextImage, timeout * 1000);
+            this.playInterval = setInterval(nextImage, timeout * 1000);
         },
         scrollImage(timeout) {
-            if (this.interval) {
-                clearInterval(this.interval);
+            if (this.scrollInterval) {
+                clearInterval(this.scrollInterval);
             }
             var iSpeed = -1;
             let cont = document.getElementById("Pictures");
@@ -226,7 +206,7 @@ export default {
                     ul.style.top = `${-ul.offsetHeight / 2}px`;
                 }
             };
-            this.interval = setInterval(scroll, timeout);
+            this.scrollInterval = setInterval(scroll, timeout);
         },
     },
 };
