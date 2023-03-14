@@ -70,4 +70,9 @@ export class Activity {
             ],
         }
     }
+    get Copy(){ 
+        var ret = new Activity();
+        Object.keys(this).forEach(k=>ret[k]=this[k]);
+        return ret;
+    }
 }
