@@ -23,7 +23,7 @@
 <script>
 import { Dot } from "@/utils/Canvas";
 import { ComponentKey, Bridges, IpcMessage, Dotpen, ConnectStatus, BlueTooth } from "@/utils/Definition";
-import TStudyDigitalPen from "../driver/PenDriver.js";
+import TStudyDigitalPen from "../../driver/PenDriver.js";
 export default {
     inject: [ComponentKey.Dotpen],
     data() {
@@ -191,13 +191,13 @@ export default {
                     time,
                     coordMode,
                 }) {
-                    data.dotpen.trigger(new Dot(coordX,coordY,"move",pageAddress));
+                    data.dotpen.trigger(Dot.Move(coordX, coordY, pageAddress));
                 },
                 onPenDown: function ({ coordMode }) {
-                    data.dotpen.trigger(Dot.Down());
+                    data.dotpen.trigger(Dot.Down);
                 },
                 onPenUp: function ({ coordMode }) {
-                    data.dotpen.trigger(Dot.Up());
+                    data.dotpen.trigger(Dot.Up);
                 },
                 onStartReceivePenOfflineData: function () {
                     console.log("onStartReceivePenOfflineData");
