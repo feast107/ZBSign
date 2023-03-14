@@ -26,12 +26,12 @@
                     </el-aside>
                     <el-main style="width: 60%">
                         <div style="
-                                            position: relative;
-                                            background-color: transparent;
-                                            overflow: hidden;
-                                            width: 100%;
-                                            height: 100%;
-                                        ">
+                                                position: relative;
+                                                background-color: transparent;
+                                                overflow: hidden;
+                                                width: 100%;
+                                                height: 100%;
+                                            ">
                             <canvas v-for="key in Object.keys(locals)" :key="key" :id="locals[key].id" class="canvas"
                                 :style="`background-color:${key}`" :width="locals[key].drawWidth"
                                 :height="locals[key].drawHeight">
@@ -45,11 +45,11 @@
                 </el-container>
                 <el-footer style="height: 5%; text-align: end">
                     <label style="
-                                        color: white;
-                                        font-family: 'Helvetica Neue', Helvetica,
-                                            'PingFang SC', 'Hiragino Sans GB',
-                                            'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-                                    ">
+                                            color: white;
+                                            font-family: 'Helvetica Neue', Helvetica,
+                                                'PingFang SC', 'Hiragino Sans GB',
+                                                'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                                        ">
                         技术支持：南京孜博汇信息科技有限公司
                     </label>
                 </el-footer>
@@ -71,6 +71,8 @@ export default {
         window.$Dispatcher.invoke(IpcMessage.FullScreen);
     },
     unmounted() {
+        this.stopPlay();
+        this.stopScroll();
         window.$Dispatcher.invoke(IpcMessage.FullScreen);
     },
     inject: [ComponentKey.PlayActicity, ComponentKey.Dotpen],
@@ -97,12 +99,9 @@ export default {
             current: null,
             locals: {
                 "#faf": new Canvas(),
-                "#ffa": new Canvas(),
-                "#aff": new Canvas(),
                 "#aaf": new Canvas(),
             },
             remotes: new Map(),
-            urls: [this.getUrl(1), this.getUrl(2), this.getUrl(3)],
         };
     },
     created() {
@@ -114,13 +113,13 @@ export default {
             }
         });
         window.StylePair = this.stylePair;
-        window.Animations = Animation;
+        window.Animator = Animation;
         ResizeEvent.on((width, height) => { });
         this.dotpen.onDraw(this.callbackHandler());
         window.drawConfig = this.drawer;
         window.locals = this.locals;
         setTimeout(() => { vue.playImage(2); }, 500);
-
+        window.ADD = () => { this.add(); }
     },
     mounted() {
         this.scrollImage(20);
@@ -156,7 +155,7 @@ export default {
              * @param {Dot} dot
              */
             var del = (dot) => {
-                if (!dot.address) {
+                if (!dot.IsMove) {
                     if (vue.current) {
                         vue.current.draw(dot);
                     }
@@ -177,23 +176,29 @@ export default {
         animate(feature) {
             this.stylePair = Animation.getOpposite(feature, "Up");
         },
+        add() { this.locals["#ffa"] = new Canvas(); },
         playImage(timeout) {
-            if (this.playInterval) {
-                clearInterval(this.playInterval);
-            }
-            let pictures = document.querySelectorAll(".canvas");
+            this.stopPlay();
+            let pictures = () => document.querySelectorAll(".canvas");
             let nextImage = () => {
-                pictures[this.index].className = `canvas ${this.stylePair[1]}`; //当前图片淡出
-                this.index++;
-                this.index = this.index % pictures.length;
-                pictures[this.index].className = `canvas ${this.stylePair[0]}`; //下一张图片淡出
+                var pic = pictures();
+                if (pic.length > 1) {
+                    pic[this.index].className = `canvas ${this.stylePair[1]}`; //当前图片淡出
+                    this.index++;
+                    this.index = this.index % pic.length;
+                    pic[this.index].className = `canvas ${this.stylePair[0]}`; //下一张图片淡出
+                }
             };
             this.playInterval = setInterval(nextImage, timeout * 1000);
         },
-        scrollImage(timeout) {
-            if (this.scrollInterval) {
-                clearInterval(this.scrollInterval);
+        stopPlay() {
+            if (this.playInterval) {
+                clearInterval(this.playInterval);
+                this.playInterval = null;
             }
+        },
+        scrollImage(timeout) {
+            this.stopScroll();
             var iSpeed = -1;
             let cont = document.getElementById("Pictures");
             let ul = cont.getElementsByTagName("ul")[0];
@@ -208,6 +213,12 @@ export default {
             };
             this.scrollInterval = setInterval(scroll, timeout);
         },
+        stopScroll() {
+            if (this.scrollInterval) {
+                clearInterval(this.scrollInterval);
+                this.scrollInterval = null;
+            }
+        }
     },
 };
 </script>
