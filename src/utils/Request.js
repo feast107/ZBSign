@@ -1,11 +1,10 @@
 import axios from "axios";
+axios.defaults.headers["token"] = 
+"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ6YmgiLCJleHAiOjE2ODAxNDg0OTIsInVzZXJJZCI6IjYyNWFiMTY0ZTRiMGQ4ZDBjNjc2MGY5NCIsInVzZXJuYW1lIjoiMTU3MjY2NjA4MzYifQ.xp5zXTbguWQScXEQS0QbNz_7PBybFI-v0jId4rG2xC0";
 /*创建axios 实例*/
 const Request = axios.create({
     /*api的baseURL*/
-    baseURL:
-        process.env.NODE_ENV === "production"
-            ? process.env.VUE_APP_REQUEST_URL
-            : "https://localhost:7201",
+    baseURL : "http://47.93.86.37:8999",
     /*请求超时时间*/
     timeout: 60000,
 });
@@ -14,7 +13,6 @@ Request.interceptors.request.use(
     (config) => {
         let url = config.url;
         //配置密匙
-
         return config;
     },
     (error) => {
@@ -22,6 +20,9 @@ Request.interceptors.request.use(
         return Promise.reject(error);
     }
 );
+
+const Handlers = []
+
 /*response拦截器*/
 Request.interceptors.response.use(
     (res) => {
@@ -32,9 +33,19 @@ Request.interceptors.response.use(
     },
     (error) => {
         /*处理response出错逻辑*/
+        Handlers[error.response.status](error);
         return Promise.reject(error);
     }
 );
+/**
+ * 
+ * @param {Number} code 
+ * @param {function<AxiosError>} handler 
+ */
+Request.error = (code,handler) =>{
+    Handlers[code] = handler;
+}
+
 Request.form = (data) => {
     let ret = new FormData();
     Object.keys(data).forEach((x) => {
