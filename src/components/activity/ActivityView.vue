@@ -39,10 +39,7 @@
                 <el-scrollbar
                     v-loading="this.loading"
                     style="width: 100%; padding-right: 10px">
-                    <el-table
-                        stripe
-                        :data="activitiesForShow"
-                        style="width: 100%">
+                    <el-table stripe :data="activitiesForShow" style="width: 100%">
                         <el-table-column>
                             <template #default="scope">
                                 <el-button text style="margin-right: 10px">
@@ -67,7 +64,7 @@
                                     size="small"
                                     >{{
                                         `| 签名${0}p | 照片${
-                                            scope.row.pictures.length
+                                            scope.row.PictureCount
                                         }p`
                                     }}</el-tag
                                 >
@@ -77,7 +74,11 @@
                             <template #default="scope">
                                 <span style="user-select: none">
                                     {{
-                                        `${scope.row.createTime.getFullYear()}/${scope.row.createTime.getMonth()}/${scope.row.createTime.getDate()}`
+                                        `${Timer.year(
+                                            scope.row.createTime
+                                        )}/${Timer.month(
+                                            scope.row.createTime
+                                        )}/${Timer.day(scope.row.createTime)}`
                                     }}
                                 </span>
                             </template>
@@ -314,7 +315,10 @@
                                 <Plus />
                             </el-icon>
                         </el-upload>
-                        <img v-else :src="editActivity.target.logoUrl" style="width:100px;height:100px;">
+                        <img
+                            v-else
+                            :src="editActivity.target.logoUrl"
+                            style="width: 100px; height: 100px" />
                     </el-form-item>
                     <el-form-item label="活动背景">
                         <el-upload
@@ -407,11 +411,13 @@
 import { ComponentKey } from "@/utils/Definition";
 import { Activity } from "@/utils/Activity";
 import { EffectLabel } from "@/utils/Animation";
+import { Timer } from "@/utils/Format";
 import Request from "@/utils/Request";
 export default {
     inject: [ComponentKey.Activities, ComponentKey.PlayActicity],
     data() {
         return {
+            Timer: Timer,
             accpetance: "image/png,image/jpg,image/jpeg",
             loading: false,
             styles: {
@@ -449,6 +455,7 @@ export default {
             let vue = this;
             setTimeout(() => {
                 vue.cache.forEach((x) => {
+                    console.log(x);
                     vue.activitiesForShow.push(x);
                 });
                 vue.loading = false;
@@ -459,12 +466,24 @@ export default {
         selectHandler(...args) {
             console.log(args);
         },
-        uploadLogo(file){ this.editActivity.target.uploadLogo(file); },
-        removeLogo(){ this.editActivity.target.removeLogo(); },
-        uploadBackground(file){ this.editActivity.target.uploadBackground(file); },
-        removeBackground(){ this.editActivity.target.removeBackground(); },
-        uploadPicture(file){ this.editActivity.target.uploadPicture(file); },
-        removePicture(file){ this.editActivity.target.removePicture(file); },
+        uploadLogo(file) {
+            this.editActivity.target.uploadLogo(file);
+        },
+        removeLogo() {
+            this.editActivity.target.removeLogo();
+        },
+        uploadBackground(file) {
+            this.editActivity.target.uploadBackground(file);
+        },
+        removeBackground() {
+            this.editActivity.target.removeBackground();
+        },
+        uploadPicture(file) {
+            this.editActivity.target.uploadPicture(file);
+        },
+        removePicture(file) {
+            this.editActivity.target.removePicture(file);
+        },
         /**
          *
          * @param {string} queryString
