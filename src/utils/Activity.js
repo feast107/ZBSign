@@ -28,7 +28,7 @@ export class Activity {
             logo: this.logo,
             background: this.background,
             pictures: this.pictures,
-            localSign: this.localSign
+            localSign: this.localSign,
         });
     }
     getDataQuery() {
@@ -48,7 +48,8 @@ export class Activity {
         ret.createTime = new Date();
         ret.sharedLink = GUID.NewGuid();
         ret.rollEffect = Effects.FadeDown.value;
-        let getUrl = (num) => `http://47.93.86.37:8686/taskFile/sign/${num}.JPG`
+        let getUrl = (num) =>
+            `http://47.93.86.37:8686/taskFile/sign/${num}.JPG`;
         ret.pictureUrls = [
             getUrl(1),
             getUrl(2),
@@ -59,7 +60,7 @@ export class Activity {
         ret.logoUrl = `http://47.93.86.37:8686/taskFile/sign/logo.png`;
         return ret;
     }
-    static rules(){
+    static rules() {
         return {
             title: [
                 {
@@ -68,11 +69,43 @@ export class Activity {
                     trigger: "blur",
                 },
             ],
-        }
+        };
     }
-    get Copy(){ 
+    uploadLogo(file) {
+        this.logo = file.raw;
+    }
+    removeLogo() {
+        this.logo = null;
+    }
+    uploadPicture(file) {
+        this.pictures.push(file.raw);
+    }
+    removePicture(file) {
+        let index = this.pictures.findIndex(
+            (x) => x.uid == file.raw.uid
+        );
+        this.pictures.splice(index, 1);
+    }
+    uploadBackground(file) {
+        this.background = file.raw;
+    }
+    removeBackground() {
+        this.background = null;
+    }
+    get Copy() {
         var ret = new Activity();
-        Object.keys(this).forEach(k=>ret[k]=this[k]);
+        Object.keys(this).forEach((k) => (ret[k] = this[k]));
         return ret;
     }
+    create() {
+        return Request.post("/signservice/activity/createActivity", this.getFileForm(), {
+            method: "POST",
+            headers: { "Content-Type": "multipart/form-data" },
+            params: this.getDataQuery(),
+        });
+    }
+    changeInfo() {
+        return Request.post("");
+    }
+    changeResource() {}
 }
