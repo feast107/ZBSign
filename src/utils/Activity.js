@@ -1,6 +1,7 @@
 import { Effects } from "./Animation";
 import { GUID } from "./Definition";
 import Request from "./Request";
+import { Dot } from "@/utils/Canvas";
 export class Activity {
     constructor(id) {
         this.id = id ?? "";
@@ -22,6 +23,14 @@ export class Activity {
 
         this.rollEffect = "";
         this.localSign = [];
+
+        this.startPageAddress = null;
+        this.pageCount = null;
+        this.pageHeight = null;
+        this.pageWidth = null;
+    }
+    get PictureCount() {
+        return this.pictureUrls.length;
     }
     getFileForm() {
         return Request.form({
@@ -81,9 +90,7 @@ export class Activity {
         this.pictures.push(file.raw);
     }
     removePicture(file) {
-        let index = this.pictures.findIndex(
-            (x) => x.uid == file.raw.uid
-        );
+        let index = this.pictures.findIndex((x) => x.uid == file.raw.uid);
         this.pictures.splice(index, 1);
     }
     uploadBackground(file) {
@@ -97,15 +104,53 @@ export class Activity {
         Object.keys(this).forEach((k) => (ret[k] = this[k]));
         return ret;
     }
+    getPageAddress(pageNum){
+        return Dot.pageAddress(this.startPageAddress,pageNum);
+    }
+    getPageNum(address) {
+        return Dot.pageNum(this.startPageAddress, address, this.pageCount);
+    }
     create() {
-        return Request.post("/signservice/activity/createActivity", this.getFileForm(), {
-            method: "POST",
-            headers: { "Content-Type": "multipart/form-data" },
-            params: this.getDataQuery(),
-        });
+        return Request.post(
+            "/signservice/activity/createActivity",
+            this.getFileForm(),
+            {
+                method: "POST",
+                headers: { "Content-Type": "multipart/form-data" },
+                params: this.getDataQuery(),
+            }
+        );
     }
     changeInfo() {
         return Request.post("");
     }
     changeResource() {}
+    static queryList() {
+        return Request.get("/signservice/activity/queryActivity");
+    }
+    /**
+     *
+     * @param {Activity} other
+     */
+    static from(other) {
+        let ret = new Activity();
+        Object.keys(other).forEach((x) => {
+            if (x == "createTime") {
+                ret[x] = new Date(Number(other[x]));
+            } else {
+                ret[x] = other[x];
+            }
+        });
+        return ret;
+    }
+    queryWrittenPages(){
+        return Request.get("/signservice/activity/queryWritePages?activityId=" + this.id);
+    }
+    queryStroke(pageNum){
+        return Request.post("/signservice/stroke/queryStroke",
+        {
+            activityId : this.id,
+            pageNum : pageNum
+        });
+    }
 }
