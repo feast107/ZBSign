@@ -93,35 +93,19 @@ export default {
     provide() {
         return {
             [ComponentKey.Dotpen]: computed(() => this.dotpen),
-            [ComponentKey.Activities]: computed(() => [
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-                Activity.Default(),
-            ]),
+            [ComponentKey.Activities]: computed(() => this.activities),
             [ComponentKey.ModifingActivity]: computed(() => { return null; }),
             [ComponentKey.PlayActicity]: computed(() => this.playingActivity)
         }
     },
-    created() {
+    async created() {
         window[Bridges.Dispatcher].listen(IpcMessage.BlueToothList, (list) => {
             this.dotpen.$ScanList = list[0];
         });
         window[Bridges.Navigator] = document[Bridges.Navigator] = {
             [Bridges.BlueTooth]: this.bluetooth,
         };
+        await this.getActivities();
     },
     data() {
         this[ComponentKey.User].phoneNumber = "1771***807";
@@ -135,7 +119,8 @@ export default {
             menu: ['新建活动', '活动列表', '智能笔'],
             select: '新建活动',
             defaultSelect: '1',
-            user: this[ComponentKey.User]
+            user: this[ComponentKey.User],
+            activities: [],
         }
     },
     methods: {
@@ -147,8 +132,11 @@ export default {
             this.select = '活动列表';
             this.defaultSelect = '2';
         },
-        selectMenu() {
-            this.select = this.menu[Number.parseInt(arguments[0]) - 1]
+        async selectMenu() {
+            this.select = this.menu[Number.parseInt(arguments[0]) - 1];
+            if(this.select == this.menu[1]){
+                await this.getActivities();
+            }
             if (this.select == this.menu[2] && !BlueTooth.requesting()) {
                 BlueTooth.forceRequestDevice({
                     filters: [
@@ -161,6 +149,18 @@ export default {
                     ],
                 })
             }
+        },
+        async getActivities() {
+            try {
+                let a = await Activity.queryList();
+                while(this.activities.length > 0){ this.activities.pop(); }
+                let l = a.data.data;
+                l.forEach(x => {
+                    let ac = Activity.from(x);
+                    this.activities.push(ac);
+                })
+            }
+            catch { }
         }
     }
 
