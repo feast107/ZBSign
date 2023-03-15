@@ -48,6 +48,7 @@ export default {
             rawResult: "",
             lastPt: {},
             trying: false,
+            isDown: false,
         };
     },
     mounted() {
@@ -191,13 +192,18 @@ export default {
                     time,
                     coordMode,
                 }) {
+                    if(!data.isDown){ data.isDown = true; }
                     data.dotpen.trigger(Dot.Move(coordX, coordY, pageAddress));
                 },
                 onPenDown: function ({ coordMode }) {
+                    if(!data.isDown){ data.isDown = true; }
                     data.dotpen.trigger(Dot.Down);
                 },
                 onPenUp: function ({ coordMode }) {
-                    data.dotpen.trigger(Dot.Up);
+                    if(data.isDown){
+                        data.isDown = false;
+                        data.dotpen.trigger(Dot.Up);
+                    }
                 },
                 onStartReceivePenOfflineData: function () {
                     console.log("onStartReceivePenOfflineData");
@@ -221,9 +227,7 @@ export default {
                     data.rawResult = "onFinishReceivePenOfflineData:";
                 },
                 onPenPageChange: function ({ pageAddress }) {
-                    console.log("onPenPageChange");
-                    data.rawResult =
-                        "onPenPageChange:" + JSON.stringify({ pageAddress });
+
                 },
             };
         },
