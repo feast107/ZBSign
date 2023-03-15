@@ -8,6 +8,7 @@ import HomePage from "./components/HomePage.vue";
 import MainPage from "./components/MainPage.vue";
 import { User } from './utils/User';
 import { ComponentKey } from "./utils/Definition";
+import Request from './utils/Request'
 import { computed } from 'vue'
 export default {
 	name: "App",
@@ -29,6 +30,7 @@ export default {
 	},
 	created() {
 		this.user.isLogin = true;
+		Request.error(500,(e)=>{ this.$message.error("服务器异常"); });
 	}
 };
 </script>
