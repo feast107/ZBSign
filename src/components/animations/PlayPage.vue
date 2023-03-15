@@ -8,7 +8,9 @@
                             <img class="logo" :src="activity.logoUrl" />
                         </el-col>
                         <el-col :span="21">
-                            <label class="title" :style="`color:${activity.titleColor};font-size:${this.fontSize}px`">
+                            <label
+                                class="title"
+                                :style="`color:${activity.titleColor};font-size:${this.fontSize}px`">
                                 {{ activity.title }}
                             </label>
                         </el-col>
@@ -18,39 +20,53 @@
                     <el-aside style="width: 40%; padding: 20px">
                         <div id="Pictures">
                             <ul>
-                                <li v-for="url in activity.pictureUrls" :key="url">
+                                <li
+                                    v-for="url in activity.pictureUrls"
+                                    :key="url">
                                     <img :src="url" />
                                 </li>
                             </ul>
                         </div>
                     </el-aside>
                     <el-main style="width: 60%">
-                        <div style="
-                                                position: relative;
-                                                background-color: transparent;
-                                                overflow: hidden;
-                                                width: 100%;
-                                                height: 100%;
-                                            ">
-                            <canvas v-for="key in Object.keys(locals)" :key="key" :id="locals[key].id"
-                                :class="locals[key].className" :z-index="locals[key].index"
+                        <div
+                            style="
+                                position: relative;
+                                background-color: transparent;
+                                overflow: hidden;
+                                width: 100%;
+                                height: 100%;
+                            ">
+                            <canvas
+                                v-for="key in Object.keys(locals)"
+                                :key="key"
+                                :id="locals[key].id"
+                                :class="locals[key].className"
+                                :z-index="locals[key].index"
                                 :style="`background-color:white;display:${locals[key].display}`"
-                                :width="locals[key].drawWidth" :height="locals[key].drawHeight">
+                                :width="locals[key].drawWidth"
+                                :height="locals[key].drawHeight">
                             </canvas>
-                            <canvas v-for="key in Object.keys(remotes)" :key="key" :id="remotes[key].id"
-                                :class="remotes[key].className" :style="`background-color:white`"
-                                :width="remotes[key].drawWidth" :height="remotes[key].drawHeight">
+                            <canvas
+                                v-for="key in Object.keys(remotes)"
+                                :key="key"
+                                :id="remotes[key].id"
+                                :class="remotes[key].className"
+                                :style="`background-color:white;display:${remotes[key].display}`"
+                                :width="remotes[key].drawWidth"
+                                :height="remotes[key].drawHeight">
                             </canvas>
                         </div>
                     </el-main>
                 </el-container>
                 <el-footer style="height: 5%; text-align: end">
-                    <label style="
-                                            color: white;
-                                            font-family: 'Helvetica Neue', Helvetica,
-                                                'PingFang SC', 'Hiragino Sans GB',
-                                                'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-                                        ">
+                    <label
+                        style="
+                            color: white;
+                            font-family: 'Helvetica Neue', Helvetica,
+                                'PingFang SC', 'Hiragino Sans GB',
+                                'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                        ">
                         技术支持：南京孜博汇信息科技有限公司
                     </label>
                 </el-footer>
@@ -65,7 +81,7 @@ import "animate.css";
 import { Animation } from "@/utils/Animation";
 import { ComponentKey, Dotpen, IpcMessage } from "@/utils/Definition";
 import { ResizeEvent } from "@/utils/Events";
-import { Canvas, Dot } from "@/utils/Canvas";
+import { Canvas, Dot, Stroke } from "@/utils/Canvas";
 import { Activity } from "@/utils/Activity";
 export default {
     beforeCreate() {
@@ -74,24 +90,27 @@ export default {
     unmounted() {
         this.stopPlay();
         this.stopScroll();
+        clearInterval(this.intervals.queryInterval);
         window.$Dispatcher.invoke(IpcMessage.FullScreen);
     },
     inject: [ComponentKey.PlayActicity, ComponentKey.Dotpen],
     data() {
         return {
             /**
-             * @param {Dotpen}
+             * @type {Dotpen}
              */
             dotpen: this[ComponentKey.Dotpen],
-            canvas: document.getElementById("Drawer"),
             /**
              * @type {Activity}
              */
             activity: this[ComponentKey.PlayActicity],
             stylePair: Animation.getOpposite("fade", "Right"),
             index: 0,
-            scrollInterval: null,
-            playInterval: null,
+            intervals: {
+                scrollInterval: null,
+                playInterval: null,
+                queryInterval: null,
+            },
             fontSize: 40,
             pictures: [],
             /**
@@ -106,37 +125,85 @@ export default {
              * @type {Object<Canvas>}
              */
             remotes: {},
+            pageNums: [],
         };
     },
     created() {
         var vue = this;
-        this.canvas ??= document.getElementById("Drawer");
+        console.log(this.activity.queryWrittenPages());
+        this.intervals.queryInterval = setInterval(() => {
+            this.activity
+                .queryWrittenPages()
+                .then((r) => {
+                    /**
+                     * @type {Array<Number>}
+                     */
+                    let list = r.data.data;
+                    list.forEach((x) => {
+                        if (this.pageNums.findIndex((i) => i == x) >= 0) {
+                            return;
+                        }
+                        this.pageNums.push(x);
+                        this.activity
+                            .queryStroke(x)
+                            .then((r) => {
+                                console.log(r);
+                                var addr = this.activity.getPageAddress(x);
+                                if (this.locals[addr]) {
+                                    return;
+                                }
+                                var can = new Canvas(
+                                    null,
+                                    null,
+                                    true,
+                                    addr,
+                                    null,
+                                    vue.dotpen.$Name,
+                                    x
+                                );
+                                this.remotes[x] = can;
+                                setTimeout(() => {
+                                    can.bind(document);
+                                    r.data.data.forEach((stroke) => {
+                                        can.draw(Dot.Up);
+                                        Stroke.SVG2Points(
+                                            stroke.p,
+                                            addr
+                                        ).forEach((dot) => {
+                                            can.draw(dot);
+                                        });
+                                        can.draw(Dot.Up);
+                                    });
+                                }, 100);
+                            })
+                            .catch((r) => {
+                                console.log(r);
+                            });
+                    });
+                })
+                .catch((e) => {});
+        }, 3000);
         document.addEventListener("keyup", (e) => {
             if (e.key == "Escape") {
                 vue.$emit("onEscapePreview", null);
             }
         });
-        window.StylePair = this.stylePair;
-        window.Animator = Animation;
-        ResizeEvent.on((width, height) => { });
+        ResizeEvent.on((width, height) => {});
         this.dotpen.onDraw(this.callbackHandler());
-        window.drawConfig = this.drawer;
         window.locals = this.locals;
         setTimeout(() => {
             vue.playImage(2);
         }, 500);
-        window.Dot = Dot;
     },
     mounted() {
         this.scrollImage(20);
-        this.canvas = document.getElementById("Drawer");
     },
     methods: {
         showAll() {
-            Object.keys(this.locals).forEach(x => this.locals[x].show());
+            Object.keys(this.locals).forEach((x) => this.locals[x].show());
         },
         hideAll() {
-            Object.keys(this.locals).forEach(x => this.locals[x].hide());
+            Object.keys(this.locals).forEach((x) => this.locals[x].hide());
         },
         callbackHandler() {
             var vue = this;
@@ -153,10 +220,20 @@ export default {
                         null,
                         null,
                         false,
-                        dot.address
+                        dot.address,
+                        2,
+                        vue.dotpen.$Name,
+                        vue.activity.getPageNum(dot.address)
                     );
                     setTimeout(() => {
                         c.bind(document);
+                        setInterval(() => {
+                            c.uploadStroke(this.activity.id)
+                                .then((r) => console.log(r))
+                                .catch((e) => {
+                                    console.log(e);
+                                });
+                        }, 3000);
                     }, 0);
                 }
                 return c;
@@ -190,21 +267,16 @@ export default {
             };
             return del;
         },
-        getUrl: (num) => `http://47.93.86.37:8686/taskFile/sign/${num}.JPG`,
-        getLogo: (num) => `http://47.93.86.37:8686/taskFile/sign/logo.png`,
         animate(feature) {
             this.stylePair = Animation.getOpposite(feature, "Up");
-        },
-        add() {
-            this.locals["#ffa"] = new Canvas();
         },
         /**
          * @return {Canvas[]}
          */
         getPictures() {
             var ret = [];
-            Object.keys(this.locals).forEach(x => ret.push(this.locals[x]));
-            Object.keys(this.remotes).forEach(x => ret.push(this.remotes[x]));
+            Object.keys(this.locals).forEach((x) => ret.push(this.locals[x]));
+            Object.keys(this.remotes).forEach((x) => ret.push(this.remotes[x]));
             return ret;
         },
         playImage(timeout) {
@@ -221,13 +293,16 @@ export default {
                     pic[this.index].className = `canvas ${this.stylePair[0]}`; //下一张图片淡出
                 }
             };
-            this.playInterval = setInterval(nextImage, timeout * 1000);
+            this.intervals.playInterval = setInterval(
+                nextImage,
+                timeout * 1000
+            );
         },
         stopPlay() {
-            if (this.playInterval) {
-                clearInterval(this.playInterval);
-                this.playInterval = null;
-                this.getPictures().forEach(x => x.className = "canvas")
+            if (this.intervals.playInterval) {
+                clearInterval(this.intervals.playInterval);
+                this.intervals.playInterval = null;
+                this.getPictures().forEach((x) => (x.className = "canvas"));
             }
         },
         scrollImage(timeout) {
@@ -244,12 +319,12 @@ export default {
                     ul.style.top = `${-ul.offsetHeight / 2}px`;
                 }
             };
-            this.scrollInterval = setInterval(scroll, timeout);
+            this.intervals.scrollInterval = setInterval(scroll, timeout);
         },
         stopScroll() {
-            if (this.scrollInterval) {
-                clearInterval(this.scrollInterval);
-                this.scrollInterval = null;
+            if (this.intervals.scrollInterval) {
+                clearInterval(this.intervals.scrollInterval);
+                this.intervals.scrollInterval = null;
             }
         },
     },
