@@ -12,13 +12,16 @@ export class Dot {
     get Y() {
         return this.y;
     }
+    get IsValid() {
+        return this.x != 0 || this.y != 0;
+    }
     get IsDown() {
         return this.type == "down";
     }
     get IsUp() {
         return this.type == "up";
     }
-    get IsMove(){ 
+    get IsMove() {
         return this.type == "move";
     }
     /**
@@ -34,11 +37,11 @@ export class Dot {
         this.address = address;
     }
     static get Down() {
-        if (this.down) this.down = new Dot(null, null, "down", null);
+        if (!this.down) this.down = new Dot(null, null, "down", null);
         return this.down;
     }
     static get Up() {
-        if (this.up) this.up = new Dot(null, null, "up", null);
+        if (!this.up) this.up = new Dot(null, null, "up", null);
         return this.up;
     }
     static Move(x, y, address) {
@@ -97,8 +100,11 @@ export class Canvas {
          * @type {Array<Stroke>}
          */
         this.strokes = new Array();
+        this.index = 0;
+        this.className = "canvas";
+        this.display = "";
     }
-    get svgs(){
+    get svgs() {
         return Stroke.PointsList2SVGList(this.points);
     }
     /**
@@ -115,34 +121,53 @@ export class Canvas {
             canvas.height = this.drawHeight;
         }
     }
+    bringToFront() {
+        this.index = 80;
+        this.className = "front";
+        console.log(`${this.id} 上升`);
+    }
+    bringBack() {
+        this.index = 0;
+        this.className = "canvas";
+        console.log(`${this.id} 下降`);
+    }
+    show() {
+        this.display = "";
+    }
+    hide() {
+        this.display = "none";
+    }
     /**
      *
      * @param {Dot} dot
      * @param {HTMLCanvasElement} canvas
      */
     draw(dot, canvas = null) {
-        switch (dot.type) {
-            case "up":
-                this.lastPoint = null;
-                var length = this.points.length;
-                if(length == 0) return;
-                if(this.points[length - 1].length == 0) return;
-                let s = Stroke.Points2SVG(this.points[length - 1]);
-                this.strokes.push(s);
-                console.log(`${this.id} : stroke[${s}]`);
-                this.points.push(new Array());
-                return;
-            case "down":
-                return;
+        if (dot.IsUp) {
+            if(this.lastPoint != null)
+                console.log(`UP : { x:${this.lastPoint.X},y:${this.lastPoint.Y} }`);
+            this.lastPoint = null;
+            var length = this.points.length;
+            if (length == 0) return;
+            if (this.points[length - 1].length == 0) return;
+            let s = Stroke.Points2SVG(this.points[length - 1]);
+            this.strokes.push(s);
+            this.points.push(new Array());
+            return;
+        }
+        if (dot.IsDown) {
+            return;
         }
         this.points[this.points.length - 1].push(dot);
         canvas ??= this.canvas;
         if (!canvas) return;
         this.resetDot(dot, canvas);
+        if (!dot.IsValid) return;
         if (this.lastPoint == null) {
             this.lastPoint = dot;
             return;
         }
+
         let context = canvas.getContext("2d");
         this.initContext(context);
         context.beginPath();
@@ -168,7 +193,7 @@ export class Canvas {
      * @param {HTMLCanvasElement} canvas
      */
     resetDot(dot, canvas) {
-        if (!dot.x) return dot;
+        if (!dot.IsMove) return dot;
         var x = (canvas.clientWidth / DotInfo.width) * dot.x * this.scale;
         var y = (canvas.clientHeight / DotInfo.height) * dot.y * this.scale;
         dot.x = x;
@@ -194,10 +219,10 @@ export class Canvas {
 
 export class Stroke {
     /**
-     * 
-     * @param {Array<Dot>} points 
+     *
+     * @param {Array<Dot>} points
      */
-    constructor(points){
+    constructor(points) {
         this.points = points;
         this.path = Stroke.Points2SVG(points);
     }
