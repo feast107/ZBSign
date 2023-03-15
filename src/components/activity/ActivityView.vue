@@ -173,7 +173,10 @@
                                         </el-button>
                                     </el-row>
                                     <el-row>
-                                        <el-button class="iconButton" circle>
+                                        <el-button
+                                            class="iconButton"
+                                            @click="editResource(scope.row)"
+                                            circle>
                                             <img
                                                 style="
                                                     width: 20px;
@@ -207,13 +210,13 @@
         </el-col>
         <!-- 修改对话框 -->
         <el-dialog
-            v-model="editActivity.onEdit"
-            title="修改"
+            v-model="editActivity.onEditInfo"
+            title="修改信息"
             align-center
             width="50%">
             <div>
                 <el-form
-                    v-if="editActivity.onEdit"
+                    v-if="editActivity.onEditInfo"
                     label-position="right"
                     style="margin-right: 20px"
                     :model="editActivity.target"
@@ -270,7 +273,6 @@
                                 </el-option>
                             </el-select>
                         </el-popover>
-                        <el-radio-group> </el-radio-group>
                     </el-form-item>
                 </el-form>
             </div>
@@ -284,6 +286,120 @@
                 </span>
             </template>
         </el-dialog>
+        <el-dialog
+            v-model="editActivity.onEditResource"
+            title="修改资源"
+            align-center
+            width="50%">
+            <div>
+                <el-form
+                    v-if="editActivity.onEditResource"
+                    label-position="right"
+                    style="margin-right: 20px"
+                    :model="editActivity.target">
+                    <el-form-item prop="logo" label="活动LOGO">
+                        <el-upload
+                            v-if="editActivity.target.logoUrl == String()"
+                            class="avatar-uploader"
+                            action="#"
+                            :limit="1"
+                            :accept="accpetance"
+                            :on-change="uploadLogo"
+                            :on-remove="removeLogo"
+                            :auto-upload="false"
+                            list-type="picture-card">
+                            <el-icon
+                                id="logoUpload"
+                                class="avatar-uploader-icon">
+                                <Plus />
+                            </el-icon>
+                        </el-upload>
+                        <img v-else :src="editActivity.target.logoUrl" style="width:100px;height:100px;">
+                    </el-form-item>
+                    <el-form-item label="活动背景">
+                        <el-upload
+                            class="avatar-uploader"
+                            action="#"
+                            :limit="1"
+                            :accept="accpetance"
+                            :on-change="uploadBackground"
+                            :on-remove="removeBackground"
+                            :auto-upload="false"
+                            list-type="picture-card">
+                            <el-icon
+                                id="backgroundUpload"
+                                class="avatar-uploader-icon">
+                                <Plus />
+                            </el-icon>
+                        </el-upload>
+                    </el-form-item>
+                    <el-form-item label="上传照片墙">
+                        <template #label>
+                            <el-popover
+                                placement="left"
+                                :width="'auto'"
+                                trigger="hover">
+                                <template #reference>
+                                    <label
+                                        style="
+                                            user-select: auto;
+                                            pointer-events: all;
+                                        "
+                                        >上传照片墙</label
+                                    >
+                                </template>
+                                <el-button
+                                    id="PopRemoveAll"
+                                    @click="
+                                        () => {
+                                            this.$refs.pictureWall.clearFiles();
+                                            activity.pictures = [];
+                                        }
+                                    "
+                                    type="danger"
+                                    >清空</el-button
+                                >
+                            </el-popover>
+                        </template>
+
+                        <el-popover placement="right" trigger="click">
+                            <template #reference>
+                                <el-button
+                                    ref="cleanRef"
+                                    style="padding: 0; border: none">
+                                    <img
+                                        style="width: 30px; height: 30px"
+                                        src="../../assets/Main/NewActivity/UploadFile.svg" />
+                                </el-button>
+                            </template>
+                            <el-upload
+                                style="max-width: 440px"
+                                ref="pictureWall"
+                                multiple
+                                action="#"
+                                :auto-upload="false"
+                                :accept="accpetance"
+                                :on-change="uploadPicture"
+                                :on-remove="removePicture"
+                                list-type="picture-card">
+                                <el-icon class="avatar-uploader-icon">
+                                    <Plus />
+                                </el-icon>
+                            </el-upload>
+                        </el-popover>
+                    </el-form-item>
+                </el-form>
+            </div>
+
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="cancelEdit">取消</el-button>
+                    <el-button type="primary" @click="confirmEdit">
+                        确认
+                    </el-button>
+                </span>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -291,10 +407,12 @@
 import { ComponentKey } from "@/utils/Definition";
 import { Activity } from "@/utils/Activity";
 import { EffectLabel } from "@/utils/Animation";
+import Request from "@/utils/Request";
 export default {
     inject: [ComponentKey.Activities, ComponentKey.PlayActicity],
     data() {
         return {
+            accpetance: "image/png,image/jpg,image/jpeg",
             loading: false,
             styles: {
                 smallButton: "border:none;padding:0;",
@@ -315,11 +433,12 @@ export default {
             activitiesForShow: [],
             searchPattern: null,
             editActivity: {
-                onEdit: false,
                 /**
                  * @type {Activity}
                  */
                 target: null,
+                onEditInfo: false,
+                onEditResource: false,
                 rules: Activity.rules(),
             },
         };
@@ -340,6 +459,12 @@ export default {
         selectHandler(...args) {
             console.log(args);
         },
+        uploadLogo(file){ this.editActivity.target.uploadLogo(file); },
+        removeLogo(){ this.editActivity.target.removeLogo(); },
+        uploadBackground(file){ this.editActivity.target.uploadBackground(file); },
+        removeBackground(){ this.editActivity.target.removeBackground(); },
+        uploadPicture(file){ this.editActivity.target.uploadPicture(file); },
+        removePicture(file){ this.editActivity.target.removePicture(file); },
         /**
          *
          * @param {string} queryString
@@ -369,18 +494,36 @@ export default {
             this.preview = target;
             this.$emit(`onSetActivity`, target);
         },
+        /**
+         *
+         * @param {Activity} target
+         */
         edit(target) {
-            console.log(target);
-            this.editActivity.onEdit = true;
-            this.editActivity.target = target;
+            this.editActivity.onEditInfo = true;
+            this.editActivity.target = target.Copy;
         },
         cancelEdit() {
-            this.editActivity.onEdit = false;
+            this.editActivity.onEditInfo = false;
+            this.editActivity.onEditResource = false;
             this.editActivity.target = null;
         },
         confirmEdit() {
-            this.editActivity.target.getDataQuery();
-            this.editActivity.onEdit = false;
+            if (this.editActivity.onEditInfo) {
+                this.editActivity.target.changeInfo();
+                this.editActivity.onEditInfo = false;
+            }
+            if (this.editActivity.onEditResource) {
+                this.editActivity.target.changeResource();
+                this.editActivity.onEditResource = false;
+            }
+        },
+        /**
+         *
+         * @param {Activity} target
+         */
+        editResource(target) {
+            this.editActivity.onEditResource = true;
+            this.editActivity.target = target.Copy;
         },
     },
 };
