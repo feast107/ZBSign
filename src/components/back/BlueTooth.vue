@@ -3,31 +3,24 @@
         <el-collapse v-model="Activate" style="border:none ;border-width: 0;">
             <el-collapse-item style="border:none ;border-width: 0;" name="main">
                 <template #title>
-                    <el-button loading text 
-                    class="el-icon--right">
+                    <el-button loading text class="el-icon--right">
                         <td class="color-dark-light">智能笔连接</td>
                     </el-button>
                 </template>
                 <el-table :data="BlueTooth" max-height="250">
                     <el-table-column prop="deviceId" label="编号" width="150" />
                     <el-table-column prop="deviceName" label="名称" width="150" />
-                    <el-table-column  label="操作" width="100">
+                    <el-table-column label="操作" width="100">
                         <template #default="scope">
-                            <el-button type="primary" plain style="width:100%;"
-                            :disabled="this.TryingToConnect"
-                            :loading="scope.row.IsConnecting"
-                            @click="SelectDevice(scope.row)">
+                            <el-button type="primary" plain style="width:100%;" :disabled="this.TryingToConnect"
+                                :loading="scope.row.IsConnecting" @click="SelectDevice(scope.row)">
                                 连接
                             </el-button>
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-button 
-                type="danger" 
-                size="small" 
-                style="float:right;width: 50px;margin-top: 10px;"
-                @click="CancelSelect()"
-                :disabled="this.BlueTooth.length==0">
+                <el-button type="danger" size="small" style="float:right;width: 50px;margin-top: 10px;"
+                    @click="CancelSelect()" :disabled="this.BlueTooth.length == 0">
                     取消
                 </el-button>
             </el-collapse-item>
@@ -46,7 +39,7 @@ export default {
             BlueTooth: [],
             TryingToConnect: false,
             Show: false,
-            Activate:['main']
+            Activate: ['main']
         }
     },
     watch: {
@@ -111,7 +104,7 @@ a {
     color: #42b983;
 }
 
-.el-collapse{
-    --el-collapse-border-color:#fff,
+.el-collapse {
+    --el-collapse-border-color: #fff,
 }
 </style>
