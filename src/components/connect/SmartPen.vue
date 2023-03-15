@@ -74,7 +74,7 @@ export default {
                         .setConnect(device, TStudyDigitalPen.getInstance());
                     console.log("--连接成功--");
 
-                    let coldDown = 25;
+                    let coldDown = 75;
                     setTimeout(() => {
                         TStudyDigitalPen.getInstance().clearPenOfflineData();
                         setTimeout(() => {
@@ -139,6 +139,7 @@ export default {
                     console.log(info);
                     data.rawResult = info;
                     data.penSerial = info.PEN_ID;
+                    data.dotpen.$Name = info.PEN_ID;
                     data.rawResult =
                         "onReceivePenInfo:" + JSON.stringify(info);
                 },
