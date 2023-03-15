@@ -32,13 +32,14 @@
                                                 width: 100%;
                                                 height: 100%;
                                             ">
-                            <canvas v-for="key in Object.keys(locals)" :key="key" :id="locals[key].id" class="canvas"
-                                :style="`background-color:${key}`" :width="locals[key].drawWidth"
-                                :height="locals[key].drawHeight">
+                            <canvas v-for="key in Object.keys(locals)" :key="key" :id="locals[key].id"
+                                :class="locals[key].className" :z-index="locals[key].index"
+                                :style="`background-color:white;display:${locals[key].display}`"
+                                :width="locals[key].drawWidth" :height="locals[key].drawHeight">
                             </canvas>
-                            <canvas v-for="key in Object.keys(remotes)" :key="key" :id="remotes[key].id" class="canvas"
-                                :style="`background-color:${key}`" :width="remotes[key].drawWidth"
-                                :height="remotes[key].drawHeight">
+                            <canvas v-for="key in Object.keys(remotes)" :key="key" :id="remotes[key].id"
+                                :class="remotes[key].className" :style="`background-color:white`"
+                                :width="remotes[key].drawWidth" :height="remotes[key].drawHeight">
                             </canvas>
                         </div>
                     </el-main>
@@ -97,11 +98,14 @@ export default {
              * @type {Canvas}
              */
             current: null,
-            locals: {
-                "#faf": new Canvas(),
-                "#aaf": new Canvas(),
-            },
-            remotes: new Map(),
+            /**
+             * @type {Object<Canvas>}
+             */
+            locals: {},
+            /**
+             * @type {Object<Canvas>}
+             */
+            remotes: {},
         };
     },
     created() {
@@ -118,15 +122,22 @@ export default {
         this.dotpen.onDraw(this.callbackHandler());
         window.drawConfig = this.drawer;
         window.locals = this.locals;
-        setTimeout(() => { vue.playImage(2); }, 500);
-        window.ADD = () => { this.add(); }
+        setTimeout(() => {
+            vue.playImage(2);
+        }, 500);
+        window.Dot = Dot;
     },
     mounted() {
         this.scrollImage(20);
         this.canvas = document.getElementById("Drawer");
-
     },
     methods: {
+        showAll() {
+            Object.keys(this.locals).forEach(x => this.locals[x].show());
+        },
+        hideAll() {
+            Object.keys(this.locals).forEach(x => this.locals[x].hide());
+        },
         callbackHandler() {
             var vue = this;
             /**
@@ -150,7 +161,7 @@ export default {
                 }
                 return c;
             };
-
+            let laterInterval = 0;
             /**
              * @param {Dot} dot
              */
@@ -160,13 +171,21 @@ export default {
                         vue.current.draw(dot);
                     }
                 } else {
+                    clearTimeout(laterInterval);
+                    vue.stopPlay();
                     if (
                         vue.current == null ||
                         vue.current.address != dot.address
                     ) {
                         vue.current = createFromLocal(dot);
                     }
+                    vue.hideAll();
                     vue.current.draw(dot);
+                    vue.current.show();
+                    laterInterval = setTimeout(() => {
+                        vue.showAll();
+                        vue.playImage(2);
+                    }, 5000);
                 }
             };
             return del;
@@ -176,12 +195,25 @@ export default {
         animate(feature) {
             this.stylePair = Animation.getOpposite(feature, "Up");
         },
-        add() { this.locals["#ffa"] = new Canvas(); },
+        add() {
+            this.locals["#ffa"] = new Canvas();
+        },
+        /**
+         * @return {Canvas[]}
+         */
+        getPictures() {
+            var ret = [];
+            Object.keys(this.locals).forEach(x => ret.push(this.locals[x]));
+            Object.keys(this.remotes).forEach(x => ret.push(this.remotes[x]));
+            return ret;
+        },
         playImage(timeout) {
             this.stopPlay();
-            let pictures = () => document.querySelectorAll(".canvas");
+            /**
+             * @return {Canvas[]}
+             */
             let nextImage = () => {
-                var pic = pictures();
+                var pic = this.getPictures();
                 if (pic.length > 1) {
                     pic[this.index].className = `canvas ${this.stylePair[1]}`; //当前图片淡出
                     this.index++;
@@ -195,6 +227,7 @@ export default {
             if (this.playInterval) {
                 clearInterval(this.playInterval);
                 this.playInterval = null;
+                this.getPictures().forEach(x => x.className = "canvas")
             }
         },
         scrollImage(timeout) {
@@ -218,7 +251,7 @@ export default {
                 clearInterval(this.scrollInterval);
                 this.scrollInterval = null;
             }
-        }
+        },
     },
 };
 </script>
@@ -302,6 +335,13 @@ export default {
             }
 
             .canvas {
+                height: 100%;
+                width: 100%;
+                left: 0;
+                position: absolute;
+            }
+
+            .front {
                 height: 100%;
                 width: 100%;
                 left: 0;
