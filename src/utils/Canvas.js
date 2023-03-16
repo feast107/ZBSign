@@ -9,10 +9,10 @@ export const DotInfo = {
 
 export class Dot {
     get X() {
-        return this.x;
+        return parseInt(this.x);
     }
     get Y() {
-        return this.y;
+        return parseInt(this.y);
     }
     get IsValid() {
         return this.x != 0 || this.y != 0;
@@ -25,6 +25,13 @@ export class Dot {
     }
     get IsMove() {
         return this.type == "move";
+    }
+    get Copy() {
+        let ret = new Dot();
+        Object.keys(this).forEach((K) => {
+            ret[K] = this[K];
+        });
+        return ret;
     }
     /**
      * @param {number} x
@@ -139,9 +146,9 @@ export class Dot {
                     if (of < 0) {
                         break;
                     }
-                    let pgA = parseInt( of / numA / numB);
+                    let pgA = parseInt(of / numA / numB);
                     let pgB = parseInt((of / numA) % numB);
-                    let pgC = parseInt( of % numA);
+                    let pgC = parseInt(of % numA);
                     ret = `${strAry[0]}.${pgA}.${pgB}.${pgC}`;
                 }
             }
@@ -187,8 +194,9 @@ export class Canvas {
      * @param {boolean} isRemote
      * @param {string} address
      * @param {number} scale
+     * @param {Document}doc
      */
-    constructor(id, config, isRemote, address, scale, penSerial, pageNum) {
+    constructor(id, config, isRemote, address, scale, penSerial, pageNum, doc = null) {
         this.id = id ?? GUID.NewGuid();
         this.config = config ?? new ContextConfig();
         this.isRemote = isRemote ?? false;
@@ -208,6 +216,9 @@ export class Canvas {
         this.index = 0;
         this.className = "canvas";
         this.display = "";
+        if(doc){
+            setTimeout(()=>{this.bind(doc)},0);
+        }
     }
     get svgs() {
         return Stroke.PointsList2SVGList(this.points);
@@ -268,6 +279,7 @@ export class Canvas {
      */
     draw(dot, canvas = null) {
         if (dot.IsUp) {
+            if (this.lastPoint == null) return;
             this.lastPoint = null;
             var length = this.points.length;
             if (length == 0) return;
@@ -278,18 +290,18 @@ export class Canvas {
                 this.pageNum
             );
             this.strokes.push(s);
-            console.log(s);
             this.points.push(new Array());
             return;
         }
         if (dot.IsDown) {
             return;
         }
-        this.points[this.points.length - 1].push(dot);
+        let d = dot.Copy;
         canvas ??= this.canvas;
         if (!canvas) return;
         this.resetDot(dot, canvas);
         if (!dot.IsValid) return;
+        this.points[this.points.length - 1].push(d);
         if (this.lastPoint == null) {
             this.lastPoint = dot;
             return;
@@ -326,7 +338,9 @@ export class Canvas {
      * @param {Document} doc
      */
     bind(doc) {
+        if(this.canvas)return;
         this.canvas = doc.getElementById(this.id);
+        if(!this.canvas)this.canvas = document.getElementById(this.id);
         console.log(this.canvas ? "绑定成功" : "绑定失败");
     }
     uploadStroke(activityId) {
@@ -347,6 +361,130 @@ export class Canvas {
             this.strokes = strokes;
         });
         return r;
+    }
+    startInterval(activityId, time = 3) {
+        this.stopInterval();
+        this.interval = setInterval(() => {}, time * 1000);
+    }
+    stopInterval() {
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
+    }
+}
+
+export class StrokeDivider {
+    /**
+     *
+     * @param {Number} pageNum
+     * @param {string} pageAddress
+     * @param {Array<Stroke>} strokes
+     * @param {string} activityId
+     * @param {string} localSerial
+     * @param {Object} localContainer
+     * @param {Object} remoteContainer
+     */
+    constructor(
+        pageNum,
+        pageAddress,
+        strokes,
+        activity,
+        localSerial,
+        localContainer,
+        remoteContainer
+    ) {
+        this.penSerial = localSerial;
+        this.activity = activity;
+        this.pageAddress = pageAddress;
+        this.pageNum = pageNum;
+        /**
+         * @type {Canvas}
+         */
+        this.local = null;
+        /**
+         * @type {Canvas}
+         */
+        this.remote = null;
+        this.localContainer = localContainer;
+        this.remoteContainer = remoteContainer;
+        this.accecptStrokes(strokes);
+        if (localContainer[pageAddress]) {
+            this.local = localContainer[pageAddress];
+        }
+        if (remoteContainer[pageAddress]) {
+            this.remote = remoteContainer[pageAddress];
+        }
+        this.index = 0;
+    }
+    /**
+     * 处理笔迹事件
+     * @param {Array<Stroke>} strokes
+     */
+    accecptStrokes(strokes) {
+        for( ; this.index < strokes.length ; this.index++){
+            let stroke = strokes[this.index];
+            /**
+             * @type {Canvas}
+             */
+            let canvas;
+            if(this.penSerial != null && stroke.s == this.penSerial){
+                canvas = this.createLocal(stroke.s);
+            }else{
+                canvas = this.createRemote(stroke.s);
+            }
+            setTimeout(()=>{
+                canvas.bind(document);
+                var points = Stroke.SVG2Points2(
+                    stroke.p,
+                    this.pageAddress
+                );
+                points.forEach((dot) => {
+                    canvas.draw(dot);
+                });
+                canvas.draw(Dot.Up);
+            },0);
+        }
+    }
+    createLocal(penSerial) {
+        if (this.local) return this.local;
+        if (this.localContainer[this.pageAddress]) {
+            this.local = this.localContainer[this.pageAddress];
+            return this.local;
+        }
+        this.localContainer[this.pageAddress] 
+        = this.local 
+        = new Canvas(null, null, false, this.pageAddress, null, penSerial, this.pageNum);
+        return this.local;
+    }
+    createRemote(penSerial){
+        if(this.remote)return this.remote;
+        if (this.remoteContainer[this.pageAddress]) {
+            this.remote = this.remoteContainer[this.pageAddress];
+            return this.remote;
+        }
+        this.remoteContainer[this.pageAddress] 
+        = this.remote 
+        = new Canvas(null, null, false, this.pageAddress, null, penSerial, this.pageNum);
+        return this.remote;
+    }
+    pollQuery(){  
+        this.stopQuery();
+        this.interval = setInterval(async()=>{
+            try{
+                let promise = await this.activity.queryStroke(page);
+                /**
+                 * @type {Array<Stroke>}
+                 */
+                 let strokes = promise.data.data;
+                accecptStrokes(strokes)
+            }catch{}
+        },3000);
+    }
+    stopQuery(){ 
+        if(!this.interval)return;
+        clearInterval(this.interval);
+        this.interval = null;
     }
 }
 
@@ -370,15 +508,16 @@ export class Stroke {
      * @param {string} svg
      * @return {Array<Dot>}
      */
-    static SVG2Points(svg,address = null) {
+    static SVG2Points(svg, address = null) {
         let ret = new Array();
+        debugger;
         if (svg == null || typeof svg != "string") return ret;
         let field = svg.split("l");
         if (field.length != 2) return ret;
         var firstPontArray = field[0].replace("M", "").split(" ");
         let firstX = parseInt(firstPontArray[0].trim());
         let firstY = parseInt(firstPontArray[1].trim());
-        ret.push(new Dot(firstX, firstY));
+        ret.push(Dot.Move(firstX, firstY, address));
 
         var pointsArray = field[1]
             .replace("l", "")
@@ -389,13 +528,55 @@ export class Stroke {
             if (i + 1 < pointsArray.length) {
                 firstX = firstX + parseInt(pointsArray[i].trim());
                 firstY = firstY + parseInt(pointsArray[i + 1].trim());
-                ret.push(Dot.Move(firstX, firstY,address));
+                ret.push(Dot.Move(firstX, firstY, address));
             }
             i++;
         }
         return ret;
     }
 
+    /**
+     *
+     * @param {string} points
+     * @param {string} address
+     * @returns
+     */
+    static SVG2Points2(points, address = null) {
+        let pointList = [];
+        /*开始转换*/
+        if (points != null && points != "") {
+            /*起始点及其他点*/
+            let firstOther = points.split("l");
+            if (firstOther != null && firstOther.length == 2) {
+                /*获取第一个点*/
+                let firstPoint = firstOther[0].replace("M", "").split(" ");
+                let firstX = parseInt(firstPoint[0]);
+                let firstY = parseInt(firstPoint[1]);
+                let firstStrokePoint = Dot.Move(firstX, firstY, address);
+                pointList.push(firstStrokePoint);
+                /*其他点*/
+                let otherPoint = firstOther[1]
+                    .replaceAll("l", "")
+                    .replaceAll("-", " -");
+                let otherPoints = otherPoint.trim().split(" ");
+                /*循环其他点*/
+                for (let i = 0; i < otherPoints.length; i++) {
+                    if (i + 1 < otherPoints.length) {
+                        let point = Dot.Move(
+                            firstX + parseInt(otherPoints[i].trim()),
+                            firstY + parseInt(otherPoints[i + 1].trim()),
+                            address
+                        );
+                        pointList.push(point);
+                        firstX = point.X;
+                        firstY = point.Y;
+                        i++;
+                    }
+                }
+            }
+        }
+        return pointList;
+    }
     /**
      * 点集合转SVG
      * @param {Array<Dot>} points
