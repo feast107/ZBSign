@@ -8,7 +8,9 @@
                             <img class="logo" :src="activity.logoUrl" />
                         </el-col>
                         <el-col :span="21">
-                            <label class="title" :style="`color:${activity.titleColor};font-size:${this.fontSize}px`">
+                            <label class="title" id="MainTitle"
+                                :style="`color:${activity.titleColor};
+                                                                                                                                                                                                                                                                                                                                                                                                    font-size:${this.fontSize}px;font-family:ForActivity;`">
                                 {{ activity.title }}
                             </label>
                         </el-col>
@@ -25,39 +27,46 @@
                         </div>
                     </el-aside>
                     <el-main style="width: 60%">
-                        <div style="
-                                                    position: relative;
-                                                    background-color: transparent;
-                                                    overflow: hidden;
-                                                    width: 100%;
-                                                    height: 100%;
-                                                ">
-                            <canvas v-for="key in Object.keys(locals)" :key="key" :id="locals[key].id"
-                                :class="locals[key].className" :z-index="locals[key].index"
-                                :style="`display:${locals[key].display};background-image:url(${activity.pageUrl})`"
-                                :width="locals[key].drawWidth" :height="locals[key].drawHeight">
-                            </canvas>
-                            <canvas v-for="key in Object.keys(remotes)" :key="key" :id="remotes[key].id"
-                                :class="remotes[key].className"
-                                :style="`display:${remotes[key].display};background-image:url(${activity.pageUrl})`"
-                                :width="remotes[key].drawWidth" :height="remotes[key].drawHeight">
-                            </canvas>
+                        <div id="MainWindow" style="
+                                    position: relative;
+                                    background-color: transparent;
+                                    overflow: hidden;
+                                    width: 100%;
+                                    height: 100%;
+                                ">
+                            <div :key="key" v-for="key in Object.keys(locals)"
+                                :style="`display:${locals[key].display};background-image:url(${activity.border}); `"
+                                :class="locals[key].className">
+                                <canvas :id="locals[key].id" :z-index="locals[key].index" class="canvasBody"
+                                    :style="`display:${locals[key].display};background-image:url(${activity.pageUrl})`"
+                                    :width="locals[key].drawWidth" :height="locals[key].drawHeight">
+                                </canvas>
+                            </div>
+                            <div :key="key" v-for="key in Object.keys(remotes)"
+                                :style="`display:${remotes[key].display};background-image:url(${activity.border});`"
+                                :class="remotes[key].className">
+                                <canvas :id="remotes[key].id" class="canvasBody"
+                                    :style="`display:${remotes[key].display};background-image:url(${activity.pageUrl})`"
+                                    :width="remotes[key].drawWidth" :height="remotes[key].drawHeight">
+                                </canvas>
+                            </div>
                         </div>
                     </el-main>
                 </el-container>
                 <el-footer style="height: 5%; text-align: end">
                     <label style="
-                                                color: white;
-                                                font-family: 'Helvetica Neue', Helvetica,
-                                                    'PingFang SC', 'Hiragino Sans GB',
-                                                    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-                                            ">
+                                color: white;
+                                font-family: 'Helvetica Neue', Helvetica,
+                                    'PingFang SC', 'Hiragino Sans GB',
+                                    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                            ">
                         技术支持：南京孜博汇信息科技有限公司
                     </label>
                 </el-footer>
             </el-container>
         </div>
-        <div id="Background" :style="`background-image: url(${activity.backgroundUrl})`"></div>
+        <el-image id="Background" fit="fill" style="width: 100%; height: 100%; z-index: 0" :src="activity.backgroundUrl">
+        </el-image>
     </div>
 </template>
 
@@ -76,12 +85,18 @@ export default {
         this.stopPlay();
         this.stopScroll();
         clearInterval(this.intervals.queryInterval);
-        this.getCanvases().forEach(x => { x.stopInterval(); });
+        Object.keys(this.strokeDividers).forEach((x) => {
+            this.strokeDividers[x].stopQuery();
+        });
+        this.getCanvases().forEach((x) => {
+            x.stopUpload();
+        });
         window.$Dispatcher.invoke(IpcMessage.FullScreen);
     },
     inject: [ComponentKey.PlayActicity, ComponentKey.Dotpen],
     data() {
         return {
+            pad: 10,
             /**
              * @type {Dotpen}
              */
@@ -97,7 +112,7 @@ export default {
                 playInterval: null,
                 queryInterval: null,
             },
-            fontSize: 40,
+            fontSize: 70,
             pictures: [],
             /**
              * @type {Canvas}
@@ -112,18 +127,25 @@ export default {
              */
             remotes: {},
             strokeDividers: {},
+            diverSize: {},
         };
     },
     created() {
         var vue = this;
+        this.loadFont(
+            "ForActivity",
+            this.activity.font
+        );
         console.log(this.activity.queryWrittenPages());
         this.intervals.queryInterval = setInterval(async () => {
             let pages;
             try {
                 //查询已经绘制的页面
                 pages = await this.activity.queryWrittenPages();
-            } catch { return; }
-            this.setPage(pages.data.data)
+            } catch {
+                return;
+            }
+            this.setPage(pages.data.data);
         }, 3000);
         document.addEventListener("keyup", (e) => {
             if (e.key == "Escape") {
@@ -136,42 +158,60 @@ export default {
         setTimeout(() => {
             vue.playImage(this.activity.Speed);
         }, 500);
+        let effects = this.activity.rollEffect.split(".");
+        this.stylePair = Animation.getOpposite(effects[0], effects[1]);
     },
     mounted() {
         this.scrollImage(20);
     },
     methods: {
+        margin() {
+            return `${this.pad}px`;
+        },
+        calc() {
+            return `calc(100% - ${this.pad * 2}%)`;
+        },
         setPage(pages) {
-            pages.forEach(async page => {
+            pages.forEach(async (page) => {
                 //判断是否已经处理过该页
-                if(this.strokeDividers[page])return;
+                if (this.strokeDividers[page]) return;
                 let promise;
                 try {
                     //初次查询笔迹
                     promise = await this.activity.queryStroke(page);
-                } catch { return; }
+                } catch {
+                    return;
+                }
                 //获取点阵地址
                 var addr = this.activity.getPageAddress(page);
                 /**
                  * @type {Array<Stroke>}
                  */
                 let strokes = promise.data.data;
-                console.log(strokes);
-                let divider = new StrokeDivider(page,
+                let divider = new StrokeDivider(
+                    page,
                     addr,
                     strokes,
                     this.activity,
                     this.dotpen.$Name,
-                    this.locals, this.remotes);
+                    this.locals,
+                    this.remotes
+                );
                 divider.accecptStrokes(strokes);
+                divider.pollQuery();
                 this.strokeDividers[page] = divider;
-            })
+            });
+        },
+        async loadFont(family, url) {
+            const font = new FontFace(family, `url(${url})`);
+            await font.load();
+            document.fonts.add(font);
         },
         showAll() {
-            this.getCanvases().forEach(x=>x.show());
+            this.getCanvases().forEach((x) => x.show());
         },
         hideAll() {
-            this.getCanvases().forEach(x=>x.hide());
+            this.getCanvases().forEach((x) => x.hide());
         },
         callbackHandler() {
             var vue = this;
@@ -195,13 +235,7 @@ export default {
                     );
                     setTimeout(() => {
                         c.bind(document);
-                        setInterval(() => {
-                            c.uploadStroke(this.activity.id)
-                                .then((r) => console.log(r))
-                                .catch((e) => {
-                                    console.log(e);
-                                });
-                        }, 3000);
+                        c.uploadInterval(vue.activity.id);
                     }, 0);
                 }
                 return c;
@@ -300,6 +334,10 @@ export default {
 </script>
 
 <style lang="scss">
+#MainTitle {
+    font-family: "ForActivity";
+}
+
 #PlayMain {
     height: 100%;
     width: 100%;
@@ -309,7 +347,7 @@ export default {
         position: fixed;
         left: 0;
         top: 0;
-        z-index: 0 !important;
+        z-index: 10 !important;
         height: 100%;
         width: 100%;
 
@@ -378,20 +416,20 @@ export default {
             }
 
             .canvas {
-                height: 100%;
                 width: 100%;
+                height: 100%;
                 left: 0;
                 position: absolute;
                 background-size: cover;
                 background-repeat: no-repeat;
                 background-position: center;
+                z-index: 10 !important;
             }
 
-            .front {
-                height: 100%;
-                width: 100%;
-                left: 0;
-                position: absolute;
+            .canvasBody {
+                width: calc(100% - 100px);
+                height: calc(100% - 100px);
+                margin: 50px;
                 background-size: cover;
                 background-repeat: no-repeat;
                 background-position: center;
@@ -410,8 +448,9 @@ export default {
         z-index: 1 !important;
         height: 100%;
         width: 100%;
+        background-color: black;
         background-image: url(../../assets/Play/RadiantBackground.jpg);
-        background-size: cover;
+        background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
     }
