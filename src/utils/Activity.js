@@ -104,8 +104,19 @@ export class Activity {
         Object.keys(this).forEach((k) => (ret[k] = this[k]));
         return ret;
     }
-    getPageAddress(pageNum){
-        return Dot.pageAddress(this.startPageAddress,pageNum);
+    getPageAddress(pageNum) {
+        return Dot.pageAddress(this.startPageAddress, pageNum);
+    }
+    get Speed() {
+        switch (this.pictureSpeed) {
+            case "3x":
+                return 2;
+            case "2x":
+                return 4;
+            case "1x":
+                return 6;
+        }
+        return 6;
     }
     getPageNum(address) {
         return Dot.pageNum(this.startPageAddress, address, this.pageCount);
@@ -143,14 +154,15 @@ export class Activity {
         });
         return ret;
     }
-    queryWrittenPages(){
-        return Request.get("/signservice/activity/queryWritePages?activityId=" + this.id);
+    queryWrittenPages() {
+        return Request.get(
+            "/signservice/activity/queryWritePages?activityId=" + this.id
+        );
     }
-    queryStroke(pageNum){
-        return Request.post("/signservice/stroke/queryStroke",
-        {
-            activityId : this.id,
-            pageNum : pageNum
+    queryStroke(pageNum) {
+        return Request.post("/signservice/stroke/queryStroke", {
+            activityId: this.id,
+            pageNum: pageNum,
         });
     }
 }
