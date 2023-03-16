@@ -1,5 +1,5 @@
 <template>
-    <el-scrollbar style="margin-right: 1px">
+    <el-scrollbar v-loading="submitting" style="margin-right: 1px">
         <el-form :model="activity" :rules="rules" label-width="120px" ref="activeForm" style="margin-right: 20px">
             <el-form-item prop="title" label="活动标题">
                 <el-input placeholder="请输入文字" v-model="activity.title" />
@@ -76,8 +76,23 @@
                         </el-option>
                     </el-select>
                 </el-popover>
-                <el-radio-group> </el-radio-group>
             </el-form-item>
+
+            <el-form-item label="签名边框">
+                <el-popover placement="right" :width="400" trigger="click">
+                    <template #reference>
+                        <el-button style="padding: 0; border: none">
+                            <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/RowEffect.svg" />
+                        </el-button>
+                    </template>
+                    <el-select v-model="activity.border" placeholder="选择效果">
+                        <el-option v-for="item in effects" :key="item.value" :label="item.label" :value="item.value">
+                            <span style="float: left">{{ item.label }}</span>
+                        </el-option>
+                    </el-select>
+                </el-popover>
+            </el-form-item>
+
             <el-form-item>
                 <el-button type="primary">预览</el-button>
                 <el-button type="primary" @click="submitForm">创建</el-button>
@@ -102,6 +117,7 @@ export default {
              */
             activity: new Activity(),
             rules: Activity.rules(),
+            submitting: false,
         };
     },
     methods: {
@@ -134,12 +150,15 @@ export default {
             ).parentElement.style.display = "";
         },
         submitForm() {
-            console.log(this.activity);
+            let vue = this;
+            this.submitting = true;
             this.activity.create()
-                .then((t) => console.log(t))
-                .catch((e) =>{
-                    console.log(e)
-                });
+                .then((_) => {
+                    this.$message.success("上传成功");
+                    this.$emit(`onJumpToList`);
+                })
+                .catch((e) => { console.log(e) })
+                .finally(() => { vue.submitting = false; })
         },
     },
 };
