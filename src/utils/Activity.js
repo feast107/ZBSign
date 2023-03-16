@@ -24,6 +24,8 @@ export class Activity {
         this.rollEffect = "";
         this.localSign = [];
 
+        this.border = "";
+
         this.startPageAddress = null;
         this.pageCount = null;
         this.pageHeight = null;
@@ -164,5 +166,15 @@ export class Activity {
             activityId: this.id,
             pageNum: pageNum,
         });
+    }
+    delete(){
+        return Request.get(`/signservice/activity/deleteActivity?activityId=${this.id}`);
+    }
+
+    static async allFont(){
+
+    }
+    static async allBorder(){
+        
     }
 }
