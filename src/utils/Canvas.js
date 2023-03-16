@@ -1,3 +1,4 @@
+import { Activity } from "./Activity";
 import { GUID } from "./Definition";
 import { Timer } from "./Format";
 import Request from "./Request";
@@ -196,7 +197,16 @@ export class Canvas {
      * @param {number} scale
      * @param {Document}doc
      */
-    constructor(id, config, isRemote, address, scale, penSerial, pageNum, doc = null) {
+    constructor(
+        id,
+        config,
+        isRemote,
+        address,
+        scale,
+        penSerial,
+        pageNum,
+        doc = null
+    ) {
         this.id = id ?? GUID.NewGuid();
         this.config = config ?? new ContextConfig();
         this.isRemote = isRemote ?? false;
@@ -216,8 +226,10 @@ export class Canvas {
         this.index = 0;
         this.className = "canvas";
         this.display = "";
-        if(doc){
-            setTimeout(()=>{this.bind(doc)},0);
+        if (doc) {
+            setTimeout(() => {
+                this.bind(doc);
+            }, 0);
         }
     }
     get svgs() {
@@ -338,9 +350,9 @@ export class Canvas {
      * @param {Document} doc
      */
     bind(doc) {
-        if(this.canvas)return;
+        if (this.canvas) return;
         this.canvas = doc.getElementById(this.id);
-        if(!this.canvas)this.canvas = document.getElementById(this.id);
+        if (!this.canvas) this.canvas = document.getElementById(this.id);
         console.log(this.canvas ? "绑定成功" : "绑定失败");
     }
     uploadStroke(activityId) {
@@ -362,15 +374,19 @@ export class Canvas {
         });
         return r;
     }
-    startInterval(activityId, time = 3) {
-        this.stopInterval();
-        this.interval = setInterval(() => {}, time * 1000);
+    uploadInterval(activityId) {
+        this.interval = setInterval(() => {
+            this.uploadStroke(activityId)
+                .then((r) => console.log(r))
+                .catch((e) => {
+                    console.log(e);
+                });
+        }, 3000);
     }
-    stopInterval() {
-        if (this.interval) {
-            clearInterval(this.interval);
-            this.interval = null;
-        }
+    stopUpload() {
+        if (!this.interval) return;
+        clearInterval(this.interval);
+        this.interval = null;
     }
 }
 
@@ -380,7 +396,7 @@ export class StrokeDivider {
      * @param {Number} pageNum
      * @param {string} pageAddress
      * @param {Array<Stroke>} strokes
-     * @param {string} activityId
+     * @param {Activity} activity
      * @param {string} localSerial
      * @param {Object} localContainer
      * @param {Object} remoteContainer
@@ -422,28 +438,26 @@ export class StrokeDivider {
      * @param {Array<Stroke>} strokes
      */
     accecptStrokes(strokes) {
-        for( ; this.index < strokes.length ; this.index++){
+        for (; this.index < strokes.length; this.index++) {
             let stroke = strokes[this.index];
             /**
              * @type {Canvas}
              */
             let canvas;
-            if(this.penSerial != null && stroke.s == this.penSerial){
+            if (this.penSerial != null && stroke.s == this.penSerial) {
                 canvas = this.createLocal(stroke.s);
-            }else{
+                canvas.uploadInterval(this.activity.id);
+            } else {
                 canvas = this.createRemote(stroke.s);
             }
-            setTimeout(()=>{
+            setTimeout(() => {
                 canvas.bind(document);
-                var points = Stroke.SVG2Points2(
-                    stroke.p,
-                    this.pageAddress
-                );
+                var points = Stroke.SVG2Points2(stroke.p, this.pageAddress);
                 points.forEach((dot) => {
                     canvas.draw(dot);
                 });
                 canvas.draw(Dot.Up);
-            },0);
+            }, 0);
         }
     }
     createLocal(penSerial) {
@@ -452,37 +466,49 @@ export class StrokeDivider {
             this.local = this.localContainer[this.pageAddress];
             return this.local;
         }
-        this.localContainer[this.pageAddress] 
-        = this.local 
-        = new Canvas(null, null, false, this.pageAddress, null, penSerial, this.pageNum);
+        this.localContainer[this.pageAddress] = this.local = new Canvas(
+            null,
+            null,
+            false,
+            this.pageAddress,
+            null,
+            penSerial,
+            this.pageNum
+        );
         return this.local;
     }
-    createRemote(penSerial){
-        if(this.remote)return this.remote;
+    createRemote(penSerial) {
+        if (this.remote) return this.remote;
         if (this.remoteContainer[this.pageAddress]) {
             this.remote = this.remoteContainer[this.pageAddress];
             return this.remote;
         }
-        this.remoteContainer[this.pageAddress] 
-        = this.remote 
-        = new Canvas(null, null, false, this.pageAddress, null, penSerial, this.pageNum);
+        this.remoteContainer[this.pageAddress] = this.remote = new Canvas(
+            null,
+            null,
+            false,
+            this.pageAddress,
+            null,
+            penSerial,
+            this.pageNum
+        );
         return this.remote;
     }
-    pollQuery(){  
+    pollQuery() {
         this.stopQuery();
-        this.interval = setInterval(async()=>{
-            try{
-                let promise = await this.activity.queryStroke(page);
+        this.interval = setInterval(async () => {
+            try {
+                let promise = await this.activity.queryStroke(this.pageNum);
                 /**
                  * @type {Array<Stroke>}
                  */
-                 let strokes = promise.data.data;
-                accecptStrokes(strokes)
-            }catch{}
-        },3000);
+                let strokes = promise.data.data;
+                accecptStrokes(strokes);
+            } catch {}
+        }, 3000);
     }
-    stopQuery(){ 
-        if(!this.interval)return;
+    stopQuery() {
+        if (!this.interval) return;
         clearInterval(this.interval);
         this.interval = null;
     }
