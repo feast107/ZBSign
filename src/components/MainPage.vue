@@ -56,10 +56,13 @@
                     </el-aside>
                     <el-main>
                         <div id="MainCard">
-                            <NewActivityView v-if="this.select == this.menu[0]" />
-                            <KeepAlive>
-                                <ActivityView @onSetActivity="onSetActivity" v-if="this.select == this.menu[1]" />
-                            </KeepAlive>
+                            <NewActivityView
+                                @onJumpToList="onJumpToList"
+                                v-if="this.select == this.menu[0]" />
+                            <ActivityView 
+                                @onSetActivity="onSetActivity" 
+                                @getActivities="getActivities"
+                                v-if="this.select == this.menu[1]" />
                             <KeepAlive>
                                 <SmartPen v-if="this.select == this.menu[2]" />
                             </KeepAlive>
@@ -120,17 +123,26 @@ export default {
             select: '新建活动',
             defaultSelect: '1',
             user: this[ComponentKey.User],
-            activities: [],
+            activities: {
+                whole:[],
+                show:[],
+            },
         }
     },
     methods: {
         onSetActivity(e) {
             this.playingActivity = e
         },
-        onEscapePreview() {
+        async onEscapePreview() {
             this.playingActivity = null;
             this.select = '活动列表';
             this.defaultSelect = '2';
+            await this.getActivities();
+        },
+        async onJumpToList(){
+            this.select = '活动列表';
+            this.defaultSelect = '2';
+            await this.getActivities();
         },
         async selectMenu() {
             this.select = this.menu[Number.parseInt(arguments[0]) - 1];
@@ -152,13 +164,13 @@ export default {
         },
         async getActivities() {
             try {
-                let a = await Activity.queryList();
-                while(this.activities.length > 0){ this.activities.pop(); }
-                let l = a.data.data;
-                l.forEach(x => {
+                let pomise = await Activity.queryList();
+                let next = [];
+                pomise.data.data.forEach(x => {
                     let ac = Activity.from(x);
-                    this.activities.push(ac);
+                    next.push(ac);
                 })
+                this.activities.whole = next;
             }
             catch { }
         }
