@@ -4,6 +4,9 @@
             <el-form-item prop="title" label="活动标题">
                 <el-input placeholder="请输入文字" v-model="activity.title" />
             </el-form-item>
+            <el-form-item prop="subTitle" label="活动副标题">
+                <el-input placeholder="可以置空" v-model="activity.subTitle" />
+            </el-form-item>
             <el-form-item label="标题颜色">
                 <el-color-picker v-model="activity.titleColor" />
             </el-form-item>
@@ -51,7 +54,11 @@
                         </el-icon>
                     </el-upload>
                 </el-popover>
-
+            </el-form-item>
+            <el-form-item label="标题尺寸">
+                <el-radio-group v-model="activity.titleSize">
+                    <el-radio v-for="item in sizes" :key="item" :label="item"></el-radio>
+                </el-radio-group>
             </el-form-item>
             <el-form-item label="照片滚动速度">
                 <el-radio-group v-model="activity.pictureSpeed">
@@ -82,19 +89,20 @@
                 <el-popover placement="right" :width="400" trigger="click">
                     <template #reference>
                         <el-button style="padding: 0; border: none">
-                            <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/RowEffect.svg" />
+                            <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/Border.svg" />
                         </el-button>
                     </template>
-                    <el-select v-model="activity.border" placeholder="选择效果">
-                        <el-option v-for="item in effects" :key="item.value" :label="item.label" :value="item.value">
-                            <span style="float: left">{{ item.label }}</span>
+                    <el-select v-model="activity.border" placeholder="选择边框">
+                        <el-option v-for="item in config.borders" :key="item.dictValue" :label="item.dictName"
+                            :value="item.dictValue">
+                            <span style="float: left">{{ item.dictName }}</span>
                         </el-option>
                     </el-select>
                 </el-popover>
             </el-form-item>
 
             <el-form-item>
-                <el-button type="primary">预览</el-button>
+                <!--<el-button type="primary">预览</el-button>-->
                 <el-button type="primary" @click="submitForm">创建</el-button>
             </el-form-item>
         </el-form>
@@ -103,14 +111,20 @@
 
 <script>
 import { Activity } from "@/utils/Activity";
-import { EffectLabel, Effects } from "@/utils/Animation";
-import Request from "@/utils/Request";
+import { EffectLabel } from "@/utils/Animation";
+import { ComponentKey } from "@/utils/Definition";
+import { DomElement } from "@/utils/Events";
 import "default-passive-events";
 export default {
+    inject: [ComponentKey.Activities],
+    created() {
+        window.activity = this.activity;
+    },
     data() {
         return {
             accpetance: "image/png,image/jpg,image/jpeg",
             speeds: ["1x", "2x", "3x"],
+            sizes: ["10", "20", "30"],
             effects: EffectLabel.getList(),
             /**
              * @type {Activity}
@@ -118,18 +132,17 @@ export default {
             activity: new Activity(),
             rules: Activity.rules(),
             submitting: false,
+            config: this[ComponentKey.Activities]
         };
     },
     methods: {
         logoUpload(file) {
             this.activity.uploadLogo(file);
-            document.getElementById("logoUpload").parentElement.style.display =
-                "none";
+            DomElement.changeIconParent("logoUpload", DomElement.hidden);
         },
         logoRemove() {
             this.activity.removeLogo();
-            document.getElementById("logoUpload").parentElement.style.display =
-                "";
+            DomElement.changeIconParent("logoUpload", DomElement.display);
         },
         pictureUpload(file) {
             this.activity.uploadPicture(file);
@@ -139,26 +152,21 @@ export default {
         },
         backgroundUpload(file) {
             this.activity.uploadBackground(file)
-            document.getElementById(
-                "backgroundUpload"
-            ).parentElement.style.display = "none";
+            DomElement.changeIconParent("backgroundUpload", DomElement.hidden);
         },
         backgroundRemove() {
             this.activity.removeBackground();
-            document.getElementById(
-                "backgroundUpload"
-            ).parentElement.style.display = "";
+            DomElement.changeIconParent("backgroundUpload", DomElement.display);
         },
-        submitForm() {
-            let vue = this;
+        async submitForm() {
             this.submitting = true;
-            this.activity.create()
-                .then((_) => {
-                    this.$message.success("上传成功");
-                    this.$emit(`onJumpToList`);
-                })
-                .catch((e) => { console.log(e) })
-                .finally(() => { vue.submitting = false; })
+            try {
+                await this.activity.create();
+                this.$message.success("创建成功");
+                this.$emit(`onJumpToList`);
+            } finally {
+                this.submitting = false;
+            }
         },
     },
 };
