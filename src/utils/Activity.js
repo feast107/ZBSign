@@ -2,11 +2,15 @@ import { Effects } from "./Animation";
 import { GUID } from "./Definition";
 import Request from "./Request";
 import { Dot } from "@/utils/Canvas";
+import { Location } from "./Location";
+
 export class Activity {
     constructor(id) {
         this.id = id ?? "";
         this.title = "";
+        this.subTitle = null;
         this.titleColor = "#000";
+        this.titleSize = "10";
 
         this.logo = null;
         this.background = null;
@@ -25,6 +29,7 @@ export class Activity {
         this.localSign = [];
 
         this.border = "";
+        this.bookId = "";
 
         this.startPageAddress = null;
         this.pageCount = null;
@@ -34,7 +39,7 @@ export class Activity {
     get PictureCount() {
         return this.pictureUrls.length;
     }
-    getFileForm() {
+    getCreateForm() {
         return Request.form({
             logo: this.logo,
             background: this.background,
@@ -42,14 +47,40 @@ export class Activity {
             localSign: this.localSign,
         });
     }
-    getDataQuery() {
+    getCreateQuery() {
         return {
             title: this.title,
+            subTitle: this.subTitle,
+            titleSize: this.titleSize,
             titleColor: this.titleColor,
+            border: this.border,
             pictureSpeed: this.pictureSpeed,
-            signSpeed: this.signSpeed,
             rollEffect: this.rollEffect,
+            signSpeed: this.signSpeed,
         };
+    }
+    /**
+     *
+     * @returns 获取删除的Query
+     */
+    getUpdateQuery() {
+        let pictures = [];
+        this.base.pictureUrls.forEach((l) => {
+            if (this.pictureUrls.findIndex((x) => x == l) < 0) {
+                pictures.push(l);
+            }
+        });
+        return {
+            activityId: this.id,
+            pictureUrls: pictures,
+        };
+    }
+    getUpdateBody() {
+        let info = this.getCreateQuery();
+        info.bookId = this.bookId;
+        info.id = this.id;
+        console.log(info);
+        return info;
     }
     static Default() {
         let ret = new Activity();
@@ -87,6 +118,7 @@ export class Activity {
     }
     removeLogo() {
         this.logo = null;
+        this.logoUrl = null;
     }
     uploadPicture(file) {
         this.pictures.push(file.raw);
@@ -100,10 +132,12 @@ export class Activity {
     }
     removeBackground() {
         this.background = null;
+        this.backgroundUrl = null;
     }
     get Copy() {
         var ret = new Activity();
         Object.keys(this).forEach((k) => (ret[k] = this[k]));
+        ret.base = this.base ?? this;
         return ret;
     }
     getPageAddress(pageNum) {
@@ -125,21 +159,33 @@ export class Activity {
     }
     create() {
         return Request.post(
-            "/signservice/activity/createActivity",
-            this.getFileForm(),
+            Location.activity("createActivity"),
+            this.getCreateForm(),
             {
                 method: "POST",
                 headers: { "Content-Type": "multipart/form-data" },
-                params: this.getDataQuery(),
+                params: this.getCreateQuery(),
             }
         );
     }
-    changeInfo() {
-        return Request.post("");
+    async changeInfo() {
+        return await Request.post(
+            Location.activity("updateActivityInfo"),
+        this.getUpdateBody());
     }
-    changeResource() {}
+    async changeResource() {
+        return await Request.post(
+            Location.activity("updateActivityInfo"),
+            this.getCreateForm(),
+            {
+                method: "POST",
+                headers: { "Content-Type": "multipart/form-data" },
+                params: this.getUpdateQuery(),
+            }
+        );
+    }
     static queryList() {
-        return Request.get("/signservice/activity/queryActivity");
+        return Request.get(Location.activity("queryActivity"));
     }
     /**
      *
@@ -158,23 +204,26 @@ export class Activity {
     }
     queryWrittenPages() {
         return Request.get(
-            "/signservice/activity/queryWritePages?activityId=" + this.id
-        );
+            Location.activity(`queryWritePages?activityId=${this.id}`));
     }
     queryStroke(pageNum) {
-        return Request.post("/signservice/stroke/queryStroke", {
+        return Request.post(
+            Location.stroke("queryStroke"), {
             activityId: this.id,
             pageNum: pageNum,
         });
     }
-    delete(){
-        return Request.get(`/signservice/activity/deleteActivity?activityId=${this.id}`);
+    delete() {
+        return Request.get(
+            Location.activity(`deleteActivity?activityId=${this.id}`)
+        );
     }
-
-    static async allFont(){
-
+    static async allFont() {
+        return await Request.get(
+            Location.dic(`queryDic?code=font`));
     }
-    static async allBorder(){
-        
+    static async allBorder() {
+        return await Request.get(
+            Location.dic(`queryDic?code=border`));
     }
 }
