@@ -10,6 +10,23 @@
             <el-form-item label="标题颜色">
                 <el-color-picker v-model="activity.titleColor" />
             </el-form-item>
+
+            <el-form-item label="标题字体">
+                <el-popover placement="right" :width="400" trigger="click">
+                    <template #reference>
+                        <el-button style="padding: 0; border: none">
+                            <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/Font.svg" />
+                        </el-button>
+                    </template>
+                    <el-select v-model="activity.font" placeholder="选择字体">
+                        <el-option v-for="item in config.fonts" :key="item.dictValue" :label="item.dictName"
+                            :value="item.dictValue">
+                            <span style="float: left">{{ item.dictName }}</span>
+                        </el-option>
+                    </el-select>
+                </el-popover>
+            </el-form-item>
+
             <el-form-item prop="logo" label="活动LOGO">
                 <el-upload class="avatar-uploader" action="#" :limit="1" :accept="accpetance" :on-change="logoUpload"
                     :on-remove="logoRemove" :auto-upload="false" list-type="picture-card">
