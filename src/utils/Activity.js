@@ -3,6 +3,7 @@ import { GUID } from "./Definition";
 import Request from "./Request";
 import { Dot } from "@/utils/Canvas";
 import { Location } from "./Location";
+import { formToJSON } from "axios";
 
 export class Activity {
     constructor(id) {
@@ -11,6 +12,7 @@ export class Activity {
         this.subTitle = null;
         this.titleColor = "#000";
         this.titleSize = "10";
+        this.font = null;
 
         this.logo = null;
         this.background = null;
@@ -35,6 +37,8 @@ export class Activity {
         this.pageCount = null;
         this.pageHeight = null;
         this.pageWidth = null;
+
+        this.willDeletePictureUrls = [];
     }
     get PictureCount() {
         return this.pictureUrls.length;
@@ -53,6 +57,7 @@ export class Activity {
             subTitle: this.subTitle,
             titleSize: this.titleSize,
             titleColor: this.titleColor,
+            font: this.font,
             border: this.border,
             pictureSpeed: this.pictureSpeed,
             rollEffect: this.rollEffect,
@@ -127,6 +132,19 @@ export class Activity {
         let index = this.pictures.findIndex((x) => x.uid == file.raw.uid);
         this.pictures.splice(index, 1);
     }
+    removePictureUrl(url) {
+        if(this.pictureUrls.remove(url)){
+            this.willDeletePictureUrls.push(url);
+        }
+    }
+    removeAllPictureUrls() {
+        if (this.pictureUrls) {
+            while (this.pictureUrls.length > 0) {
+                let url = this.pictureUrls.pop();
+                this.willDeletePictureUrls.push(url);
+            }
+        }
+    }
     uploadBackground(file) {
         this.background = file.raw;
     }
@@ -171,7 +189,8 @@ export class Activity {
     async changeInfo() {
         return await Request.post(
             Location.activity("updateActivityInfo"),
-        this.getUpdateBody());
+            this.getUpdateBody()
+        );
     }
     async changeResource() {
         return await Request.post(
@@ -204,11 +223,11 @@ export class Activity {
     }
     queryWrittenPages() {
         return Request.get(
-            Location.activity(`queryWritePages?activityId=${this.id}`));
+            Location.activity(`queryWritePages?activityId=${this.id}`)
+        );
     }
     queryStroke(pageNum) {
-        return Request.post(
-            Location.stroke("queryStroke"), {
+        return Request.post(Location.stroke("queryStroke"), {
             activityId: this.id,
             pageNum: pageNum,
         });
@@ -219,11 +238,9 @@ export class Activity {
         );
     }
     static async allFont() {
-        return await Request.get(
-            Location.dic(`queryDic?code=font`));
+        return await Request.get(Location.dic(`queryDic?code=font`));
     }
     static async allBorder() {
-        return await Request.get(
-            Location.dic(`queryDic?code=border`));
+        return await Request.get(Location.dic(`queryDic?code=border`));
     }
 }
