@@ -17,3 +17,11 @@ export class ResizeEvent {
         this.delegates.splice(index, 1);
     }
 }
+
+export class DomElement{
+    static get display(){ return ""; }
+    static get hidden(){ return "none"; }
+    static changeIconParent(id ,target){
+        document.getElementById(id).parentElement.style.display = target;
+    }
+}
