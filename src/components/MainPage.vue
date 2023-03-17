@@ -56,13 +56,9 @@
                     </el-aside>
                     <el-main>
                         <div id="MainCard">
-                            <NewActivityView
-                                @onJumpToList="onJumpToList"
-                                v-if="this.select == this.menu[0]" />
-                            <ActivityView 
-                                @onSetActivity="onSetActivity" 
-                                @getActivities="getActivities"
-                                v-if="this.select == this.menu[1]" />
+                            <NewActivityView @onJumpToList="onJumpToList" v-if="this.select == this.menu[0]" />
+                            <ActivityView @onSetActivity="onSetActivity" @getActivities="getActivities"
+                                v-if="this.select == this.menu[1] && showActivities" />
                             <KeepAlive>
                                 <SmartPen v-if="this.select == this.menu[2]" />
                             </KeepAlive>
@@ -108,7 +104,11 @@ export default {
         window[Bridges.Navigator] = document[Bridges.Navigator] = {
             [Bridges.BlueTooth]: this.bluetooth,
         };
-        await this.getActivities();
+        try {
+            await this.getActivities();
+            await this.getConfigs();
+        } finally { }
+        console.log(this.activities);
     },
     data() {
         this[ComponentKey.User].phoneNumber = "1771***807";
@@ -124,9 +124,14 @@ export default {
             defaultSelect: '1',
             user: this[ComponentKey.User],
             activities: {
-                whole:[],
-                show:[],
+                whole: [],
+                show: [],
+                borders: null,
+                fonts: null,
+                speeds: ["1x", "2x", "3x"],
+                sizes: ["10", "20", "30"]
             },
+            showActivities:true,
         }
     },
     methods: {
@@ -139,14 +144,14 @@ export default {
             this.defaultSelect = '2';
             await this.getActivities();
         },
-        async onJumpToList(){
+        async onJumpToList() {
             this.select = '活动列表';
             this.defaultSelect = '2';
             await this.getActivities();
         },
         async selectMenu() {
             this.select = this.menu[Number.parseInt(arguments[0]) - 1];
-            if(this.select == this.menu[1]){
+            if (this.select == this.menu[1]) {
                 await this.getActivities();
             }
             if (this.select == this.menu[2] && !BlueTooth.requesting()) {
@@ -162,8 +167,16 @@ export default {
                 })
             }
         },
+        async getConfigs() {
+            let bs = await Activity.allBorder();
+            let fs = await Activity.allFont();
+            this.activities.borders = bs.data.data;
+            this.activities.fonts = fs.data.data;
+        },
         async getActivities() {
             try {
+                this.showActivities = false;
+                setTimeout(()=>{ this.showActivities = true; },0)
                 let pomise = await Activity.queryList();
                 let next = [];
                 pomise.data.data.forEach(x => {
@@ -172,7 +185,7 @@ export default {
                 })
                 this.activities.whole = next;
             }
-            catch { }
+            finally { }
         }
     }
 
