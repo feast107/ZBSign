@@ -4,7 +4,8 @@ export class Location{
     static get Activity(){ return `${this.Root}/activity`; }
     static get Stroke(){ return `${this.Root}/stroke`; }
     static get Dic(){ return `${this.Root}/dic` }
-
+    static get Token(){ return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ6YmgiLCJleHAiOjE2ODAxNDg0OTIsInVzZXJJZCI6IjYyNWFiMTY0ZTRiMGQ4ZDBjNjc2MGY5NCIsInVzZXJuYW1lIjoiMTU3MjY2NjA4MzYifQ.xp5zXTbguWQScXEQS0QbNz_7PBybFI-v0jId4rG2xC0"; }
+    
     static activity(method){
         return `${this.Activity}/${method}`;
     }
