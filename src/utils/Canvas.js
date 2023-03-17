@@ -1,6 +1,7 @@
 import { Activity } from "./Activity";
 import { GUID } from "./Definition";
 import { Timer } from "./Format";
+import { Location } from "./Location";
 import Request from "./Request";
 
 export const DotInfo = {
@@ -364,7 +365,8 @@ export class Canvas {
             pageNum: this.pageNum,
             strokeList: strokes,
         };
-        let r = Request.post("/signservice/stroke/uploadStroke", data);
+
+        let r = Request.post(Location.stroke("uploadStroke"), data);
         console.log(data);
         r.catch((e) => {
             this.strokes.forEach((x) => {
