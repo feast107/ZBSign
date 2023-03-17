@@ -1,10 +1,10 @@
 import axios from "axios";
-axios.defaults.headers["token"] = 
-"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ6YmgiLCJleHAiOjE2ODAxNDg0OTIsInVzZXJJZCI6IjYyNWFiMTY0ZTRiMGQ4ZDBjNjc2MGY5NCIsInVzZXJuYW1lIjoiMTU3MjY2NjA4MzYifQ.xp5zXTbguWQScXEQS0QbNz_7PBybFI-v0jId4rG2xC0";
+import { Location } from "./Location";
+axios.defaults.headers["token"] = Location.Token;
 /*创建axios 实例*/
 const Request = axios.create({
     /*api的baseURL*/
-    baseURL : "http://47.93.86.37:8999",
+    baseURL : Location.Url,
     /*请求超时时间*/
     timeout: 60000,
 });
