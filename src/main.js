@@ -8,6 +8,8 @@ import 'vue-cropper/dist/index.css'
 import 'ideal-image-slider/ideal-image-slider.css'
 import 'ideal-image-slider/themes/default/default.css'
 import { ElMessage } from 'element-plus'
+import './utils/Global'
+
 let app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
