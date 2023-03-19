@@ -6,6 +6,6 @@ export class User{
         this.isLogin = false;
     }
     async allBook(){
-        return Request.solve(Request.get(Location.book(`queryBooks`)));
+        return Request.get(Location.book(`queryBooks`)).result();
     }
 }
