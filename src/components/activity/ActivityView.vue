@@ -546,6 +546,8 @@ export default {
     padding: 0;
     border: none !important;
     margin: 1px;
+    height: 36px;
+    width: 36px !important;
 }
 
 .Imager {
@@ -571,12 +573,6 @@ export default {
     height: 100px !important;
 }
 
-.el-popover {
-    .iconButton {
-        height: 32px;
-        width: 32px;
-    }
-}
 
 #ActivityView {
     #MainList {
