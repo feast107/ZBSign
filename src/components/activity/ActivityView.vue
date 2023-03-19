@@ -750,25 +750,22 @@ export default {
         },
         async confirmEdit() {
             if (this.editActivity.onEditInfo) {
-                try {
-                    let r = await this.editActivity.target.changeInfo();
-                    console.log(r);
+                if((await this.editActivity.target.changeInfo()).Success){
                     this.editActivity.onEditInfo = false;
-                } catch {
+                }else{
                     this.$message.error("修改失败");
                     return;
                 }
             }
             if (this.editActivity.onEditResource) {
                 this.changing = true;
-                try {
-                    await this.editActivity.target.changeResource();
+                if ((await this.editActivity.target.changeResource()).Success) {
                     this.editActivity.onEditResource = false;
-                } catch {
-                    this.$message.error("修改失败");
-                    return;
-                } finally {
                     this.changing = false;
+                } else {
+                    this.$message.error("修改失败");
+                    this.changing = false;
+                    return;
                 }
             }
             this.$message.success("修改成功");

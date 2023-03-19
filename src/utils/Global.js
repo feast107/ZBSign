@@ -4,8 +4,8 @@ export default (function () {
      * @param {Any} item
      */
     Array.prototype.remove = function (item, predicate = null) {
-        if(!predicate || typeof(predicate) != "function"){ predicate = (x) => x == item; }
-        let index = this.findIndex((x) =>  predicate(x));
+        if (!predicate || typeof (predicate) != "function") { predicate = (x) => x == item; }
+        let index = this.findIndex((x) => predicate(x));
         return index >= 0 ? this.splice(index, 1)[0] : false;
     };
     /**
@@ -53,11 +53,13 @@ export default (function () {
             let ret = await this;
             if (ret.status == 200) {
                 ret = ret.data;
-                Object.defineProperty(ret, "Success", {
+                let getter = {
                     get: function () {
                         return this.code == 1;
                     }
-                })
+                };
+                Object.defineProperty(ret, "Success", getter)
+                Object.defineProperty(ret, "success", getter)
             }
             return ret;
         } catch (e) {

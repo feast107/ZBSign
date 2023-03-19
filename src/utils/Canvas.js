@@ -367,13 +367,13 @@ export class Canvas {
         };
         console.log(r);
         return Request
-        .post(Location.stroke("uploadStroke"), data)
-        .catch(_ => {
-            this.strokes.forEach((x) => {
-                strokes.push(x);
+            .post(Location.stroke("uploadStroke"), data)
+            .catch(_ => {
+                this.strokes.forEach((x) => {
+                    strokes.push(x);
+                });
+                this.strokes = strokes;
             });
-            this.strokes = strokes;
-        });
     }
     uploadInterval(activityId) {
         this.interval = setInterval(() => {
@@ -388,6 +388,16 @@ export class Canvas {
         if (!this.interval) return;
         clearInterval(this.interval);
         this.interval = null;
+    }
+    /**
+     * @param {string} value
+     */
+    addClassName(value) {
+        if (this.className.includes(value)) return;
+        this.className += ` ${value}`;
+    }
+    removeClassName(value) {
+        this.className.replace(value, "");
     }
 }
 
@@ -498,13 +508,13 @@ export class StrokeDivider {
     pollQuery() {
         this.stopQuery();
         this.interval = setInterval(async () => {
-            let promise = await this.activity.queryStroke(this.pageNum);
+            let promise = await this.activity.queryStroke(this.pageNum).result();
             if (!promise.Success) { return; }
             /**
              * @type {Array<Stroke>}
              */
             let strokes = promise.data;
-            accecptStrokes(promise.data);
+            this.accecptStrokes(promise.data);
         }, 3000);
     }
     stopQuery() {

@@ -1,6 +1,22 @@
 <template>
     <el-scrollbar v-loading="submitting" style="margin-right: 1px">
         <el-form :model="activity" :rules="rules" label-width="120px" ref="activeForm" style="margin-right: 20px">
+            <el-form-item label="活动本子">
+                <el-popover placement="right" :width="400" trigger="click">
+                    <template #reference>
+                        <el-button style="padding: 0; border: none">
+                            <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/Border.svg" />
+                        </el-button>
+                    </template>
+                    <el-select v-model="activity.books" placeholder="选择本子">
+                        <el-option v-for="item in config.books" :key="item.bookId" 
+                            :value="item.bookId">
+                            <span style="float: left">{{ item.bookName }}</span>
+                        </el-option>
+                    </el-select>
+                </el-popover>
+            </el-form-item>
+            
             <el-form-item prop="title" label="活动标题">
                 <el-input placeholder="请输入文字" v-model="activity.title" />
             </el-form-item>

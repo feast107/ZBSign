@@ -199,13 +199,14 @@ export default {
                 //判断是否已经处理过该页
                 if (this.strokeDividers[page]) return;
                 let promise = await this.activity.queryStroke(page);
+                debugger;
                 if(!promise.Success)return;
                 //获取点阵地址
                 var addr = this.activity.getPageAddress(page);
                 /**
                  * @type {Array<Stroke>}
                  */
-                let strokes = promise.data.data;
+                let strokes = promise.data;
                 let divider = new StrokeDivider(
                     page,
                     addr,

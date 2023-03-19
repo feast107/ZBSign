@@ -3,51 +3,79 @@
         <div v-if="this.playingActivity == null" class="Main">
             <div id="Fore">
                 <el-container>
-                    <el-aside style="overflow:hidden">
-                        <div style="width: 100%; ">
-                            <div style="padding:20px">
-                                <el-row style="user-select: none;">
-                                    <img style="margin-left:10px;margin-right:10px" src="../assets/Main/Logo-2.svg" />
+                    <el-aside style="overflow: hidden">
+                        <div style="width: 100%">
+                            <div style="padding: 20px">
+                                <el-row style="user-select: none">
+                                    <img
+                                        style="
+                                            margin-left: 10px;
+                                            margin-right: 10px;
+                                        "
+                                        src="../assets/Main/Logo-2.svg"
+                                    />
                                 </el-row>
                                 <el-row justify="center">
                                     <el-col :span="8">
-                                        <el-button text style="font-size:small">当前账号:</el-button>
+                                        <el-button text style="font-size: small"
+                                            >当前账号:</el-button
+                                        >
                                     </el-col>
                                     <el-col :span="10">
-                                        <el-button text type="primary">{{ this.user.phoneNumber }}</el-button>
+                                        <el-button text type="primary">{{
+                                            this.user.phoneNumber
+                                        }}</el-button>
                                     </el-col>
                                 </el-row>
                             </div>
                         </div>
-                        <el-menu :default-active="this.defaultSelect" @select="selectMenu">
+                        <el-menu
+                            :default-active="this.defaultSelect"
+                            @select="selectMenu"
+                        >
                             <el-menu-item-group>
                                 <el-menu-item index="1">
                                     <el-row justify="center">
                                         <el-row justify="center">
-                                            <img class="menu-logo" src="../assets/Main/NewActive.svg" />
+                                            <img
+                                                class="menu-logo"
+                                                src="../assets/Main/NewActive.svg"
+                                            />
                                         </el-row>
                                         <el-row justify="center">
-                                            <label class="menu-text">新建活动</label>
+                                            <label class="menu-text"
+                                                >新建活动</label
+                                            >
                                         </el-row>
                                     </el-row>
                                 </el-menu-item>
                                 <el-menu-item index="2">
                                     <el-row justify="center">
                                         <el-row justify="center">
-                                            <img class="menu-logo" src="../assets/Main/ActiveList.svg" />
+                                            <img
+                                                class="menu-logo"
+                                                src="../assets/Main/ActiveList.svg"
+                                            />
                                         </el-row>
                                         <el-row justify="center">
-                                            <label class="menu-text">活动列表</label>
+                                            <label class="menu-text"
+                                                >活动列表</label
+                                            >
                                         </el-row>
                                     </el-row>
                                 </el-menu-item>
                                 <el-menu-item index="3">
                                     <el-row justify="center">
                                         <el-row justify="center">
-                                            <img class="menu-logo" src="../assets/Main/SmartPen.svg" />
+                                            <img
+                                                class="menu-logo"
+                                                src="../assets/Main/SmartPen.svg"
+                                            />
                                         </el-row>
                                         <el-row justify="center">
-                                            <label class="menu-text">智能笔</label>
+                                            <label class="menu-text"
+                                                >智能笔</label
+                                            >
                                         </el-row>
                                     </el-row>
                                 </el-menu-item>
@@ -56,9 +84,18 @@
                     </el-aside>
                     <el-main>
                         <div id="MainCard">
-                            <NewActivityView @onJumpToList="onJumpToList" v-if="this.select == this.menu[0]" />
-                            <ActivityView @onSetActivity="onSetActivity" @getActivities="getActivities"
-                                v-if="this.select == this.menu[1] && showActivities" />
+                            <NewActivityView
+                                @onJumpToList="onJumpToList"
+                                v-if="this.select == this.menu[0]"
+                            />
+                            <ActivityView
+                                @onSetActivity="onSetActivity"
+                                @getActivities="getActivities"
+                                v-if="
+                                    this.select == this.menu[1] &&
+                                    showActivities
+                                "
+                            />
                             <KeepAlive>
                                 <SmartPen v-if="this.select == this.menu[2]" />
                             </KeepAlive>
@@ -74,9 +111,16 @@
     </div>
 </template>
 <script>
-import { computed } from 'vue'
+import { computed } from "vue";
 import { Activity } from "@/utils/Activity";
-import { ComponentKey, Bridges, IpcMessage, Dotpen, BlueTooth } from "@/utils/Definition";
+import { User } from "@/utils/User";
+import {
+    ComponentKey,
+    Bridges,
+    IpcMessage,
+    Dotpen,
+    BlueTooth,
+} from "@/utils/Definition";
 import SmartPen from "./connect/SmartPen.vue";
 import PlayPage from "./animations/PlayPage.vue";
 import ActivityView from "./activity/ActivityView.vue";
@@ -93,9 +137,11 @@ export default {
         return {
             [ComponentKey.Dotpen]: computed(() => this.dotpen),
             [ComponentKey.Activities]: computed(() => this.activities),
-            [ComponentKey.ModifingActivity]: computed(() => { return null; }),
-            [ComponentKey.PlayActicity]: computed(() => this.playingActivity)
-        }
+            [ComponentKey.ModifingActivity]: computed(() => {
+                return null;
+            }),
+            [ComponentKey.PlayActicity]: computed(() => this.playingActivity),
+        };
     },
     async created() {
         window[Bridges.Dispatcher].listen(IpcMessage.BlueToothList, (list) => {
@@ -107,7 +153,8 @@ export default {
         try {
             await this.getActivities();
             await this.getConfigs();
-        } finally { }
+        } finally {
+        }
         console.log(this.activities);
     },
     data() {
@@ -119,9 +166,12 @@ export default {
             playingActivity: null,
             dotpen: new Dotpen(),
             bluetooth: BlueTooth,
-            menu: ['新建活动', '活动列表', '智能笔'],
-            select: '新建活动',
-            defaultSelect: '1',
+            menu: ["新建活动", "活动列表", "智能笔"],
+            select: "新建活动",
+            defaultSelect: "1",
+            /**
+             * @type {User}
+             */
             user: this[ComponentKey.User],
             activities: {
                 whole: [],
@@ -129,24 +179,24 @@ export default {
                 borders: null,
                 fonts: null,
                 speeds: ["1x", "2x", "3x"],
-                sizes: ["10", "20", "30"]
+                sizes: ["10", "20", "30"],
             },
-            showActivities:true,
-        }
+            showActivities: true,
+        };
     },
     methods: {
         onSetActivity(e) {
-            this.playingActivity = e
+            this.playingActivity = e;
         },
         async onEscapePreview() {
             this.playingActivity = null;
-            this.select = '活动列表';
-            this.defaultSelect = '2';
+            this.select = "活动列表";
+            this.defaultSelect = "2";
             await this.getActivities();
         },
         async onJumpToList() {
-            this.select = '活动列表';
-            this.defaultSelect = '2';
+            this.select = "活动列表";
+            this.defaultSelect = "2";
             await this.getActivities();
         },
         async selectMenu() {
@@ -159,34 +209,37 @@ export default {
                     filters: [
                         {
                             namePrefix: "TD",
-                            services: [
-                                "0000fff0-0000-1000-8000-00805f9b34fb",
-                            ],
+                            services: ["0000fff0-0000-1000-8000-00805f9b34fb"],
                         },
                     ],
-                })
+                });
             }
         },
         async getConfigs() {
             let bs = await Activity.allBorder();
             let fs = await Activity.allFont();
+            let bks = await this.user.allBook();
             this.activities.borders = bs.data;
             this.activities.fonts = fs.data;
+            this.activities.books = bks.data;
         },
         async getActivities() {
-                this.showActivities = false;
-                setTimeout(()=>{ this.showActivities = true; },0)
-                let promise = await Activity.queryList();
-                if(!promise){ return; }
-                let next = [];
-                promise.data.forEach(x => {
-                    let ac = Activity.from(x);
-                    next.push(ac);
-                })
-                this.activities.whole = next;
-        }
-    }
-
+            this.showActivities = false;
+            setTimeout(() => {
+                this.showActivities = true;
+            }, 0);
+            let promise = await Activity.queryList();
+            if (!promise) {
+                return;
+            }
+            let next = [];
+            promise.data.forEach((x) => {
+                let ac = Activity.from(x);
+                next.push(ac);
+            });
+            this.activities.whole = next;
+        },
+    },
 };
 </script>
 <style scoped lang="scss">
