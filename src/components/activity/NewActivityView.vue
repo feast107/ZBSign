@@ -177,13 +177,13 @@ export default {
         },
         async submitForm() {
             this.submitting = true;
-            try {
-                await this.activity.create();
+            if(await this.activity.create()){
                 this.$message.success("创建成功");
                 this.$emit(`onJumpToList`);
-            } finally {
-                this.submitting = false;
+            }else{
+                this.$message.error("创建失败");
             }
+            this.submitting = false;
         },
     },
 };
