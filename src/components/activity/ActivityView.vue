@@ -741,7 +741,7 @@ export default {
          */
         edit(target) {
             this.editActivity.onEditInfo = true;
-            this.editActivity.target = target.Copy;
+            this.editActivity.target = target.copy;
         },
         cancelEdit() {
             this.editActivity.onEditInfo = false;
@@ -777,7 +777,7 @@ export default {
          */
         editResource(target) {
             this.editActivity.onEditResource = true;
-            this.editActivity.target = target.Copy;
+            this.editActivity.target = target.copy;
         },
         /**
          * @param {Activity} activity
