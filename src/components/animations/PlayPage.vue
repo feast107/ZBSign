@@ -8,9 +8,12 @@
                             <img class="logo" :src="activity.logoUrl" />
                         </el-col>
                         <el-col :span="21">
-                            <label class="title" id="MainTitle"
+                            <label
+                                class="title"
+                                id="MainTitle"
                                 :style="`color:${activity.titleColor};
-                                                                                                                                                                                                                                                                                                                                                                                                    font-size:${this.fontSize}px;font-family:ForActivity;`">
+                                                                                                                                                                                                                                                                                                                                                                                                    font-size:${this.fontSize}px;font-family:ForActivity;`"
+                            >
                                 {{ activity.title }}
                             </label>
                         </el-col>
@@ -20,52 +23,80 @@
                     <el-aside style="width: 40%; padding: 20px">
                         <div id="Pictures">
                             <ul>
-                                <li v-for="url in activity.pictureUrls" :key="url">
+                                <li
+                                    v-for="url in activity.pictureUrls"
+                                    :key="url"
+                                >
                                     <img :src="url" />
                                 </li>
                             </ul>
                         </div>
                     </el-aside>
                     <el-main style="width: 60%">
-                        <div id="MainWindow" style="
-                                    position: relative;
-                                    background-color: transparent;
-                                    overflow: hidden;
-                                    width: 100%;
-                                    height: 100%;
-                                ">
-                            <div :key="key" v-for="key in Object.keys(locals)"
+                        <div
+                            id="MainWindow"
+                            style="
+                                position: relative;
+                                background-color: transparent;
+                                overflow: hidden;
+                                width: 100%;
+                                height: 100%;
+                            "
+                        >
+                            <div
+                                :key="key"
+                                v-for="key in Object.keys(locals)"
                                 :style="`display:${locals[key].display};background-image:url(${activity.border}); `"
-                                :class="locals[key].className">
-                                <canvas :id="locals[key].id" :z-index="locals[key].index" class="canvasBody"
+                                :class="locals[key].className"
+                            >
+                                <canvas
+                                    :id="locals[key].id"
+                                    :z-index="locals[key].index"
+                                    class="canvasBody"
                                     :style="`display:${locals[key].display};background-image:url(${activity.pageUrl})`"
-                                    :width="locals[key].drawWidth" :height="locals[key].drawHeight">
+                                    :width="locals[key].drawWidth"
+                                    :height="locals[key].drawHeight"
+                                >
                                 </canvas>
                             </div>
-                            <div :key="key" v-for="key in Object.keys(remotes)"
+                            <div
+                                :key="key"
+                                v-for="key in Object.keys(remotes)"
                                 :style="`display:${remotes[key].display};background-image:url(${activity.border});`"
-                                :class="remotes[key].className">
-                                <canvas :id="remotes[key].id" class="canvasBody"
+                                :class="remotes[key].className"
+                            >
+                                <canvas
+                                    :id="remotes[key].id"
+                                    class="canvasBody"
                                     :style="`display:${remotes[key].display};background-image:url(${activity.pageUrl})`"
-                                    :width="remotes[key].drawWidth" :height="remotes[key].drawHeight">
+                                    :width="remotes[key].drawWidth"
+                                    :height="remotes[key].drawHeight"
+                                >
                                 </canvas>
                             </div>
                         </div>
                     </el-main>
                 </el-container>
                 <el-footer style="height: 5%; text-align: end">
-                    <label style="
-                                color: white;
-                                font-family: 'Helvetica Neue', Helvetica,
-                                    'PingFang SC', 'Hiragino Sans GB',
-                                    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-                            ">
+                    <label
+                        style="
+                            color: white;
+                            font-family: 'Helvetica Neue', Helvetica,
+                                'PingFang SC', 'Hiragino Sans GB',
+                                'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                        "
+                    >
                         技术支持：南京孜博汇信息科技有限公司
                     </label>
                 </el-footer>
             </el-container>
         </div>
-        <el-image id="Background" fit="fill" style="width: 100%; height: 100%; z-index: 0" :src="activity.backgroundUrl">
+        <el-image
+            id="Background"
+            fit="fill"
+            style="width: 100%; height: 100%; z-index: 0"
+            :src="activity.backgroundUrl"
+        >
         </el-image>
     </div>
 </template>
@@ -132,27 +163,19 @@ export default {
     },
     created() {
         var vue = this;
-        this.loadFont(
-            "ForActivity",
-            this.activity.font
-        );
-        console.log(this.activity.queryWrittenPages());
+        this.loadFont("ForActivity", this.activity.font);
         this.intervals.queryInterval = setInterval(async () => {
-            let pages;
-            try {
-                //查询已经绘制的页面
-                pages = await this.activity.queryWrittenPages();
-            } catch {
-                return;
-            }
-            this.setPage(pages.data.data);
+            //查询已经绘制的页面
+            let pages = await this.activity.queryWrittenPages();
+            if (!pages.Success) { return; }
+            this.setPage(pages.data);
         }, 3000);
         document.addEventListener("keyup", (e) => {
             if (e.key == "Escape") {
                 vue.$emit("onEscapePreview", null);
             }
         });
-        ResizeEvent.on((width, height) => { });
+        ResizeEvent.on((width, height) => {});
         this.dotpen.onDraw(this.callbackHandler());
         window.locals = this.locals;
         setTimeout(() => {
@@ -175,13 +198,8 @@ export default {
             pages.forEach(async (page) => {
                 //判断是否已经处理过该页
                 if (this.strokeDividers[page]) return;
-                let promise;
-                try {
-                    //初次查询笔迹
-                    promise = await this.activity.queryStroke(page);
-                } catch {
-                    return;
-                }
+                let promise = await this.activity.queryStroke(page);
+                if(!promise.Success)return;
                 //获取点阵地址
                 var addr = this.activity.getPageAddress(page);
                 /**
