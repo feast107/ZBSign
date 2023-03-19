@@ -9,7 +9,7 @@
                         </el-button>
                     </template>
                     <el-select v-model="activity.books" placeholder="选择本子">
-                        <el-option v-for="item in config.books" :key="item.bookId" 
+                        <el-option v-for="item in config.books" :key="item.bookId" :label="item.bookName"
                             :value="item.bookId">
                             <span style="float: left">{{ item.bookName }}</span>
                         </el-option>
