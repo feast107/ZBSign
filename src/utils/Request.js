@@ -63,6 +63,7 @@ Request.form = (data) => {
     });
     return ret;
 };
+
 Request.blob = (raw) => {
     return new Promise((res, rej) => {
         let reader = new FileReader();
@@ -76,4 +77,25 @@ Request.blob = (raw) => {
         };
     });
 };
+
+/**
+ * 
+ * @param {Promise} request 
+ */
+Request.solve = async (request) => { 
+    try{
+        let response = await request;
+        let data = response.data;
+        console.log(data);
+        if( data.code == 1 ){
+            return data;
+        }else{
+            console.warn(data.msg);
+            return false;
+        }
+    }catch(e){
+        console.warn(e) 
+        return false;
+     }
+}
 export default Request;
