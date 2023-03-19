@@ -3,8 +3,9 @@ export default (function () {
      * Remove specified target
      * @param {Any} item
      */
-    Array.prototype.remove = function (item) {
-        let index = this.findIndex((x) => x == item);
+    Array.prototype.remove = function (item, predicate = null) {
+        if(!predicate || typeof(predicate) != "function"){ predicate = (x) => x == item; }
+        let index = this.findIndex((x) =>  predicate(x));
         return index >= 0 ? this.splice(index, 1)[0] : false;
     };
     /**
@@ -47,4 +48,25 @@ export default (function () {
     Date.prototype.timeStamp = function () {
         return this - new Date(1970, 1, 1);
     };
+    Promise.prototype.result = async function () {
+        try {
+            let ret = await this;
+            if (ret.status == 200) {
+                ret = ret.data;
+                Object.defineProperty(ret, "Success", {
+                    get: function () {
+                        return this.code == 1;
+                    }
+                })
+            }
+            return ret;
+        } catch (e) {
+            return {
+                get Success() { return false; },
+                code: 0,
+                msg: e,
+                data: null,
+            }
+        }
+    }
 })();
