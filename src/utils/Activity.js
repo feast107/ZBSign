@@ -176,7 +176,7 @@ export class Activity {
         return Dot.pageNum(this.startPageAddress, address, this.pageCount);
     }
     create() {
-        return Request.post(
+        return Request.solve(Request.post(
             Location.activity("createActivity"),
             this.getCreateForm(),
             {
@@ -184,7 +184,7 @@ export class Activity {
                 headers: { "Content-Type": "multipart/form-data" },
                 params: this.getCreateQuery(),
             }
-        );
+        ));
     }
     async changeInfo() {
         return await Request.post(
@@ -204,7 +204,7 @@ export class Activity {
         );
     }
     static queryList() {
-        return Request.get(Location.activity("queryActivity"));
+        return Request.solve(Request.get(Location.activity("queryActivity")));
     }
     /**
      *
@@ -233,14 +233,14 @@ export class Activity {
         });
     }
     delete() {
-        return Request.get(
+        return Request.solve( Request.get(
             Location.activity(`deleteActivity?activityId=${this.id}`)
-        );
+        ));
     }
     static async allFont() {
-        return await Request.get(Location.dic(`queryDic?code=font`));
+        return await Request.solve(Request.get(Location.dic(`queryDic?code=font`)));
     }
     static async allBorder() {
-        return await Request.get(Location.dic(`queryDic?code=border`));
+        return await Request.solve(Request.get(Location.dic(`queryDic?code=border`)));
     }
 }
