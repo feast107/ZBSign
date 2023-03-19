@@ -3,7 +3,6 @@ import { GUID } from "./Definition";
 import Request from "./Request";
 import { Dot } from "@/utils/Canvas";
 import { Location } from "./Location";
-import { formToJSON } from "axios";
 
 export class Activity {
     constructor(id) {
@@ -38,6 +37,9 @@ export class Activity {
         this.pageHeight = null;
         this.pageWidth = null;
 
+        /**
+         * @type {Array<string>} 亟待删除的图片链接
+         */
         this.willDeletePictureUrls = [];
     }
     get PictureCount() {
@@ -58,6 +60,7 @@ export class Activity {
             titleSize: this.titleSize,
             titleColor: this.titleColor,
             font: this.font,
+            bookId: this.bookId,
             border: this.border,
             pictureSpeed: this.pictureSpeed,
             rollEffect: this.rollEffect,
@@ -129,7 +132,7 @@ export class Activity {
         this.pictures.push(file.raw);
     }
     removePicture(file) {
-        this.pictures.remove(null,(x) => x.uid == file.raw.uid);
+        this.pictures.remove(null, (x) => x.uid == file.raw.uid);
     }
     removePictureUrl(url) {
         if (this.pictureUrls.remove(url)) {
@@ -152,10 +155,7 @@ export class Activity {
         this.backgroundUrl = null;
     }
     get Copy() {
-        var ret = new Activity();
-        Object.keys(this).forEach((k) => (ret[k] = this[k]));
-        ret.base = this.base ?? this;
-        return ret;
+        return Object.copy(this,Activity);
     }
     getPageAddress(pageNum) {
         return Dot.pageAddress(this.startPageAddress, pageNum);
