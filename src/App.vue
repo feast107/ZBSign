@@ -33,7 +33,6 @@ export default {
 		Request.error(500,(e)=>{ this.$message.error("服务器异常"); });
 		let bs = await this.user.allBook();
 		if(bs){
-			debugger;
 		}
 	}
 };
