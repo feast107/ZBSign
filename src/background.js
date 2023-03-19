@@ -21,6 +21,7 @@ async function createWindow() {
         title: "孜博汇签到程序",
         minWidth: 960,
         minHeight: 540,
+        maxWidth : width,
         frame: true,
         transparent: false,
         fullscreenable: true,
