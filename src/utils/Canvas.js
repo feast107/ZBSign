@@ -356,7 +356,7 @@ export class Canvas {
         if (!this.canvas) this.canvas = document.getElementById(this.id);
         console.log(this.canvas ? "绑定成功" : "绑定失败");
     }
-    uploadStroke(activityId) {
+    async uploadStroke(activityId) {
         if (this.strokes.length == 0) return Promise.resolve(true);
         let strokes = this.strokes;
         this.strokes = [];
@@ -365,16 +365,15 @@ export class Canvas {
             pageNum: this.pageNum,
             strokeList: strokes,
         };
-
-        let r = Request.post(Location.stroke("uploadStroke"), data);
-        console.log(data);
-        r.catch((e) => {
+        console.log(r);
+        return Request
+        .post(Location.stroke("uploadStroke"), data)
+        .catch(_ => {
             this.strokes.forEach((x) => {
                 strokes.push(x);
             });
             this.strokes = strokes;
         });
-        return r;
     }
     uploadInterval(activityId) {
         this.interval = setInterval(() => {
@@ -499,14 +498,13 @@ export class StrokeDivider {
     pollQuery() {
         this.stopQuery();
         this.interval = setInterval(async () => {
-            try {
-                let promise = await this.activity.queryStroke(this.pageNum);
-                /**
-                 * @type {Array<Stroke>}
-                 */
-                let strokes = promise.data.data;
-                accecptStrokes(strokes);
-            } catch {}
+            let promise = await this.activity.queryStroke(this.pageNum);
+            if (!promise.Success) { return; }
+            /**
+             * @type {Array<Stroke>}
+             */
+            let strokes = promise.data;
+            accecptStrokes(promise.data);
         }, 3000);
     }
     stopQuery() {
@@ -663,5 +661,5 @@ export class Stroke {
         return ret;
     }
 
-    static PointsList2SVGList(points) {}
+    static PointsList2SVGList(points) { }
 }
