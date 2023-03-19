@@ -18,12 +18,14 @@ async function createWindow() {
     const { width, height } = primaryDisplay.workAreaSize;
     // Create the browser window.
     const mainWin = application.createWindow(WindowType.Main, {
+        title: "孜博汇签到程序",
         minWidth: 960,
         minHeight: 540,
         frame: true,
         transparent: false,
         fullscreenable: true,
         autoHideMenuBar: true,
+        icon: path.join(__static,"./icon.ico"),
         //fullscreen: true,
         //simpleFullscreen:true,
         webPreferences: {
@@ -129,7 +131,7 @@ app.on("ready", async () => {
     if (isDevelopment && !process.env.IS_TEST) {
         // Install Vue Devtools
         try {
-            await installExtension(VUEJS3_DEVTOOLS);
+            //await installExtension(VUEJS3_DEVTOOLS);
         } catch (e) {
             console.error("Vue Devtools failed to install:", e.toString());
         }
