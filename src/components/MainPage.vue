@@ -22,7 +22,7 @@
                                         >
                                     </el-col>
                                     <el-col :span="10">
-                                        <el-button text type="primary">{{
+                                        <el-button text style="background-color:transparent" type="primary">{{
                                             this.user.phoneNumber
                                         }}</el-button>
                                     </el-col>
@@ -292,7 +292,7 @@ svg {
 
 .el-aside {
     height: 100% !important;
-    width: 23% !important;
+    width: 220px !important;
 }
 
 .el-menu {
