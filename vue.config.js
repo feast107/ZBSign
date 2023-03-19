@@ -4,6 +4,7 @@ module.exports = defineConfig({
     pluginOptions: {
         electronBuilder: {
             preload: "src/preload.js",
+            chainWebpackMainProcess : (_) => "src/background.js",
         },
     },
 });
