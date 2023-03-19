@@ -89,9 +89,8 @@
                 </el-popover>
             </el-form-item>
             <el-form-item label="标题尺寸">
-                <el-radio-group v-model="activity.titleSize">
-                    <el-radio v-for="item in sizes" :key="item" :label="item"></el-radio>
-                </el-radio-group>
+                <el-slider :min="10" :max="50" style="width:200px" v-model="activity.titleSize">
+                </el-slider>
             </el-form-item>
             <el-form-item label="照片滚动速度">
                 <el-radio-group v-model="activity.pictureSpeed">
