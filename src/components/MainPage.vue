@@ -170,22 +170,20 @@ export default {
         async getConfigs() {
             let bs = await Activity.allBorder();
             let fs = await Activity.allFont();
-            this.activities.borders = bs.data.data;
-            this.activities.fonts = fs.data.data;
+            this.activities.borders = bs.data;
+            this.activities.fonts = fs.data;
         },
         async getActivities() {
-            try {
                 this.showActivities = false;
                 setTimeout(()=>{ this.showActivities = true; },0)
-                let pomise = await Activity.queryList();
+                let promise = await Activity.queryList();
+                if(!promise){ return; }
                 let next = [];
-                pomise.data.data.forEach(x => {
+                promise.data.forEach(x => {
                     let ac = Activity.from(x);
                     next.push(ac);
                 })
                 this.activities.whole = next;
-            }
-            finally { }
         }
     }
 
