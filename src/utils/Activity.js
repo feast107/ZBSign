@@ -10,7 +10,7 @@ export class Activity {
         this.title = "";
         this.subTitle = null;
         this.titleColor = "#000";
-        this.titleSize = "10";
+        this.titleSize = 10;
         this.font = null;
 
         this.logo = null;
@@ -57,7 +57,7 @@ export class Activity {
         return {
             title: this.title,
             subTitle: this.subTitle,
-            titleSize: this.titleSize,
+            titleSize: String(this.titleSize),
             titleColor: this.titleColor,
             font: this.font,
             bookId: this.bookId,
@@ -132,7 +132,7 @@ export class Activity {
         this.pictures.push(file.raw);
     }
     removePicture(file) {
-        this.pictures.remove(null, (x) => x.uid == file.raw.uid);
+        this.pictures.remove(file.raw);
     }
     removePictureUrl(url) {
         if (this.pictureUrls.remove(url)) {
@@ -153,9 +153,6 @@ export class Activity {
     removeBackground() {
         this.background = null;
         this.backgroundUrl = null;
-    }
-    get Copy() {
-        return Object.copy(this,Activity);
     }
     getPageAddress(pageNum) {
         return Dot.pageAddress(this.startPageAddress, pageNum);
