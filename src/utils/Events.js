@@ -22,6 +22,8 @@ export class DomElement{
     static get display(){ return ""; }
     static get hidden(){ return "none"; }
     static changeIconParent(id ,target){
-        document.getElementById(id).parentElement.style.display = target;
+        let dom = document.getElementById(id);
+        if(!dom || !dom.parentElement) return;
+        dom.parentElement.style.display = target;
     }
 }
