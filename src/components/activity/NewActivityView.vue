@@ -89,8 +89,7 @@
                 </el-popover>
             </el-form-item>
             <el-form-item label="标题尺寸">
-                <el-slider :min="10" :max="50" style="width:200px" v-model="activity.titleSize">
-                </el-slider>
+                <el-slider :min="config.minSize" :max="config.maxSize" style="width:200px" v-model="activity.titleSize" />
             </el-form-item>
             <el-form-item label="照片滚动速度">
                 <el-radio-group v-model="activity.pictureSpeed">
@@ -146,7 +145,6 @@ import { Activity } from "@/utils/Activity";
 import { EffectLabel } from "@/utils/Animation";
 import { ComponentKey } from "@/utils/Definition";
 import { DomElement } from "@/utils/Events";
-import "default-passive-events";
 export default {
     inject: [ComponentKey.Activities],
     created() {
@@ -156,7 +154,6 @@ export default {
         return {
             accpetance: "image/png,image/jpg,image/jpeg",
             speeds: ["1x", "2x", "3x"],
-            sizes: ["10", "20", "30"],
             effects: EffectLabel.getList(),
             /**
              * @type {Activity}

@@ -5,17 +5,35 @@
                 <el-header style="height: 20%">
                     <el-row>
                         <el-col :span="3">
-                            <img class="logo" :src="activity.logoUrl" />
+                            <img
+                                v-if="activity.HasLogo"
+                                class="logo"
+                                :src="activity.logoUrl"
+                            />
                         </el-col>
                         <el-col :span="21">
-                            <label
-                                class="title"
-                                id="MainTitle"
-                                :style="`color:${activity.titleColor};
-                                                                                                                                                                                                                                                                                                                                                                                                    font-size:${this.fontSize}px;font-family:ForActivity;`"
-                            >
-                                {{ activity.title }}
-                            </label>
+                            <el-row>
+                                <label
+                                    class="title"
+                                    id="MainTitle"
+                                    :style="`color:${activity.titleColor};font-size:${activity.titleSize}px;font-family:ForActivity;`"
+                                >
+                                    {{ activity.title }}
+                                </label>
+                            </el-row>
+                            <el-row v-if="activity.HasSubTitle">
+                                <label
+                                    class="title"
+                                    id="SubTitle"
+                                    :style="`color:${
+                                        activity.titleColor
+                                    };font-size:${
+                                        activity.titleSize / 3
+                                    }px;font-family:ForActivity;`"
+                                >
+                                    {{ activity.subTitle }}
+                                </label>
+                            </el-row>
                         </el-col>
                     </el-row>
                 </el-header>
@@ -167,7 +185,9 @@ export default {
         this.intervals.queryInterval = setInterval(async () => {
             //查询已经绘制的页面
             let pages = await this.activity.queryWrittenPages();
-            if (!pages.Success) { return; }
+            if (!pages.Success) {
+                return;
+            }
             this.setPage(pages.data);
         }, 3000);
         document.addEventListener("keyup", (e) => {
@@ -178,14 +198,16 @@ export default {
         ResizeEvent.on((width, height) => {});
         this.dotpen.onDraw(this.callbackHandler());
         window.locals = this.locals;
-        setTimeout(() => {
-            vue.playImage(this.activity.Speed);
-        }, 500);
+
         let effects = this.activity.rollEffect.split(".");
         this.stylePair = Animation.getOpposite(effects[0], effects[1]);
     },
     mounted() {
         this.scrollImage(20);
+        let vue = this;
+        setTimeout(() => {
+            vue.playImage(this.activity.Speed);
+        }, 3000);
     },
     methods: {
         margin() {
@@ -199,8 +221,7 @@ export default {
                 //判断是否已经处理过该页
                 if (this.strokeDividers[page]) return;
                 let promise = await this.activity.queryStroke(page);
-                debugger;
-                if(!promise.Success)return;
+                if (!promise.Success) return;
                 //获取点阵地址
                 var addr = this.activity.getPageAddress(page);
                 /**
@@ -371,8 +392,6 @@ export default {
         width: 100%;
 
         .el-row {
-            height: 100%;
-
             .el-col {
                 height: 100%;
             }
@@ -391,6 +410,7 @@ export default {
                 font-weight: 1000;
                 margin: 0 !important;
                 height: 100%;
+                width: 100%;
                 user-select: none;
                 letter-spacing: 10px;
                 pointer-events: none;

@@ -310,13 +310,7 @@
                         </el-popover>
                     </el-form-item>
                     <el-form-item label="标题尺寸">
-                        <el-radio-group v-model="editActivity.target.titleSize">
-                            <el-radio
-                                v-for="item in activities.sizes"
-                                :key="item"
-                                :label="item"
-                            ></el-radio>
-                        </el-radio-group>
+                        <el-slider :min="activities.minSize" :max="activities.maxSize" style="width:200px" v-model="editActivity.target.titleSize" />
                     </el-form-item>
                     <el-form-item label="照片滚动速度">
                         <el-radio-group
@@ -621,6 +615,9 @@ import { Timer } from "@/utils/Format";
 import { DomElement } from "@/utils/Events";
 export default {
     inject: [ComponentKey.Activities, ComponentKey.PlayActicity],
+    beforeMount() {
+        this.setShow(this.activities);
+    },
     data() {
         return {
             Timer: Timer,
@@ -650,9 +647,6 @@ export default {
             },
             changing: false,
         };
-    },
-    beforeMount() {
-        this.setShow(this.activities);
     },
     watch: {
         activities(old, newValue) {
@@ -750,9 +744,9 @@ export default {
         },
         async confirmEdit() {
             if (this.editActivity.onEditInfo) {
-                if((await this.editActivity.target.changeInfo()).Success){
+                if ((await this.editActivity.target.changeInfo()).Success) {
                     this.editActivity.onEditInfo = false;
-                }else{
+                } else {
                     this.$message.error("修改失败");
                     return;
                 }

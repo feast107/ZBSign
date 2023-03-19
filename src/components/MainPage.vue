@@ -179,7 +179,8 @@ export default {
                 borders: null,
                 fonts: null,
                 speeds: ["1x", "2x", "3x"],
-                sizes: ["10", "20", "30"],
+                minSize:10,
+                maxSize:100,
             },
             showActivities: true,
         };

@@ -45,6 +45,8 @@ export class Activity {
     get PictureCount() {
         return this.pictureUrls.length;
     }
+    get HasLogo(){ return this.logoUrl && this.logoUrl != "" }
+    get HasSubTitle(){ return this.subTitle && this.subTitle != "" }
     getCreateForm() {
         return Request.form({
             logo: this.logo,
@@ -213,10 +215,16 @@ export class Activity {
     static from(other) {
         let ret = new Activity();
         Object.keys(other).forEach((x) => {
-            if (x == "createTime") {
-                ret[x] = new Date(Number(other[x]));
-            } else {
-                ret[x] = other[x];
+            switch (x) {
+                case "createTime":
+                    ret[x] = new Date(Number(other[x]));
+                    break;
+                case "titleSize":
+                    ret[x] = Number(other[x]);
+                    break;
+                default:
+                    ret[x] = other[x];
+                    break;
             }
         });
         return ret;
