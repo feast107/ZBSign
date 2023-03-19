@@ -10,43 +10,31 @@ export default (function () {
     };
     /**
      *
-     * @param {Any} target
-     * @param {Class|undefined} any
+     * @param {Any} from
+     * @param {Class|undefined} type
      * @returns
      */
-    Object.copy = function (target, any = null) {
-        if (!target) return;
+    Object.copy = function (from) {
+        if (!from || typeof (from) != 'object') return;
         let ret;
-        if (any) {
-            switch (typeof any) {
-                case "function":
-                    try {
-                        ret = any();
-                    } catch {
-                        ret = new any();
-                    }
-                    break;
-                default:
-                    ret = any;
-            }
-        } else {
-            ret = {};
-        }
-        if (target instanceof Array) {
-            let ret = [];
-            target.forEach((x) => {
+        if (from instanceof Array) {
+            ret = [];
+            from.forEach((x) => {
                 ret.push(x);
             });
             return ret;
         } else {
-            Object.keys(target).forEach((k) => {
-                ret[k] = target[k];
+            try {
+                ret = new from.__proto__.constructor();
+            } catch { ret = {} }
+            Object.keys(from).forEach((k) => {
+                ret[k] = from[k];
             });
             return ret;
         }
     };
     Date.prototype.timeStamp = function () {
-        return this - new Date(1970, 1, 1);
+        return this - new Date(1970);
     };
     Promise.prototype.result = async function () {
         try {
