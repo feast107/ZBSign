@@ -129,11 +129,10 @@ export class Activity {
         this.pictures.push(file.raw);
     }
     removePicture(file) {
-        let index = this.pictures.findIndex((x) => x.uid == file.raw.uid);
-        this.pictures.splice(index, 1);
+        this.pictures.remove(null,(x) => x.uid == file.raw.uid);
     }
     removePictureUrl(url) {
-        if(this.pictureUrls.remove(url)){
+        if (this.pictureUrls.remove(url)) {
             this.willDeletePictureUrls.push(url);
         }
     }
@@ -176,35 +175,39 @@ export class Activity {
         return Dot.pageNum(this.startPageAddress, address, this.pageCount);
     }
     create() {
-        return Request.solve(Request.post(
-            Location.activity("createActivity"),
-            this.getCreateForm(),
-            {
-                method: "POST",
-                headers: { "Content-Type": "multipart/form-data" },
-                params: this.getCreateQuery(),
-            }
-        ));
+        return Request
+            .post(
+                Location.activity("createActivity"),
+                this.getCreateForm(),
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "multipart/form-data" },
+                    params: this.getCreateQuery(),
+                })
+            .result();
     }
     async changeInfo() {
-        return await Request.post(
-            Location.activity("updateActivityInfo"),
-            this.getUpdateBody()
-        );
+        return Request
+            .post(
+                Location.activity("updateActivityInfo"),
+                this.getUpdateBody())
+            .result();
     }
     async changeResource() {
-        return await Request.post(
-            Location.activity("updateActivityInfo"),
-            this.getCreateForm(),
-            {
-                method: "POST",
-                headers: { "Content-Type": "multipart/form-data" },
-                params: this.getUpdateQuery(),
-            }
-        );
+        return Request
+            .post(Location.activity("updateActivityInfo"),
+                this.getCreateForm(),
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "multipart/form-data" },
+                    params: this.getUpdateQuery(),
+                }
+            ).result();
     }
     static queryList() {
-        return Request.solve(Request.get(Location.activity("queryActivity")));
+        return Request
+            .get(Location.activity("queryActivity"))
+            .result();
     }
     /**
      *
@@ -222,25 +225,29 @@ export class Activity {
         return ret;
     }
     queryWrittenPages() {
-        return Request.get(
-            Location.activity(`queryWritePages?activityId=${this.id}`)
-        );
+        return Request
+            .get(Location.activity(`queryWritePages?activityId=${this.id}`))
+            .result();
     }
     queryStroke(pageNum) {
         return Request.post(Location.stroke("queryStroke"), {
             activityId: this.id,
             pageNum: pageNum,
-        });
+        }).result();
     }
-    delete() {
-        return Request.solve( Request.get(
-            Location.activity(`deleteActivity?activityId=${this.id}`)
-        ));
+    async delete() {
+        return await Request
+            .get(Location.activity(`deleteActivity?activityId=${this.id}`))
+            .result();
     }
     static async allFont() {
-        return await Request.solve(Request.get(Location.dic(`queryDic?code=font`)));
+        return await Request
+            .get(Location.dic(`queryDic?code=font`))
+            .result();
     }
     static async allBorder() {
-        return await Request.solve(Request.get(Location.dic(`queryDic?code=border`)));
+        return await Request
+            .get(Location.dic(`queryDic?code=border`))
+            .result();
     }
 }
