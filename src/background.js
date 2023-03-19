@@ -46,13 +46,13 @@ async function createWindow() {
         mainWin.loadURL("app://./index.html");
     }
     Events.Register(ipcMain);
-    let aspectRatio = 1920/1080;
+    let aspectRatio = 1920 / 1080;
     mainWin.on("will-resize", (event, newBounds) => {
         const win = event.sender;
         event.preventDefault(); // 拦截，使窗口先不变
         const currentSize = win.getSize();
         const widthChanged = currentSize[0] !== newBounds.width; // 判断是宽变了还是高变了，两者都变优先按宽适配
-        // ! 虽然搞不懂为何有1px偏差，但是可以解决问题(Windows 10)
+        //虽然搞不懂为何有1px偏差，但是可以解决问题(Windows 10)
         if (widthChanged) {
             win.setContentSize(
                 newBounds.width - 1,
