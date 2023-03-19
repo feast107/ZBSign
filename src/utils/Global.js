@@ -1,38 +1,42 @@
 export default (function () {
+    let copy = (from, to) => {
+        Object.keys(from).forEach((k) => {
+            to[k] = from[k];
+        });
+    }
     /**
      * Remove specified target
      * @param {Any} item
      */
-    Array.prototype.remove = function (item, predicate = null) {
-        if (!predicate || typeof (predicate) != "function") { predicate = (x) => x == item; }
-        let index = this.findIndex((x) => predicate(x));
+    Array.prototype.remove = function (item) {
+        let index = this.findIndex((x) => Object.is(x, item));
         return index >= 0 ? this.splice(index, 1)[0] : false;
     };
-    /**
-     *
-     * @param {Any} from
-     * @param {Class|undefined} type
-     * @returns
-     */
-    Object.copy = function (from) {
-        if (!from || typeof (from) != 'object') return;
-        let ret;
-        if (from instanceof Array) {
-            ret = [];
-            from.forEach((x) => {
-                ret.push(x);
-            });
-            return ret;
-        } else {
-            try {
-                ret = new from.__proto__.constructor();
-            } catch { ret = {} }
-            Object.keys(from).forEach((k) => {
-                ret[k] = from[k];
-            });
-            return ret;
+    Object.defineProperty(Object.prototype, 'copy',
+        {
+            get: function () {
+                let ret;
+                if (this instanceof Array) {
+                    ret = new Array();
+                    this.forEach((x) => {
+                        ret.push(x);
+                    });
+                } else if (this instanceof Map) {
+                    ret = new Map();
+                    let tmp = Object.fromEntries(this);
+                    Object.keys(tmp).forEach(k => {
+                        ret.set(k, tmp[k]);
+                    })
+                } else {
+                    ret = new Object();
+                    ret.__proto__ = this.__proto__;
+                }
+                copy(this, ret);
+                return ret;
+            },
+            set: (_) => { }
         }
-    };
+    )
     Date.prototype.timeStamp = function () {
         return this - new Date(1970);
     };
