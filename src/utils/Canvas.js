@@ -232,6 +232,7 @@ export class Canvas {
                 this.bind(doc);
             }, 0);
         }
+        this.events = [];
     }
     get svgs() {
         return Stroke.PointsList2SVGList(this.points);
@@ -279,6 +280,8 @@ export class Canvas {
         this.className = "canvas";
         console.log(`${this.id} 下降`);
     }
+    trigger(sender){ this.events.forEach(x=>x(sender)) }
+    listen(handler){ this.events.push(handler) }
     show() {
         this.display = "";
     }
@@ -486,6 +489,7 @@ export class StrokeDivider {
             penSerial,
             this.pageNum
         );
+        this.local.listen(async (_)=>{  await this.doQuery(); })
         return this.local;
     }
     createRemote(penSerial) {
@@ -503,24 +507,29 @@ export class StrokeDivider {
             penSerial,
             this.pageNum
         );
+        this.remote.listen(async (_)=>{  await this.doQuery(); })
         return this.remote;
     }
-    pollQuery() {
-        this.stopQuery();
-        this.interval = setInterval(async () => {
-            let promise = await this.activity.queryStroke(this.pageNum).result();
-            if (!promise.Success) { return; }
-            /**
-             * @type {Array<Stroke>}
-             */
-            let strokes = promise.data;
-            this.accecptStrokes(promise.data);
-        }, 3000);
-    }
-    stopQuery() {
-        if (!this.interval) return;
-        clearInterval(this.interval);
-        this.interval = null;
+    // pollQuery() {
+    //     this.stopQuery();
+    //     this.interval = setInterval(async () => {
+    //        //await this.doQuery();
+    //     }, 3000);
+    // }
+    // stopQuery() {
+    //     if (!this.interval) return;
+    //     clearInterval(this.interval);
+    //     this.interval = null;
+    // }
+    async doQuery(){
+        let promise = await this.activity.queryStroke(this.pageNum);
+        if (!promise.Success) { return; }
+        /**
+         * @type {Array<Stroke>}
+         */
+        let strokes = promise.data;
+        this.accecptStrokes(promise.data);
+        console.log(`${this.pageNum}页 拉取新的笔迹 总共:[${strokes.length}]条 新增:[${strokes.length - this.index}]条`)
     }
 }
 
