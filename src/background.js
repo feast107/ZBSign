@@ -30,6 +30,7 @@ async function createWindow() {
         //fullscreen: true,
         //simpleFullscreen:true,
         webPreferences: {
+            partition: String(+new Date()),
             nodeIntegration: true,
             contextIsolation: true,
             preload: path.join(__dirname, "/preload.js"),
