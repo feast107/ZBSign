@@ -99,11 +99,11 @@ export class EffectLabel {
         var vs = this.value.split(".");
         return Animation.getOpposite(vs[0], vs[1]);
     }
-    static get effect(){
+    static get effect() {
         return (value) => {
             var vs = value.split(".");
-        return Animation.getOpposite(vs[0], vs[1]);
-        }
+            return Animation.getOpposite(vs[0], vs[1]);
+        };
     }
 }
 
@@ -113,3 +113,105 @@ export const Effects = {
     FadeLeft: new EffectLabel("淡入淡出 (左)", "fade.Left"),
     FadeRight: new EffectLabel("淡入淡出 (右)", "fade.Right"),
 };
+
+export class EndlessPlayer {
+    /**
+     *
+     * @param {function} elementGetter
+     */
+    constructor(elementGetter) {
+        this.interval = null;
+        this.index = -1;
+        this.getter = elementGetter;
+    }
+    /**
+     *
+     * @param {Number} second
+     * @returns {EndlessPlayer}
+     */
+    bySeconds(second) {
+        this.Between = 1000 * second;
+        return this;
+    }
+    byMillionSeconds(millionSecond){
+        this.Between = millionSecond;
+        return this;
+    }
+    /**
+     * @param {Number} value
+     */
+    set Between(value){
+        this.between = value;
+        if(this.interval){
+            this.start();
+        }
+    }
+    /**
+     *
+     * @param {function} action
+     * @returns {EndlessPlayer}
+     */
+    beforeRound(action) {
+        this.beforeRoundAction = action;
+        return this;
+    }
+    /**
+     *
+     * @param {function} action
+     * @returns {EndlessPlayer}
+     */
+    afterAll(action) {
+        this.afterAllAction = action;
+        return this;
+    }
+    /**
+     *
+     * @param {function} action
+     * @returns {EndlessPlayer}
+     */
+    whenElementIn(action) {
+        this.inAction = action;
+        return this;
+    }
+    /**
+     *
+     * @param {function} action
+     * @returns {EndlessPlayer}
+     */
+    whenElementOut(action) {
+        this.outAction = action;
+        return this;
+    }
+    Index(length, change = false) {
+        if (change) this.index--;
+        if (this.index < 0) {
+            this.index = length - 1;
+        }
+        return this.index;
+    }
+    play() {
+        this.start();
+    }
+    start() {
+        this.stop();
+        let nextImage = () => {
+            var elements = this.getter();
+            this.beforeRoundAction();
+            if (elements.length > 1) {
+                let element = elements[this.Index(elements.length)];
+                this.inAction(element);
+
+                element = elements[this.Index(elements.length, true)];
+                this.outAction(element);
+            }
+        };
+        this.interval = setInterval(nextImage, this.between);
+    }
+    stop() {
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.afterAllAction();
+            this.interval = null;
+        }
+    }
+}
