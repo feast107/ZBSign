@@ -37,6 +37,9 @@ export class Activity {
         this.pageHeight = null;
         this.pageWidth = null;
 
+        this.leftBorder = null;
+        this.rightBorder = null;
+        this.mask = "#fff";
         /**
          * @type {Array<string>} 亟待删除的图片链接
          */
@@ -45,8 +48,12 @@ export class Activity {
     get PictureCount() {
         return this.pictureUrls.length;
     }
-    get HasLogo(){ return this.logoUrl && this.logoUrl != "" }
-    get HasSubTitle(){ return this.subTitle && this.subTitle != "" }
+    get HasLogo() {
+        return this.logoUrl && this.logoUrl != "";
+    }
+    get HasSubTitle() {
+        return this.subTitle && this.subTitle != "";
+    }
     getCreateForm() {
         return Request.form({
             logo: this.logo,
@@ -74,15 +81,9 @@ export class Activity {
      * @returns 获取删除的Query
      */
     getUpdateQuery() {
-        let pictures = [];
-        this.base.pictureUrls.forEach((l) => {
-            if (this.pictureUrls.findIndex((x) => x == l) < 0) {
-                pictures.push(l);
-            }
-        });
         return {
-            activityId: this.id,
-            pictureUrls: pictures,
+            id: this.id,
+            pictureUrls: this.willDeletePictureUrls + '',
         };
     }
     getUpdateBody() {
@@ -174,39 +175,35 @@ export class Activity {
         return Dot.pageNum(this.startPageAddress, address, this.pageCount);
     }
     create() {
-        return Request
-            .post(
-                Location.activity("createActivity"),
-                this.getCreateForm(),
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "multipart/form-data" },
-                    params: this.getCreateQuery(),
-                })
-            .result();
+        return Request.post(
+            Location.activity("createActivity"),
+            this.getCreateForm(),
+            {
+                method: "POST",
+                headers: { "Content-Type": "multipart/form-data" },
+                params: this.getCreateQuery(),
+            }
+        ).result();
     }
     async changeInfo() {
-        return Request
-            .post(
-                Location.activity("updateActivityInfo"),
-                this.getUpdateBody())
-            .result();
+        return Request.post(
+            Location.activity("updateActivityInfo"),
+            this.getUpdateBody()
+        ).result();
     }
     async changeResource() {
-        return Request
-            .post(Location.activity("updateActivityInfo"),
-                this.getCreateForm(),
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "multipart/form-data" },
-                    params: this.getUpdateQuery(),
-                }
-            ).result();
+        return Request.post(
+            Location.activity("updateActivityFile"),
+            this.getCreateForm(),
+            {
+                method: "POST",
+                headers: { "Content-Type": "multipart/form-data" },
+                params: this.getUpdateQuery(),
+            }
+        ).result();
     }
     static queryList() {
-        return Request
-            .get(Location.activity("queryActivity"))
-            .result();
+        return Request.get(Location.activity("queryActivity")).result();
     }
     /**
      *
@@ -230,9 +227,9 @@ export class Activity {
         return ret;
     }
     queryWrittenPages() {
-        return Request
-            .get(Location.activity(`queryWritePages?activityId=${this.id}`))
-            .result();
+        return Request.get(
+            Location.activity(`queryWritePages?activityId=${this.id}`)
+        ).result();
     }
     queryStroke(pageNum) {
         return Request.post(Location.stroke("queryStroke"), {
@@ -241,18 +238,14 @@ export class Activity {
         }).result();
     }
     async delete() {
-        return await Request
-            .get(Location.activity(`deleteActivity?activityId=${this.id}`))
-            .result();
+        return await Request.get(
+            Location.activity(`deleteActivity?activityId=${this.id}`)
+        ).result();
     }
     static async allFont() {
-        return await Request
-            .get(Location.dic(`queryDic?code=font`))
-            .result();
+        return await Request.get(Location.dic(`queryDic?code=font`)).result();
     }
     static async allBorder() {
-        return await Request
-            .get(Location.dic(`queryDic?code=border`))
-            .result();
+        return await Request.get(Location.dic(`queryDic?code=border`)).result();
     }
 }
