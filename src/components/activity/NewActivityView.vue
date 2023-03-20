@@ -5,7 +5,7 @@
                 <el-popover placement="right" :width="400" trigger="click">
                     <template #reference>
                         <el-button style="padding: 0; border: none">
-                            <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/Border.svg" />
+                            <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/Book.svg" />
                         </el-button>
                     </template>
                     <el-select v-model="activity.books" placeholder="选择本子">
