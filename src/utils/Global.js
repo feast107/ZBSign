@@ -44,6 +44,7 @@ export default (function () {
         try {
             let ret = await this;
             if (ret.status == 200) {
+                console.log(ret)
                 ret = ret.data;
                 let getter = {
                     get: function () {
@@ -52,7 +53,7 @@ export default (function () {
                 };
                 Object.defineProperty(ret, "Success", getter)
                 Object.defineProperty(ret, "success", getter)
-            }
+              }
             return ret;
         } catch (e) {
             return {
