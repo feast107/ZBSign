@@ -35,6 +35,9 @@ export default {
             can: this["canvas"],
         };
     },
+    methods:{
+        
+    }
 };
 </script>
 
