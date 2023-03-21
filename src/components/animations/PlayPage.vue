@@ -168,7 +168,7 @@ export default {
         this.stylePair = Animation.getOpposite(effects[0], effects[1]);
 
         this.player = new EndlessPlayer(this.getCanvases)
-            .bySeconds(3)
+            .bySeconds(this.activity.Speed)
             .whenElementIn((e) => {
                 e.show();
                 e.className = `canvas ${this.stylePair[1]}`;
@@ -279,7 +279,7 @@ export default {
                     }
                 } else {
                     clearTimeout(laterInterval);
-                    vue.stopPlay();
+                    vue.player.stop();
                     if (
                         vue.current == null ||
                         vue.current.address != dot.address
@@ -291,7 +291,7 @@ export default {
                     vue.current.show();
                     laterInterval = setTimeout(() => {
                         vue.showAll();
-                        vue.playImage(this.activity.Speed);
+                        vue.player.play();
                     }, 5000);
                 }
             };
