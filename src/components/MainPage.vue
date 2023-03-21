@@ -145,7 +145,7 @@ export default {
     },
     async created() {
         window[Bridges.Dispatcher].listen(IpcMessage.BlueToothList, (list) => {
-            this.dotpen.$ScanList = list[0];
+            this.dotpen.$ScanList = list;
         });
         window[Bridges.Navigator] = document[Bridges.Navigator] = {
             [Bridges.BlueTooth]: this.bluetooth,
