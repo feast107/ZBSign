@@ -4,10 +4,14 @@ import { Timer } from "./Format";
 import { Location } from "./Location";
 import Request from "./Request";
 
-export const DotInfo = {
-    width: 5600,
-    height: 3960,
-};
+export class DotInfo {
+    static get width() {
+        return 5600;
+    }
+    static get height() {
+        return 3960;
+    }
+}
 
 export class Dot {
     get X() {
@@ -270,8 +274,12 @@ export class Canvas {
         dot.y = y;
         return dot;
     }
-    trigger(sender) { this.events.forEach(x => x(sender)) }
-    listen(handler) { this.events.push(handler) }
+    trigger(sender) {
+        this.events.forEach((x) => x(sender));
+    }
+    listen(handler) {
+        this.events.push(handler);
+    }
     show() {
         this.display = "";
     }
@@ -362,14 +370,14 @@ export class Canvas {
             pageNum: this.pageNum,
             strokeList: strokes,
         };
-        return Request
-            .post(Location.stroke("uploadStroke"), data)
-            .catch(_ => {
+        return Request.post(Location.stroke("uploadStroke"), data).catch(
+            (_) => {
                 this.strokes.forEach((x) => {
                     strokes.push(x);
                 });
                 this.strokes = strokes;
-            });
+            }
+        );
     }
     uploadInterval(activityId) {
         this.interval = setInterval(() => {
@@ -478,7 +486,9 @@ export class StrokeDivider {
             penSerial,
             this.pageNum
         );
-        this.local.listen(async (_) => { await this.doQuery(); })
+        this.local.listen(async (_) => {
+            await this.doQuery();
+        });
         return this.local;
     }
     createRemote(penSerial) {
@@ -496,18 +506,26 @@ export class StrokeDivider {
             penSerial,
             this.pageNum
         );
-        this.remote.listen(async (_) => { await this.doQuery(); })
+        this.remote.listen(async (_) => {
+            await this.doQuery();
+        });
         return this.remote;
     }
     async doQuery() {
         let promise = await this.activity.queryStroke(this.pageNum);
-        if (!promise.Success) { return; }
+        if (!promise.Success) {
+            return;
+        }
         /**
          * @type {Array<Stroke>}
          */
         let strokes = promise.data;
         this.accecptStrokes(promise.data);
-        console.log(`${this.pageNum}页 拉取新的笔迹 总共:[${strokes.length}]条 新增:[${strokes.length - this.index}]条`)
+        console.log(
+            `${this.pageNum}页 拉取新的笔迹 总共:[${strokes.length}]条 新增:[${
+                strokes.length - this.index
+            }]条`
+        );
     }
 }
 
@@ -658,5 +676,5 @@ export class Stroke {
         return ret;
     }
 
-    static PointsList2SVGList(points) { }
+    static PointsList2SVGList(points) {}
 }
