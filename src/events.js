@@ -16,14 +16,14 @@ export const Events = {
             app.quit();
         });
         ipcMain.on(IpcMessage.Log, (e, ...args) => {
-            application.$Logger.log("This is test logger info", args);
+            application.$Logger.log("This is test logger info", ...args);
         });
         ipcMain.on(IpcMessage.Self, (e) => {
             e.sender.$Scope.send(IpcMessage.Self, e.sender.$Scope.$Name);
         });
         ipcMain.on(IpcMessage.BlueToothPair, (e, ...args) => {
             console.log({ event: e, response: args });
-            this.bluetoothPinCallback(args);
+            this.bluetoothPinCallback(...args);
         });
         ipcMain.on(IpcMessage.FullScreen, (e) => {
             e.sender.$Scope.setFullScreen();
