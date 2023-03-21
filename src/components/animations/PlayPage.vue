@@ -247,10 +247,10 @@ export default {
                         vue.dotpen.$Name,
                         vue.activity.getPageNum(dot.address)
                     );
-                    setTimeout(() => {
+                    //setTimeout(() => {
                         c.bind(document);
                         c.uploadInterval(vue.activity.id);
-                    }, 0);
+                    //}, 0);
                 }
                 return c;
             };
