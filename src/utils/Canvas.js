@@ -280,8 +280,8 @@ export class Canvas {
         this.className = "canvas";
         console.log(`${this.id} 下降`);
     }
-    trigger(sender){ this.events.forEach(x=>x(sender)) }
-    listen(handler){ this.events.push(handler) }
+    trigger(sender) { this.events.forEach(x => x(sender)) }
+    listen(handler) { this.events.push(handler) }
     show() {
         this.display = "";
     }
@@ -292,11 +292,13 @@ export class Canvas {
      *
      * @param {Dot} dot
      * @param {HTMLCanvasElement} canvas
+     * @param {boolean} store 是否需要存储
      */
-    draw(dot, canvas = null) {
+    draw(dot, canvas = null, store = true) {
         if (dot.IsUp) {
             if (this.lastPoint == null) return;
             this.lastPoint = null;
+            if (!store) return;
             var length = this.points.length;
             if (length == 0) return;
             if (this.points[length - 1].length == 0) return;
@@ -317,7 +319,9 @@ export class Canvas {
         if (!canvas) return;
         this.resetDot(dot, canvas);
         if (!dot.IsValid) return;
-        this.points[this.points.length - 1].push(d);
+        if (store) {
+            this.points[this.points.length - 1].push(d);
+        }
         if (this.lastPoint == null) {
             this.lastPoint = dot;
             return;
@@ -368,7 +372,6 @@ export class Canvas {
             pageNum: this.pageNum,
             strokeList: strokes,
         };
-        console.log(r);
         return Request
             .post(Location.stroke("uploadStroke"), data)
             .catch(_ => {
@@ -381,7 +384,7 @@ export class Canvas {
     uploadInterval(activityId) {
         this.interval = setInterval(() => {
             this.uploadStroke(activityId)
-                .then((r) => console.log(r))
+                .then(() => console.log("上传成功"))
                 .catch((e) => {
                     console.log(e);
                 });
@@ -468,9 +471,9 @@ export class StrokeDivider {
                 canvas.bind(document);
                 var points = Stroke.SVG2Points2(stroke.p, this.pageAddress);
                 points.forEach((dot) => {
-                    canvas.draw(dot);
+                    canvas.draw(dot, null, false);
                 });
-                canvas.draw(Dot.Up);
+                canvas.draw(Dot.Up, null, false);
             }, 0);
         }
     }
@@ -489,7 +492,7 @@ export class StrokeDivider {
             penSerial,
             this.pageNum
         );
-        this.local.listen(async (_)=>{  await this.doQuery(); })
+        this.local.listen(async (_) => { await this.doQuery(); })
         return this.local;
     }
     createRemote(penSerial) {
@@ -507,7 +510,7 @@ export class StrokeDivider {
             penSerial,
             this.pageNum
         );
-        this.remote.listen(async (_)=>{  await this.doQuery(); })
+        this.remote.listen(async (_) => { await this.doQuery(); })
         return this.remote;
     }
     // pollQuery() {
@@ -521,7 +524,7 @@ export class StrokeDivider {
     //     clearInterval(this.interval);
     //     this.interval = null;
     // }
-    async doQuery(){
+    async doQuery() {
         let promise = await this.activity.queryStroke(this.pageNum);
         if (!promise.Success) { return; }
         /**
