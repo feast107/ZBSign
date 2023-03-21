@@ -15,10 +15,7 @@ export class Scope {
         Object.keys(LogLevel).forEach((level) => {
             let handler = LogLevel[level];
             this.$Logger[handler] = function (...args) {
-                if(args.length == 1 && args[0] instanceof Array){
-                    args = args[0];
-                }
-                window.webContents.send(IpcMessage.Log, handler, args);
+                window.webContents.send(IpcMessage.Log, handler, ...args);
             };
         });
         this.$IsFullScreen = false;
@@ -27,7 +24,7 @@ export class Scope {
         this.$Window.close();
     }
     send(handler, ...args) {
-        this.$Window.webContents.send(handler, args);
+        this.$Window.webContents.send(handler, ...args);
     }
     setFullScreen(){
         this.$Window.setFullScreen(!this.$IsFullScreen);
@@ -44,7 +41,7 @@ export class Application {
             let handler = LogLevel[level];
             this.$Logger[handler] = (...args) => {
                 ref.getAllWindow().forEach((win) =>
-                    win.webContents.$Scope.$Logger[handler](args)
+                    win.webContents.$Scope.$Logger[handler](...args)
                 );
             };
         });
