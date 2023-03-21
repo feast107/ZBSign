@@ -36,6 +36,7 @@ export class Activity {
         this.pageCount = null;
         this.pageHeight = null;
         this.pageWidth = null;
+        this.pageUrl = null;
 
         this.leftBorder = null;
         this.rightBorder = null;
