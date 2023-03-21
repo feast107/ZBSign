@@ -50,26 +50,8 @@
                                     width: 100%;
                                     height: 100%;
                                 ">
-                            <div :key="key" v-for="key in Object.keys(locals)"
-                                :style="`display:${locals[key].display};background-image:url(${activity.rightBorder}); `"
-                                :class="locals[key].className">
-                                <canvas :id="locals[key].id" :z-index="locals[key].index" class="canvasBody"
-                                    :style="`z-index:30;background-color:#aaaa0040`" :width="locals[key].drawWidth"
-                                    :height="locals[key].drawHeight">
-                                </canvas>
-                                <div :style="`background-image:url(${activity.pageUrl});z-index:20`" class="canvasBody">
-                                </div>
-                            </div>
-                            <div :key="key" v-for="key in Object.keys(remotes)"
-                                :style="`display:${remotes[key].display};background-image:url(${activity.rightBorder});`"
-                                :class="remotes[key].className">
-                                <canvas :id="remotes[key].id" class="canvasBody"
-                                    :style="`z-index:30;background-color:#aaaa0040`" :width="remotes[key].drawWidth"
-                                    :height="remotes[key].drawHeight">
-                                </canvas>
-                                <div :style="`background-image:url(${activity.pageUrl});z-index:20`" class="canvasBody">
-                                </div>
-                            </div>
+                            <Container :key="key" v-for="key in Object.keys(locals)" :canvas="locals[key]"></Container>
+                            <Container :key="key" v-for="key in Object.keys(remotes)" :canvas="remotes[key]"></Container>
                         </div>
                     </el-main>
                 </el-container>
@@ -96,8 +78,12 @@ import { Animation, EndlessPlayer } from "@/utils/Animation";
 import { ComponentKey, Dotpen, IpcMessage } from "@/utils/Definition";
 import { ResizeEvent } from "@/utils/Events";
 import { Canvas, Dot, Stroke, StrokeDivider } from "@/utils/Canvas";
+import  Container  from './Container.vue'
 import { Activity } from "@/utils/Activity";
 export default {
+    components:{
+        Container,
+    },
     beforeCreate() {
         window.$Dispatcher.invoke(IpcMessage.FullScreen);
     },
@@ -440,16 +426,7 @@ export default {
                 z-index: 10 !important;
             }
 
-            .canvasBody {
-                left: 0;
-                position: absolute;
-                width: calc(100% - 100px);
-                height: calc(100% - 100px);
-                margin: 50px;
-                background-size: cover;
-                background-repeat: no-repeat;
-                background-position: center;
-            }
+            
 
             label {
                 user-select: none;
