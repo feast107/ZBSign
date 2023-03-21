@@ -270,16 +270,6 @@ export class Canvas {
         dot.y = y;
         return dot;
     }
-    bringToFront() {
-        this.index = 80;
-        this.className = "front";
-        console.log(`${this.id} 上升`);
-    }
-    bringBack() {
-        this.index = 0;
-        this.className = "canvas";
-        console.log(`${this.id} 下降`);
-    }
     trigger(sender) { this.events.forEach(x => x(sender)) }
     listen(handler) { this.events.push(handler) }
     show() {
@@ -383,11 +373,7 @@ export class Canvas {
     }
     uploadInterval(activityId) {
         this.interval = setInterval(() => {
-            this.uploadStroke(activityId)
-                .then(() => console.log("上传成功"))
-                .catch((e) => {
-                    console.log(e);
-                });
+            this.uploadStroke(activityId);
         }, 3000);
     }
     stopUpload() {
@@ -513,17 +499,6 @@ export class StrokeDivider {
         this.remote.listen(async (_) => { await this.doQuery(); })
         return this.remote;
     }
-    // pollQuery() {
-    //     this.stopQuery();
-    //     this.interval = setInterval(async () => {
-    //        //await this.doQuery();
-    //     }, 3000);
-    // }
-    // stopQuery() {
-    //     if (!this.interval) return;
-    //     clearInterval(this.interval);
-    //     this.interval = null;
-    // }
     async doQuery() {
         let promise = await this.activity.queryStroke(this.pageNum);
         if (!promise.Success) { return; }
