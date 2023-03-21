@@ -4,12 +4,12 @@ const { IpcMessage, Bridges, FileType } = require("./utils/Definition");
 const dispatcher = {
     listen: (handler, callback) => {
         ipcRenderer.on(handler, function (_, ...args) {
-            callback(args);
+            callback(...args);
         });
     },
-    invoke: (handler, ...args) => ipcRenderer.send(handler, args),
+    invoke: (handler, ...args) => ipcRenderer.send(handler, ...args),
     testLogger: (...args) => {
-        ipcRenderer.send(IpcMessage.Log, args);
+        ipcRenderer.send(IpcMessage.Log, ...args);
     },
     promise: async (handler, ...args) => {
         return new Promise((s, _) => {
@@ -20,7 +20,7 @@ const dispatcher = {
                 s(result[0]);
             };
             ipcRenderer.on(handler, callback);
-            ipcRenderer.send(handler, args);
+            ipcRenderer.send(handler, ...args);
         });
     },
     execute: (fun) => ipcRenderer.send(IpcMessage.Execute, fun),
