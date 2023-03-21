@@ -88,11 +88,11 @@ async function createWindow() {
                 let connectHandler;
                 let cancelHandler;
                 connectHandler = (e, ...args) => {
-                    console.log(args);
+                    console.log(...args);
                     ipcMain.off(IpcMessage.BlueToothSelect, connectHandler);
                     ipcMain.off(IpcMessage.BlueToothCancel, cancelHandler);
                     e.sender.$Scope.$BlueToothConnecting = false;
-                    callback(args[0][0]);
+                    callback(...args);
                 };
                 cancelHandler = (e, _) => {
                     application.$Logger.warn("Cancel request");
