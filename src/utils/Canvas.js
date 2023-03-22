@@ -444,6 +444,32 @@ export class StrokeDivider {
         }
         this.index = 0;
     }
+    accecptOneStroke(stroke) {
+        /**
+        * @type {Canvas}
+        */
+        let canvas;
+        if (this.penSerial != null && stroke.s == this.penSerial) {
+            canvas = this.createLocal(stroke.s);
+            canvas.uploadInterval(this.activity.id);
+        } else {
+            canvas = this.createRemote(stroke.s);
+        }
+        setTimeout(() => {
+            canvas.bind(document);
+            var points = Stroke.SVG2Points2(stroke.p, this.pageAddress);
+            points.forEach((dot) => {
+                canvas.draw(dot, null, false);
+            });
+            canvas.draw(Dot.Up, null, false);
+        }, 0);
+    }
+    accecptNewStrokes(strokes) {
+        strokes.forEach(stroke => {
+            this.index ++;
+            this.accecptOneStroke(stroke);
+        })
+    }
     /**
      * 处理笔迹事件
      * @param {Array<Stroke>} strokes
@@ -451,24 +477,7 @@ export class StrokeDivider {
     accecptStrokes(strokes) {
         for (; this.index < strokes.length; this.index++) {
             let stroke = strokes[this.index];
-            /**
-             * @type {Canvas}
-             */
-            let canvas;
-            if (this.penSerial != null && stroke.s == this.penSerial) {
-                canvas = this.createLocal(stroke.s);
-                canvas.uploadInterval(this.activity.id);
-            } else {
-                canvas = this.createRemote(stroke.s);
-            }
-            setTimeout(() => {
-                canvas.bind(document);
-                var points = Stroke.SVG2Points2(stroke.p, this.pageAddress);
-                points.forEach((dot) => {
-                    canvas.draw(dot, null, false);
-                });
-                canvas.draw(Dot.Up, null, false);
-            }, 0);
+            this.accecptOneStroke(stroke);
         }
     }
     createLocal(penSerial) {
@@ -511,21 +520,32 @@ export class StrokeDivider {
         });
         return this.remote;
     }
-    async doQuery() {
-        let promise = await this.activity.queryStroke(this.pageNum);
+    async doQuery(newInterface = true) {
+        let promise;
+        if (newInterface) {
+            promise = await this.activity.queryStrokeChanged(this.pageNum, this.index);
+        } else {
+            promise = await this.activity.queryStroke(this.pageNum);
+        }
         if (!promise.Success) {
             return;
         }
         /**
          * @type {Array<Stroke>}
          */
+        if(!promise){ console.log("promise 没有返回");return; }
         let strokes = promise.data;
-        this.accecptStrokes(promise.data);
-        console.log(
-            `${this.pageNum}页 拉取新的笔迹 总共:[${strokes.length}]条 新增:[${
-                strokes.length - this.index
-            }]条`
-        );
+        if(!strokes){ console.log("strokes 为空或没有新的笔迹");return; }
+        if (newInterface) {
+            console.log(`${this.pageNum}页 拉取新的笔迹 新增:[${strokes.length}]条`);
+            this.accecptNewStrokes(strokes);
+        } else {
+            console.log(
+                `${this.pageNum}页 拉取全部笔迹 总共:[${strokes.length}]条 新增:[${strokes.length - this.index
+                }]条`
+                );
+            this.accecptStrokes(strokes);
+        }
     }
 }
 
@@ -676,5 +696,5 @@ export class Stroke {
         return ret;
     }
 
-    static PointsList2SVGList(points) {}
+    static PointsList2SVGList(points) { }
 }
