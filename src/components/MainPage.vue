@@ -7,19 +7,14 @@
                         <div style="width: 100%">
                             <div style="padding: 20px">
                                 <el-row style="user-select: none">
-                                    <img
-                                        style="
-                                            margin-left: 10px;
-                                            margin-right: 10px;
-                                        "
-                                        src="../assets/Main/Logo-2.svg"
-                                    />
+                                    <img style="
+                                                margin-left: 10px;
+                                                margin-right: 10px;
+                                            " src="../assets/Main/Logo-2.svg" />
                                 </el-row>
                                 <el-row justify="center">
                                     <el-col :span="8">
-                                        <el-button text style="font-size: small"
-                                            >当前账号:</el-button
-                                        >
+                                        <el-button text style="font-size: small">当前账号:</el-button>
                                     </el-col>
                                     <el-col :span="10">
                                         <el-button text style="background-color:transparent" type="primary">{{
@@ -29,53 +24,35 @@
                                 </el-row>
                             </div>
                         </div>
-                        <el-menu
-                            :default-active="this.defaultSelect"
-                            @select="selectMenu"
-                        >
+                        <el-menu :default-active="this.defaultSelect" @select="selectMenu">
                             <el-menu-item-group>
                                 <el-menu-item index="1">
                                     <el-row justify="center">
                                         <el-row justify="center">
-                                            <img
-                                                class="menu-logo"
-                                                src="../assets/Main/NewActive.svg"
-                                            />
+                                            <img class="menu-logo" src="../assets/Main/NewActive.svg" />
                                         </el-row>
                                         <el-row justify="center">
-                                            <label class="menu-text"
-                                                >新建活动</label
-                                            >
+                                            <label class="menu-text">新建活动</label>
                                         </el-row>
                                     </el-row>
                                 </el-menu-item>
                                 <el-menu-item index="2">
                                     <el-row justify="center">
                                         <el-row justify="center">
-                                            <img
-                                                class="menu-logo"
-                                                src="../assets/Main/ActiveList.svg"
-                                            />
+                                            <img class="menu-logo" src="../assets/Main/ActiveList.svg" />
                                         </el-row>
                                         <el-row justify="center">
-                                            <label class="menu-text"
-                                                >活动列表</label
-                                            >
+                                            <label class="menu-text">活动列表</label>
                                         </el-row>
                                     </el-row>
                                 </el-menu-item>
                                 <el-menu-item index="3">
                                     <el-row justify="center">
                                         <el-row justify="center">
-                                            <img
-                                                class="menu-logo"
-                                                src="../assets/Main/SmartPen.svg"
-                                            />
+                                            <img class="menu-logo" src="../assets/Main/SmartPen.svg" />
                                         </el-row>
                                         <el-row justify="center">
-                                            <label class="menu-text"
-                                                >智能笔</label
-                                            >
+                                            <label class="menu-text">智能笔</label>
                                         </el-row>
                                     </el-row>
                                 </el-menu-item>
@@ -84,18 +61,11 @@
                     </el-aside>
                     <el-main>
                         <div id="MainCard">
-                            <NewActivityView
-                                @onJumpToList="onJumpToList"
-                                v-if="this.select == this.menu[0]"
-                            />
-                            <ActivityView
-                                @onSetActivity="onSetActivity"
-                                @getActivities="getActivities"
-                                v-if="
-                                    this.select == this.menu[1] &&
-                                    showActivities
-                                "
-                            />
+                            <NewActivityView @onJumpToList="onJumpToList" v-if="this.select == this.menu[0]" />
+                            <ActivityView @onSetActivity="onSetActivity" @getActivities="getActivities" v-if="
+                                this.select == this.menu[1] &&
+                                showActivities
+                            " />
                             <KeepAlive>
                                 <SmartPen v-if="this.select == this.menu[2]" />
                             </KeepAlive>
@@ -179,8 +149,8 @@ export default {
                 borders: null,
                 fonts: null,
                 speeds: ["1x", "2x", "3x"],
-                minSize:10,
-                maxSize:100,
+                minSize: 10,
+                maxSize: 100,
             },
             showActivities: true,
         };
