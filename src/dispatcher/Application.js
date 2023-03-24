@@ -26,7 +26,10 @@ export class Scope {
     send(handler, ...args) {
         this.$Window.webContents.send(handler, ...args);
     }
-    setFullScreen(){
+    setFullScreen(full) {
+        if (full != null) {
+            this.$IsFullScreen = !full;
+        }
         this.$Window.setFullScreen(!this.$IsFullScreen);
         this.$IsFullScreen = !this.$IsFullScreen;
     }
@@ -110,7 +113,7 @@ export class Application {
         return this.$Windows[name];
     }
     /**
-     * 
+     *
      * @returns {Array<BrowserWindow>} windows
      */
     getAllWindow() {
