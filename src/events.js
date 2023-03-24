@@ -25,8 +25,8 @@ export const Events = {
             console.log({ event: e, response: args });
             this.bluetoothPinCallback(...args);
         });
-        ipcMain.on(IpcMessage.FullScreen, (e) => {
-            e.sender.$Scope.setFullScreen();
+        ipcMain.on(IpcMessage.FullScreen, (e,...args) => {
+            e.sender.$Scope.setFullScreen(...args);
         });
 
         ipcMain.on(IpcMessage.FileRead, (e, type, name) => {
