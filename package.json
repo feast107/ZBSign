@@ -1,9 +1,8 @@
 {
     "name": "dotpen",
+    "productName": "孜博汇签到程序",
     "version": "0.1.0",
     "private": true,
-    "main": "background.js",
-    "productName": "孜博汇签到程序",
     "scripts": {
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
@@ -15,6 +14,7 @@
         "postinstall": "electron-builder install-app-deps",
         "postuninstall": "electron-builder install-app-deps"
     },
+    "main": "background.js",
     "dependencies": {
         "@element-plus/icons-vue": "^2.0.10",
         "animate.css": "^4.1.1",

@@ -21,16 +21,16 @@ async function createWindow() {
         title: "孜博汇签到程序",
         minWidth: 960,
         minHeight: 540,
-        maxWidth : width,
+        maxWidth: width,
         frame: true,
         transparent: false,
         fullscreenable: true,
         autoHideMenuBar: true,
-        icon: path.join(__static,"./icon.ico"),
+        icon: path.join(__static, "./icon.ico"),
         //fullscreen: true,
         //simpleFullscreen:true,
         webPreferences: {
-            partition: String(+new Date()),
+            //partition: String(+new Date()),
             nodeIntegration: true,
             contextIsolation: true,
             preload: path.join(__dirname, "/preload.js"),
@@ -40,9 +40,8 @@ async function createWindow() {
     });
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
+        await mainWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
         if (!process.env.IS_TEST) mainWin.webContents.openDevTools();
-        await mainWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL + WindowType.Main);
-        
     } else {
         createProtocol("app");
         // Load the index.html when not in development

@@ -161,8 +161,8 @@ export class Activity {
     getPageAddress(pageNum) {
         return Dot.pageAddress(this.startPageAddress, pageNum);
     }
-    get Speed() {
-        switch (this.pictureSpeed) {
+    get SignSpeed() {
+        switch (this.signSpeed) {
             case "3x":
                 return 2;
             case "2x":
@@ -171,6 +171,17 @@ export class Activity {
                 return 6;
         }
         return 6;
+    }
+    get PictureSpeed() {
+        switch (this.pictureSpeed) {
+            case "3x":
+                return 10;
+            case "2x":
+                return 20;
+            case "1x":
+                return 30;
+        }
+        return 20;
     }
     getPageNum(address) {
         return Dot.pageNum(this.startPageAddress, address, this.pageCount);
@@ -236,6 +247,13 @@ export class Activity {
         return Request.post(Location.stroke("queryStroke"), {
             activityId: this.id,
             pageNum: pageNum,
+        }).result();
+    }
+    queryStrokeChanged(pageNum, index) {
+        return Request.post(Location.stroke("queryIndexStroke"), {
+            activityId: this.id,
+            pageNum: pageNum,
+            index: index,
         }).result();
     }
     async delete() {
