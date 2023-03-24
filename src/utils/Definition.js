@@ -146,7 +146,6 @@ export class BlueTooth {
     }
 }
 
-export const BlueToothConnecter = new BlueTooth();
 
 export const ConnectStatus = {
     Disconnected: "disconnected",
