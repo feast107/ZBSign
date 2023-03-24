@@ -16,7 +16,6 @@ module.exports = defineConfig({
             appId: "com.zbform.sign",
             productName: "孜博汇签到程序",
             preload: "src/preload.js",
-            chainWebpackMainProcess: (_) => { },
         },
     },
 });
