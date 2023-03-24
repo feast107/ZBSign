@@ -41,13 +41,15 @@ async function createWindow() {
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
         if (!process.env.IS_TEST) mainWin.webContents.openDevTools();
-        await mainWin.loadURL(
-            process.env.WEBPACK_DEV_SERVER_URL + WindowType.Main
-        );
+        await mainWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL + WindowType.Main);
+        
     } else {
         createProtocol("app");
         // Load the index.html when not in development
         mainWin.loadURL("app://./index.html");
+        // await mainWin.loadURL(
+        //     process.env.WEBPACK_DEV_SERVER_URL + WindowType.Main
+        // );
     }
     Events.Register(ipcMain);
     let aspectRatio = 1920 / 1080;
