@@ -84,7 +84,7 @@ export class Activity {
     getUpdateQuery() {
         return {
             id: this.id,
-            pictureUrls: this.willDeletePictureUrls + '',
+            pictureUrls: this.willDeletePictureUrls + "",
         };
     }
     getUpdateBody() {
@@ -248,5 +248,14 @@ export class Activity {
     }
     static async allBorder() {
         return await Request.get(Location.dic(`queryDic?code=border`)).result();
+    }
+    /**
+     *
+     * @param {Dot} dot
+     */
+    isValidDot(dot) {
+        return (
+            Dot.pageNum(this.startPageAddress, dot.address, this.pageCount) > 0
+        );
     }
 }
