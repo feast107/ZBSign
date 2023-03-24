@@ -5,29 +5,18 @@
                 <el-header style="height: 20%">
                     <el-row>
                         <el-col :span="3">
-                            <el-image
-                                v-if="activity.HasLogo"
-                                class="logo"
-                                fit="cover"
-                                :src="activity.logoUrl" />
+                            <el-image v-if="activity.HasLogo" class="logo" fit="cover" :src="activity.logoUrl" />
                         </el-col>
                         <el-col :span="21">
                             <el-row>
-                                <label
-                                    class="title"
-                                    id="MainTitle"
+                                <label class="title" id="MainTitle"
                                     :style="`color:${activity.titleColor};font-size:${activity.titleSize}px;font-family:ForActivity;`">
                                     {{ activity.title }}
                                 </label>
                             </el-row>
                             <el-row v-if="activity.HasSubTitle">
-                                <label
-                                    class="title"
-                                    id="SubTitle"
-                                    :style="`color:${
-                                        activity.titleColor
-                                    };font-size:${
-                                        activity.titleSize / 1.5
+                                <label class="title" id="SubTitle" :style="`color:${activity.titleColor
+                                    };font-size:${activity.titleSize / 1.5
                                     }px;font-family:ForActivity;`">
                                     {{ activity.subTitle }}
                                 </label>
@@ -38,20 +27,15 @@
                 <el-container style="height: 75%">
                     <el-aside style="width: 40%">
                         <div id="PictureBorder">
-                            <el-image
-                                fit="fill"
-                                style="
-                                    left: 0;
-                                    position: absolute;
-                                    width: 100%;
-                                    height: 100%;
-                                "
-                                :src="activity.leftBorder"></el-image>
+                            <el-image fit="fill" style="
+                                        left: 0;
+                                        position: absolute;
+                                        width: 100%;
+                                        height: 100%;
+                                    " :src="activity.leftBorder"></el-image>
                             <div id="Pictures">
                                 <ul>
-                                    <li
-                                        v-for="url in activity.pictureUrls"
-                                        :key="url">
+                                    <li v-for="url in activity.pictureUrls" :key="url">
                                         <img :src="url" />
                                     </li>
                                 </ul>
@@ -59,44 +43,31 @@
                         </div>
                     </el-aside>
                     <el-main style="width: 60%">
-                        <div
-                            id="MainWindow"
-                            style="
-                                position: relative;
-                                background-color: transparent;
-                                overflow: hidden;
-                                width: 100%;
-                                height: 100%;
-                            ">
-                            <Container
-                                :key="key"
-                                v-for="key in Object.keys(locals)"
-                                :canvas="locals[key]"></Container>
-                            <Container
-                                :key="key"
-                                v-for="key in Object.keys(remotes)"
-                                :canvas="remotes[key]"></Container>
+                        <div id="MainWindow" style="
+                                    position: relative;
+                                    background-color: transparent;
+                                    overflow: hidden;
+                                    width: 100%;
+                                    height: 100%;
+                                ">
+                            <Container :key="key" v-for="key in Object.keys(locals)" :canvas="locals[key]"></Container>
+                            <Container :key="key" v-for="key in Object.keys(remotes)" :canvas="remotes[key]"></Container>
                         </div>
                     </el-main>
                 </el-container>
                 <el-footer style="height: 5%; text-align: end">
-                    <label
-                        style="
-                            color: white;
-                            font-family: 'Helvetica Neue', Helvetica,
-                                'PingFang SC', 'Hiragino Sans GB',
-                                'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-                        ">
+                    <label style="
+                                color: white;
+                                font-family: 'Helvetica Neue', Helvetica,
+                                    'PingFang SC', 'Hiragino Sans GB',
+                                    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                            ">
                         技术支持：南京孜博汇信息科技有限公司
                     </label>
                 </el-footer>
             </el-container>
         </div>
-        <el-image
-            id="Background"
-            fit="fill"
-            style="width: 100%; height: 100%; z-index: 0"
-            :src="activity.backgroundUrl">
+        <el-image id="Background" fit="fill" style="width: 100%; height: 100%; z-index: 0" :src="activity.backgroundUrl">
         </el-image>
     </div>
 </template>
@@ -176,7 +147,7 @@ export default {
                 vue.$emit("onEscapePreview", null);
             }
         });
-        ResizeEvent.on((width, height) => {});
+        ResizeEvent.on((width, height) => { });
         this.dotpen.onDraw(this.callbackHandler());
 
         let effects = this.activity.rollEffect.split(".");
@@ -456,9 +427,7 @@ export default {
                 z-index: 10 !important;
             }
 
-            <<<<<<<
-                HEAD=======>>>>>>>44eb5462902b01155354a339cba05688b45a8f21
-                label {
+            label {
                 user-select: none;
             }
         }
