@@ -146,16 +146,23 @@ export class BlueTooth {
     }
 }
 
-
 export const ConnectStatus = {
     Disconnected: "disconnected",
     Connected: "connected",
     Connecting: "connecting",
 };
 
-export const Handlers = {
-    QuitPlay: "H-QuitPlay",
-};
+export class Handlers {
+    static get QuitPlay() {
+        return "H-QuitPlay";
+    }
+    static get PlayHandler() {
+        return "onSetToPlay";
+    }
+    static get EraseHandler() {
+        return "onSetToErase";
+    }
+}
 
 export class GlobalEvent {
     static addListener(handler, event) {
@@ -213,3 +220,9 @@ export class GUID {
         return new Date().valueOf() + pwd;
     }
 }
+
+export const PageStatus = {
+    Default: "default",
+    Playing: "playing",
+    Erasing: "erasing",
+};
