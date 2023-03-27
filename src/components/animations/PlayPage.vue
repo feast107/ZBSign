@@ -77,7 +77,8 @@ import "animate.css";
 import { Animation, EndlessPlayer } from "@/utils/Animation";
 import { ComponentKey, Dotpen, IpcMessage } from "@/utils/Definition";
 import { ResizeEvent } from "@/utils/Events";
-import { Canvas, Dot, Stroke, StrokeDivider } from "@/utils/Canvas";
+import { Canvas, Dot } from "@/utils/Canvas";
+import { Stroke , StrokeDivider } from "@/utils/Stroke";
 import Container from "./Container.vue";
 import { Activity } from "@/utils/Activity";
 export default {
@@ -264,7 +265,10 @@ export default {
                         vue.current.draw(dot);
                     }
                 } else {
-                    if (!this.activity.isValidDot(dot)) return;
+                    if (!this.activity.isValidDot(dot)) {
+                        console.log(`[${dot.address}]无效`)
+                        return;
+                    }
                     clearTimeout(laterInterval);
                     vue.player.stop();
                     if (
