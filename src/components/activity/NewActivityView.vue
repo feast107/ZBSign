@@ -1,14 +1,14 @@
 <template>
     <el-scrollbar v-loading="submitting" style="margin-right: 1px">
         <el-form :model="activity" :rules="rules" label-width="120px" ref="activeForm" style="margin-right: 20px">
-            <el-form-item label="活动本子">
+            <el-form-item label="活动本子" prop="bookId">
                 <el-popover placement="right" :width="400" trigger="click">
                     <template #reference>
                         <el-button style="padding: 0; border: none">
                             <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/Book.svg" />
                         </el-button>
                     </template>
-                    <el-select v-model="activity.books" placeholder="选择本子">
+                    <el-select v-model="activity.bookId" placeholder="选择本子">
                         <el-option v-for="item in config.books" :key="item.bookId" :label="item.bookName"
                             :value="item.bookId">
                             <span style="float: left">{{ item.bookName }}</span>
@@ -16,7 +16,7 @@
                     </el-select>
                 </el-popover>
             </el-form-item>
-            
+
             <el-form-item prop="title" label="活动标题">
                 <el-input placeholder="请输入文字" v-model="activity.title" />
             </el-form-item>
@@ -187,15 +187,21 @@ export default {
             this.activity.removeBackground();
             DomElement.changeIconParent("backgroundUpload", DomElement.display);
         },
-        async submitForm() {
-            this.submitting = true;
-            if(await this.activity.create()){
-                this.$message.success("创建成功");
-                this.$emit(`onJumpToList`);
-            }else{
-                this.$message.error("创建失败");
-            }
-            this.submitting = false;
+        submitForm() {
+            this.$refs.activeForm.validate()
+            .then(async r => {
+                this.submitting = true;
+                if (await this.activity.create()) {
+                    this.$message.success("创建成功");
+                    this.$emit(`onJumpToList`);
+                } else {
+                    this.$message.error("创建失败");
+                }
+                this.submitting = false;
+            }).catch(e => {
+                this.$message.warning("请填写缺失的项目")
+            });
+
         },
     },
 };
