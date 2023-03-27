@@ -353,7 +353,7 @@
 </template>
 
 <script>
-import { ComponentKey } from "@/utils/Definition";
+import { ComponentKey , Handlers } from "@/utils/Definition";
 import { Activity } from "@/utils/Activity";
 import { EffectLabel } from "@/utils/Animation";
 import { Timer } from "@/utils/Format";
@@ -476,7 +476,10 @@ export default {
         },
         previewPlay(target) {
             this.preview = target;
-            this.$emit(`onSetActivity`, target);
+            this.$emit(Handlers.PlayHandler, target);
+        },
+        erase(target){
+
         },
         /**
          *
