@@ -1,6 +1,6 @@
 <template>
     <KeepAlive>
-        <div v-if="this.playingActivity == null" class="Main">
+        <div v-if="pageStatus == PageStatus.Default" class="Main">
             <div id="Fore">
                 <el-container>
                     <el-aside style="overflow: hidden">
@@ -17,9 +17,11 @@
                                         <el-button text style="font-size: small">当前账号:</el-button>
                                     </el-col>
                                     <el-col :span="10">
-                                        <el-button text style="background-color:transparent" type="primary">{{
-                                            this.user.phoneNumber
-                                        }}</el-button>
+                                        <el-button text style="
+                                                    background-color: transparent;
+                                                " type="primary">{{
+                                                    this.user.phoneNumber
+                                                }}</el-button>
                                     </el-col>
                                 </el-row>
                             </div>
@@ -62,10 +64,11 @@
                     <el-main>
                         <div id="MainCard">
                             <NewActivityView @onJumpToList="onJumpToList" v-if="this.select == this.menu[0]" />
-                            <ActivityView @onSetActivity="onSetActivity" @getActivities="getActivities" v-if="
-                                this.select == this.menu[1] &&
-                                showActivities
-                            " />
+                            <ActivityView @onSetToPlay="this[Handlers.PlayHandler]"
+                                @onSetToErase="this[Handlers.EraseHandler]" @getActivities="getActivities" v-if="
+                                    this.select == this.menu[1] &&
+                                    showActivities
+                                " />
                             <KeepAlive>
                                 <SmartPen v-if="this.select == this.menu[2]" />
                             </KeepAlive>
@@ -76,8 +79,11 @@
             <div id="Back"></div>
         </div>
     </KeepAlive>
-    <div v-if="this.playingActivity != null" class="Main">
-        <PlayPage @onEscapePreview="onEscapePreview" />
+    <div v-if="pageStatus == PageStatus.Playing" class="Main">
+        <PlayPage @onEscapePreview="onEscape" />
+    </div>
+    <div v-if="pageStatus == PageStatus.Erasing" class="Main">
+        <ErasePage @onEscapeErase="onEscape" />
     </div>
 </template>
 <script>
@@ -90,17 +96,21 @@ import {
     IpcMessage,
     Dotpen,
     BlueTooth,
+    PageStatus,
+    Handlers
 } from "@/utils/Definition";
 import SmartPen from "./connect/SmartPen.vue";
 import PlayPage from "./animations/PlayPage.vue";
 import ActivityView from "./activity/ActivityView.vue";
 import NewActivityView from "./activity/NewActivityView.vue";
+import ErasePage from "./animations/ErasePage.vue";
 export default {
     components: {
         NewActivityView,
         ActivityView,
         SmartPen,
         PlayPage,
+        ErasePage,
     },
     inject: [ComponentKey.User],
     provide() {
@@ -110,7 +120,7 @@ export default {
             [ComponentKey.ModifingActivity]: computed(() => {
                 return null;
             }),
-            [ComponentKey.PlayActicity]: computed(() => this.playingActivity),
+            [ComponentKey.PlayActicity]: computed(() => this.selectActivity),
         };
     },
     async created() {
@@ -130,10 +140,13 @@ export default {
     data() {
         this[ComponentKey.User].phoneNumber = "1771***807";
         return {
+            Handlers: Handlers,
+            PageStatus: PageStatus,
+            pageStatus: "default",
             /**
-             * @param {Reference}
+             * @param {Activity}
              */
-            playingActivity: null,
+            selectActivity: null,
             dotpen: new Dotpen(),
             bluetooth: BlueTooth,
             menu: ["新建活动", "活动列表", "智能笔"],
@@ -156,11 +169,17 @@ export default {
         };
     },
     methods: {
-        onSetActivity(e) {
-            this.playingActivity = e;
+        [Handlers.PlayHandler](e) {
+            this.pageStatus = PageStatus.Playing;
+            this.selectActivity = e;
         },
-        async onEscapePreview() {
-            this.playingActivity = null;
+        [Handlers.EraseHandler](e) {
+            this.pageStatus = PageStatus.Erasing;
+            this.selectActivity = e;
+        },
+        async onEscape() {
+            this.selectActivity = null;
+            this.pageStatus = PageStatus.Default;
             this.select = "活动列表";
             this.defaultSelect = "2";
             await this.getActivities();
@@ -187,12 +206,12 @@ export default {
             }
         },
         async getConfigs() {
-            let bs = await Activity.allBorder();
-            let fs = await Activity.allFont();
-            let bks = await this.user.allBook();
-            this.activities.borders = bs.data;
-            this.activities.fonts = fs.data;
-            this.activities.books = bks.data;
+            let bs = Activity.allBorder();
+            let fs = Activity.allFont();
+            let bks = this.user.allBook();
+            this.activities.borders = await bs.data;
+            this.activities.fonts = await fs.data;
+            this.activities.books = await bks.data;
         },
         async getActivities() {
             this.showActivities = false;
