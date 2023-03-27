@@ -1,10 +1,8 @@
 <template>
     <div>
-        <ul>
-            <li>
-
-            </li>
-        </ul>
+        <div>
+            
+        </div>
     </div>
 </template>
 
@@ -16,10 +14,14 @@ export default {
         return {
             activity: this[ComponentKey.ModifingActivity],
             regions: [],
+            svgs:[]
         }
     },
     created() { },
     unmounted() { }
 }
 </script>
-<style></style>
+
+<style>
+
+</style>
