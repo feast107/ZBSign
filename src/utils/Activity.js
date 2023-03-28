@@ -243,7 +243,7 @@ export class Activity {
             Location.activity(`queryWritePages?activityId=${this.id}`)
         ).result();
     }
-    queryStroke(pageNum) {
+    queryStrokes(pageNum) {
         return Request.post(Location.stroke("queryStroke"), {
             activityId: this.id,
             pageNum: pageNum,
