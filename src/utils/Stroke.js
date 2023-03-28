@@ -138,7 +138,7 @@ export class StrokeDivider {
                 this.index
             );
         } else {
-            promise = await this.activity.queryStroke(this.pageNum);
+            promise = await this.activity.queryStrokes(this.pageNum);
         }
         if (!promise.Success) {
             return;
@@ -180,12 +180,33 @@ export class Stroke {
      * @param {string} color
      */
     constructor(points, penSerial, pageNum, color = "#000") {
+        /**
+         * 颜色
+         */
         this.c = color;
+        /**
+         * 路径
+         */
         this.p = Stroke.Points2SVG(points);
+        /**
+         * 笔序列号
+         */
         this.s = penSerial;
+        /**
+         * 页码
+         */
         this.n = pageNum;
+        /**
+         * 时间戳
+         */
         this.st = new Date().getTime();
+        /**
+         * 起始点x
+         */
         this.x1 = points[0].X;
+        /**
+         * 起始点y
+         */
         this.y1 = points[0].Y;
     }
     /**
