@@ -3,10 +3,10 @@ import { Stroke, StrokeManager } from "./Stroke";
 
 export class DotInfo {
     static get width() {
-        return 5600;
+        return 10000;
     }
     static get height() {
-        return 3960;
+        return 6900;
     }
 }
 
@@ -171,7 +171,7 @@ export class ContextConfig {
      * @param {number} drawCount
      */
     constructor(lineWidth, lineJoin, lineCap, drawCount) {
-        this.lineWidth = lineWidth ?? 2;
+        this.lineWidth = lineWidth ?? 1;
         this.lineJoin = lineJoin ?? "round";
         this.lineCap = lineCap ?? "round";
         this.drawCount = drawCount ?? 2;
@@ -245,8 +245,8 @@ export class Canvas {
      */
     setScale(scale, canvas) {
         this.scale = scale;
-        this.drawHeight = 940 * scale;
-        this.drawWidth = 1460 * scale;
+        this.drawHeight = 520 * scale;
+        this.drawWidth = 753 * scale;
         if (canvas) {
             canvas.width = this.drawWidth;
             canvas.height = this.drawHeight;
