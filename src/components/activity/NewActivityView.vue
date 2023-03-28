@@ -189,18 +189,18 @@ export default {
         },
         submitForm() {
             this.$refs.activeForm.validate()
-            .then(async r => {
-                this.submitting = true;
-                if (await this.activity.create()) {
-                    this.$message.success("创建成功");
-                    this.$emit(`onJumpToList`);
-                } else {
-                    this.$message.error("创建失败");
-                }
-                this.submitting = false;
-            }).catch(e => {
-                this.$message.warning("请填写缺失的项目")
-            });
+                .then(async r => {
+                    this.submitting = true;
+                    if (await this.activity.create()) {
+                        this.$message.success("创建成功");
+                        this.$emit(`onJumpToList`);
+                    } else {
+                        this.$message.error("创建失败");
+                    }
+                    this.submitting = false;
+                }).catch(e => {
+                    this.$message.warning("请填写缺失的项目")
+                });
 
         },
     },
