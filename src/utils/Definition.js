@@ -154,7 +154,10 @@ export const ConnectStatus = {
 
 export class Handlers {
     static get QuitPlay() {
-        return "H-QuitPlay";
+        return "onEscapePlay";
+    }
+    static get QuitErase(){
+        return "onEscapeErase";
     }
     static get PlayHandler() {
         return "onSetToPlay";
