@@ -75,7 +75,7 @@
 <script>
 import "animate.css";
 import { Animation, EndlessPlayer } from "@/utils/Animation";
-import { ComponentKey, Dotpen, IpcMessage } from "@/utils/Definition";
+import { ComponentKey, Dotpen, IpcMessage, Handlers } from "@/utils/Definition";
 import { ResizeEvent } from "@/utils/Events";
 import { Canvas, Dot } from "@/utils/Canvas";
 import { Stroke , StrokeDivider } from "@/utils/Stroke";
@@ -145,7 +145,7 @@ export default {
         this.startQuery();
         document.addEventListener("keyup", (e) => {
             if (e.key == "Escape") {
-                vue.$emit("onEscapePreview", null);
+                vue.$emit(Handlers.QuitPlay, null);
             }
         });
         ResizeEvent.on((width, height) => { });
@@ -196,7 +196,7 @@ export default {
             pages.forEach(async (page) => {
                 //判断是否已经处理过该页
                 if (this.strokeDividers[page]) return;
-                let promise = await this.activity.queryStroke(page);
+                let promise = await this.activity.queryStrokes(page);
                 if (!promise.Success) return;
                 //获取点阵地址
                 var addr = this.activity.getPageAddress(page);
