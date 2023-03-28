@@ -44,6 +44,11 @@ export default (function () {
             this.pop();
         }
     };
+    Array.prototype.addRange ??= function (another){
+        another.forEach(x=>{
+            this.push(x);
+        })
+    }
     Array.prototype.removeAll ??= function (predicate) {
         let index = 0,
             count = 0;
