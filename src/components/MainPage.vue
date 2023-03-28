@@ -7,54 +7,77 @@
                         <div style="width: 100%">
                             <div style="padding: 20px">
                                 <el-row style="user-select: none">
-                                    <img style="
-                                                margin-left: 10px;
-                                                margin-right: 10px;
-                                            " src="../assets/Main/Logo-2.svg" />
+                                    <img
+                                        style="
+                                            margin-left: 10px;
+                                            margin-right: 10px;
+                                        "
+                                        src="../assets/Main/Logo-2.svg" />
                                 </el-row>
                                 <el-row justify="center">
                                     <el-col :span="8">
-                                        <el-button text style="font-size: small">当前账号:</el-button>
+                                        <el-button text style="font-size: small"
+                                            >当前账号:</el-button
+                                        >
                                     </el-col>
                                     <el-col :span="10">
-                                        <el-button text style="
-                                                    background-color: transparent;
-                                                " type="primary">{{
-                                                    this.user.phoneNumber
-                                                }}</el-button>
+                                        <el-button
+                                            text
+                                            style="
+                                                background-color: transparent;
+                                            "
+                                            type="primary"
+                                            >{{
+                                                this.user.phoneNumber
+                                            }}</el-button
+                                        >
                                     </el-col>
                                 </el-row>
                             </div>
                         </div>
-                        <el-menu :default-active="this.defaultSelect" @select="selectMenu">
+                        <el-menu
+                            :default-active="this.defaultSelect"
+                            @select="selectMenu">
                             <el-menu-item-group>
                                 <el-menu-item index="1">
                                     <el-row justify="center">
                                         <el-row justify="center">
-                                            <img class="menu-logo" src="../assets/Main/NewActive.svg" />
+                                            <img
+                                                class="menu-logo"
+                                                src="../assets/Main/NewActive.svg" />
                                         </el-row>
                                         <el-row justify="center">
-                                            <label class="menu-text">新建活动</label>
+                                            <label class="menu-text"
+                                                >新建活动</label
+                                            >
                                         </el-row>
                                     </el-row>
                                 </el-menu-item>
                                 <el-menu-item index="2">
                                     <el-row justify="center">
                                         <el-row justify="center">
-                                            <img class="menu-logo" src="../assets/Main/ActiveList.svg" />
+                                            <img
+                                                class="menu-logo"
+                                                src="../assets/Main/ActiveList.svg" />
                                         </el-row>
                                         <el-row justify="center">
-                                            <label class="menu-text">活动列表</label>
+                                            <label class="menu-text"
+                                                >活动列表</label
+                                            >
                                         </el-row>
                                     </el-row>
                                 </el-menu-item>
                                 <el-menu-item index="3">
                                     <el-row justify="center">
                                         <el-row justify="center">
-                                            <img class="menu-logo" src="../assets/Main/SmartPen.svg" />
+                                            <img
+                                                class="menu-logo"
+                                                src="../assets/Main/SmartPen.svg" />
                                         </el-row>
                                         <el-row justify="center">
-                                            <label class="menu-text">智能笔</label>
+                                            <label class="menu-text"
+                                                >智能笔</label
+                                            >
                                         </el-row>
                                     </el-row>
                                 </el-menu-item>
@@ -63,9 +86,18 @@
                     </el-aside>
                     <el-main>
                         <div id="MainCard">
-                            <NewActivityView @onJumpToList="onJumpToList" v-if="this.select == this.menu[0]" />
-                            <ActivityView @onSetToPlay="this[Handlers.PlayHandler]"
-                                @onSetToErase="this[Handlers.EraseHandler]" @getActivities="getActivities" v-if="
+                            <NewActivityView
+                                @onJumpToList="onJumpToList"
+                                v-if="this.select == this.menu[0]" />
+                            <ActivityView
+                                @[Handlers.PlayHandler]="
+                                    this[Handlers.PlayHandler]
+                                "
+                                @[Handlers.EraseHandler]="
+                                    this[Handlers.EraseHandler]
+                                "
+                                @getActivities="getActivities"
+                                v-if="
                                     this.select == this.menu[1] &&
                                     showActivities
                                 " />
@@ -80,10 +112,10 @@
         </div>
     </KeepAlive>
     <div v-if="pageStatus == PageStatus.Playing" class="Main">
-        <PlayPage @onEscapePreview="onEscape" />
+        <PlayPage @[Handlers.QuitPlay]="onEscape" />
     </div>
     <div v-if="pageStatus == PageStatus.Erasing" class="Main">
-        <ErasePage @onEscapeErase="onEscape" />
+        <ErasePage @[Handlers.QuitErase]="onEscape" />
     </div>
 </template>
 <script>
@@ -97,7 +129,7 @@ import {
     Dotpen,
     BlueTooth,
     PageStatus,
-    Handlers
+    Handlers,
 } from "@/utils/Definition";
 import SmartPen from "./connect/SmartPen.vue";
 import PlayPage from "./animations/PlayPage.vue";
@@ -118,7 +150,7 @@ export default {
             [ComponentKey.Dotpen]: computed(() => this.dotpen),
             [ComponentKey.Activities]: computed(() => this.activities),
             [ComponentKey.ModifingActivity]: computed(() => {
-                return null;
+                return this.selectActivity;
             }),
             [ComponentKey.PlayActicity]: computed(() => this.selectActivity),
         };
@@ -130,6 +162,7 @@ export default {
         window[Bridges.Navigator] = document[Bridges.Navigator] = {
             [Bridges.BlueTooth]: this.bluetooth,
         };
+        this.dotpen.listen(dot=>{ if(dot.IsMove){ console.log(dot) } })
         try {
             await this.getActivities();
             await this.getConfigs();
