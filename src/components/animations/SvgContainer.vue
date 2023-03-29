@@ -2,7 +2,7 @@
     <div :style="`width:${width ?? 'unset'};height:${height ?? 'unset'}`">
         <svg viewBox="0 0 10000 6900" class="strokes" xmlns="http://www.w3.org/2000/svg" version="1.1">
             <g fill="none" style="g">
-                <path v-for="stroke in svgs" :key="stroke" :stroke-width="thick ?? 100" :d="stroke.p" stroke="lightblue"
+                <path v-for="stroke in svgs" :key="stroke" :stroke-width="thick ?? 100" :d="stroke.p" class="backStroke"
                     @mouseenter="() => { this.moveBy(stroke) }">
                 </path>
                 <path v-for="stroke in svgs" :key="stroke" :d="stroke.p" :stroke="stroke.c" stroke-width="10">
@@ -36,11 +36,7 @@ export default {
             }
         })
     },
-    unmounted() { },
     methods: {
-        removeStroke(stroke) {
-            //console.log(stroke);
-        },
         moveBy(stroke) {
             if (!this.isErasing) return;
             this.svgs.remove(stroke);
@@ -62,4 +58,8 @@ export default {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.backStroke {
+    stroke: transparent;
+}
+</style>
