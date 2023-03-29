@@ -164,8 +164,10 @@ export default {
         };
         this.dotpen.listen(dot=>{ if(dot.IsMove){ console.log(dot) } })
         try {
-            await this.getActivities();
-            await this.getConfigs();
+            let conf = this.getConfigs();
+            let act = this.getActivities();
+            await conf;
+            await act;
         } finally {
         }
         console.log(this.activities);
@@ -242,9 +244,9 @@ export default {
             let bs = Activity.allBorder();
             let fs = Activity.allFont();
             let bks = this.user.allBook();
-            this.activities.borders = await bs.data;
-            this.activities.fonts = await fs.data;
-            this.activities.books = await bks.data;
+            this.activities.borders = (await bs).data;
+            this.activities.fonts = (await fs).data;
+            this.activities.books = (await bks).data;
         },
         async getActivities() {
             this.showActivities = false;
