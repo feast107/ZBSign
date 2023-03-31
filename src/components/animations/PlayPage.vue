@@ -28,11 +28,11 @@
                     <el-aside style="width: 40%">
                         <div id="PictureBorder">
                             <el-image fit="fill" style="
-                                        left: 0;
-                                        position: absolute;
-                                        width: 100%;
-                                        height: 100%;
-                                    " :src="activity.leftBorder"></el-image>
+                                            left: 0;
+                                            position: absolute;
+                                            width: 100%;
+                                            height: 100%;
+                                        " :src="activity.leftBorder"></el-image>
                             <div id="Pictures">
                                 <ul>
                                     <li v-for="url in activity.pictureUrls" :key="url">
@@ -44,12 +44,12 @@
                     </el-aside>
                     <el-main style="width: 60%">
                         <div id="MainWindow" style="
-                                    position: relative;
-                                    background-color: transparent;
-                                    overflow: hidden;
-                                    width: 100%;
-                                    height: 100%;
-                                ">
+                                        position: relative;
+                                        background-color: transparent;
+                                        overflow: hidden;
+                                        width: 100%;
+                                        height: 100%;
+                                    ">
                             <Container :key="key" v-for="key in Object.keys(locals)" :canvas="locals[key]"></Container>
                             <Container :key="key" v-for="key in Object.keys(remotes)" :canvas="remotes[key]"></Container>
                         </div>
@@ -57,11 +57,11 @@
                 </el-container>
                 <el-footer style="height: 5%; text-align: end">
                     <label style="
-                                color: white;
-                                font-family: 'Helvetica Neue', Helvetica,
-                                    'PingFang SC', 'Hiragino Sans GB',
-                                    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-                            ">
+                                    color: white;
+                                    font-family: 'Helvetica Neue', Helvetica,
+                                        'PingFang SC', 'Hiragino Sans GB',
+                                        'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                                ">
                         技术支持：南京孜博汇信息科技有限公司
                     </label>
                 </el-footer>
@@ -78,7 +78,7 @@ import { Animation, EndlessPlayer } from "@/utils/Animation";
 import { ComponentKey, Dotpen, IpcMessage, Handlers } from "@/utils/Definition";
 import { ResizeEvent } from "@/utils/Events";
 import { Canvas, Dot } from "@/utils/Canvas";
-import { Stroke , StrokeDivider } from "@/utils/Stroke";
+import { Stroke, StrokeDivider } from "@/utils/Stroke";
 import Container from "./Container.vue";
 import { Activity } from "@/utils/Activity";
 export default {

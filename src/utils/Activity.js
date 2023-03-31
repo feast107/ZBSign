@@ -256,6 +256,13 @@ export class Activity {
             index: index,
         }).result();
     }
+    async deleteStrokes(pageNum, strokeList) {
+        return await Request.post(Location.stroke("deleteStroke"), {
+            activityId: this.id,
+            pageNum: pageNum,
+            stList: strokeList,
+        }).result();
+    }
     async delete() {
         return await Request.get(
             Location.activity(`deleteActivity?activityId=${this.id}`)

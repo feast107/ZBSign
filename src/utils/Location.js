@@ -6,7 +6,7 @@ export class Location {
     static get Dic() { return `${this.Root}/dic` }
     static get Book() { return `${this.Root}/book` }
     static get Token() {
-        return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ6YmgiLCJleHAiOjE2ODAxNDg0OTIsInVzZXJJZCI6IjYyNWFiMTY0ZTRiMGQ4ZDBjNjc2MGY5NCIsInVzZXJuYW1lIjoiMTU3MjY2NjA4MzYifQ.xp5zXTbguWQScXEQS0QbNz_7PBybFI-v0jId4rG2xC0";
+        return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ6YmgiLCJleHAiOjE2ODE1MzY3OTYsInVzZXJJZCI6IjYyNWFiMTY0ZTRiMGQ4ZDBjNjc2MGY5NCIsInVzZXJuYW1lIjoiMTU3MjY2NjA4MzYifQ.OLxzfpkILvroOd1R4mrdgDmC_wwLs8pKujdf_E_1n_I";
     }
 
     static activity(method) {

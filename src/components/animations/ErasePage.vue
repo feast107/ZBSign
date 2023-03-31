@@ -15,21 +15,23 @@
             </el-page-header>
         </el-header>
         <el-main>
-            <el-empty v-if="pages.length == 0" description="空" />
-            <el-scrollbar v-else id="MainSpace">
-                <el-space wrap size="large">
-                    <el-card :key="page" :style="`${width + 50}px`" v-for="page in pages">
-                        <SvgContainer :thick="eraseThick" :is-erasing="isErasing" :width="`${width}px`"
-                            :strokes="page.strokes" :on-remove-stroke="
-                                (_) => {
-                                    onRemove(_, page.pageNum);
-                                }
-                            " />
-                    </el-card>
-                </el-space>
-                <div v-if="enableErase" z-index="50" class="Rubber"
-                    :style="`left:${place.x}px;top:${place.y}px;height:${eraseSize}px;width:${eraseSize}px;`"></div>
-            </el-scrollbar>
+            <div id="MainSpace">
+                <el-empty v-if="pages.length == 0" description="空" />
+                <el-scrollbar v-else>
+                    <el-space wrap size="large">
+                        <el-card :key="page" :style="`${width + 50}px`" v-for="page in pages">
+                            <SvgContainer :thick="eraseThick" :is-erasing="isErasing" :width="`${width}px`"
+                                :strokes="page.strokes" :on-remove-stroke="
+                                    (_) => {
+                                        onRemove(_, page.pageNum);
+                                    }
+                                " />
+                        </el-card>
+                    </el-space>
+                    <div v-if="enableErase" z-index="50" class="Rubber"
+                        :style="`left:${place.x}px;top:${place.y}px;height:${eraseSize}px;width:${eraseSize}px;`"></div>
+                </el-scrollbar>
+            </div>
         </el-main>
     </el-container>
     <div class="footer">
@@ -58,6 +60,7 @@
 <script>
 import { Activity } from "@/utils/Activity";
 import { ComponentKey, Handlers } from "@/utils/Definition";
+import { Stroke } from "@/utils/Stroke";
 import SvgContainer from "./SvgContainer.vue";
 export default {
     inject: [ComponentKey.ModifingActivity],
@@ -114,7 +117,6 @@ export default {
     methods: {
         quitErase() {
             this.$emit(Handlers.QuitErase);
-            console.log("??");
         },
         mountEvents() {
             window.onmousewheel = this.mousewheel;
@@ -181,9 +183,33 @@ export default {
                 y: e.pageY - dom.offsetTop - this.eraseSize / 2,
             };
         },
-        save(){
+        async save() {
             this;
-            debugger;
+            let updates = {};
+            this.removedStrokes.forEach(x => {
+                let list = updates[x.pageNum];
+                if (!list) { list = updates[x.pageNum] = []; }
+                /**
+                 * @type {Stroke}
+                 */
+                let stroke = x.stroke;
+                list.add(stroke.st);
+            })
+
+            let wait = Object.keys(updates);
+            let allComplete = true;
+            for (let i = 0; i < wait.length; i++) {
+                let key = wait[i];
+                let r = await this.activity.deleteStrokes(key, updates[key]);
+                if (r.data != 1) {
+                    allComplete = false;
+                    this.$message.error("擦除失败")
+                }
+            }
+            if (allComplete) {
+                this.$message.success("擦除成功");
+            }
+            this.quitErase();
         },
     },
 };
@@ -208,6 +234,11 @@ export default {
 
 .el-container {
     height: 98%;
+
+    #MainSpace {
+        height: 100%;
+        width: 100%;
+    }
 }
 
 .footer {
