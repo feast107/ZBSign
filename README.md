@@ -1,7 +1,12 @@
 # Dotpen-Vue-Electron
 
+Node v16.x Required
+
 ## Project setup
-```
+``` shell
+npm install -g electron
+npm install -g electron-builder
+npm install -g @vue/cli
 npm install
 ```
 
