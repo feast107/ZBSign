@@ -28,28 +28,33 @@
                     <el-aside style="width: 40%">
                         <div id="PictureBorder">
                             <el-image fit="fill" style="
-                                            left: 0;
-                                            position: absolute;
-                                            width: 100%;
-                                            height: 100%;
-                                        " :src="activity.leftBorder"></el-image>
-                            <div id="Pictures">
-                                <ul>
-                                    <li v-for="url in activity.pictureUrls" :key="url">
-                                        <img :src="url" />
-                                    </li>
-                                </ul>
-                            </div>
+                                        left: 0;
+                                        position: absolute;
+                                        width: 100%;
+                                        height: 100%;
+                                    " :src="activity.leftBorder"></el-image>
+                            <Aspratio :ratio="3 / 1">
+                                <MultipleBorder :left="5" :center="90" :right="5" :top="5" :middle="90" :bottom="5">
+                                    <template #center>
+                                        <Scroller style="width:100%;height:100%" :pictures="activity.pictureUrls"
+                                            :speed="activity.PictureSpeed" :play="scroll"></Scroller>
+                                    </template>
+                                    <template #left-up>
+                                        <div style="background-color:black;
+                                        height: 100%;width:100%;box-shadow:10px;"></div>
+                                    </template>
+                                </MultipleBorder>
+                            </Aspratio>
                         </div>
                     </el-aside>
                     <el-main style="width: 60%">
                         <div id="MainWindow" style="
-                                        position: relative;
-                                        background-color: transparent;
-                                        overflow: hidden;
-                                        width: 100%;
-                                        height: 100%;
-                                    ">
+                                    position: relative;
+                                    background-color: transparent;
+                                    overflow: hidden;
+                                    width: 100%;
+                                    height: 100%;
+                                ">
                             <Container :key="key" v-for="key in Object.keys(locals)" :canvas="locals[key]"></Container>
                             <Container :key="key" v-for="key in Object.keys(remotes)" :canvas="remotes[key]"></Container>
                         </div>
@@ -57,11 +62,11 @@
                 </el-container>
                 <el-footer style="height: 5%; text-align: end">
                     <label style="
-                                    color: white;
-                                    font-family: 'Helvetica Neue', Helvetica,
-                                        'PingFang SC', 'Hiragino Sans GB',
-                                        'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-                                ">
+                                color: white;
+                                font-family: 'Helvetica Neue', Helvetica,
+                                    'PingFang SC', 'Hiragino Sans GB',
+                                    'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                            ">
                         技术支持：南京孜博汇信息科技有限公司
                     </label>
                 </el-footer>
@@ -74,23 +79,29 @@
 
 <script>
 import "animate.css";
-import { Animation, EndlessPlayer } from "@/utils/Animation";
-import { ComponentKey, Dotpen, IpcMessage, Handlers } from "@/utils/Definition";
+import { Activity } from "@/utils/Activity";
 import { ResizeEvent } from "@/utils/Events";
 import { Canvas, Dot } from "@/utils/Canvas";
 import { Stroke, StrokeDivider } from "@/utils/Stroke";
+import { Animation, EndlessPlayer } from "@/utils/Animation";
+import { ComponentKey, Dotpen, IpcMessage, Handlers } from "@/utils/Definition";
+
 import Container from "./Container.vue";
-import { Activity } from "@/utils/Activity";
+import Scroller from "./Scroller.vue";
+import MultipleBorder from "./MultipleBorder.vue";
+import Aspratio from "../layout/Aspratio.vue";
 export default {
     components: {
         Container,
+        Scroller,
+        MultipleBorder,
+        Aspratio,
     },
     beforeCreate() {
         window.$Dispatcher.invoke(IpcMessage.FullScreen, true);
     },
     unmounted() {
         this.player.stop();
-        this.stopScroll();
         clearInterval(this.intervals.queryInterval);
         this.getCanvases().forEach((x) => {
             x.stopUpload();
@@ -137,6 +148,8 @@ export default {
              * @type {EndlessPlayer}
              */
             player: null,
+
+            scroll: true,
         };
     },
     created() {
@@ -173,7 +186,7 @@ export default {
             });
     },
     mounted() {
-        this.scrollImage(this.activity.PictureSpeed);
+        //this.scrollImage(this.activity.PictureSpeed);
         let vue = this;
         setTimeout(() => {
             vue.player.start();
@@ -266,7 +279,7 @@ export default {
                     }
                 } else {
                     if (!this.activity.isValidDot(dot)) {
-                        console.log(`[${dot.address}]无效`)
+                        console.log(`[${dot.address}]无效`);
                         return;
                     }
                     clearTimeout(laterInterval);
@@ -296,28 +309,6 @@ export default {
             Object.keys(this.locals).forEach((x) => ret.push(this.locals[x]));
             Object.keys(this.remotes).forEach((x) => ret.push(this.remotes[x]));
             return ret;
-        },
-        scrollImage(timeout) {
-            this.stopScroll();
-            var iSpeed = -1;
-            let cont = document.getElementById("Pictures");
-            let ul = cont.getElementsByTagName("ul")[0];
-            ul.innerHTML += ul.innerHTML;
-            let scroll = () => {
-                ul.style.top = `${ul.offsetTop + iSpeed}px`;
-                if (ul.offsetTop < -ul.offsetHeight / 2) {
-                    ul.style.top = "0px";
-                } else if (ul.offsetTop > 0) {
-                    ul.style.top = `${-ul.offsetHeight / 2}px`;
-                }
-            };
-            this.intervals.scrollInterval = setInterval(scroll, timeout);
-        },
-        stopScroll() {
-            if (this.intervals.scrollInterval) {
-                clearInterval(this.intervals.scrollInterval);
-                this.intervals.scrollInterval = null;
-            }
         },
     },
 };
@@ -385,7 +376,7 @@ export default {
                     background-size: cover;
                     background-repeat: no-repeat;
 
-                    #Pictures {
+                    #PictureScroll {
                         margin-top: 40px;
                         margin-top: 40px;
                         margin-left: 80px;
@@ -394,28 +385,6 @@ export default {
                         width: calc(100% - 160px);
                         position: relative;
                         overflow: hidden;
-
-                        li {
-                            background-size: cover;
-                            background-repeat: no-repeat;
-                            user-select: none;
-                        }
-
-                        ul {
-                            position: absolute;
-                            left: 0;
-                            margin: 0;
-                            padding: 0;
-                        }
-
-                        ul li {
-                            list-style: none;
-                            float: left;
-                        }
-
-                        ul li img {
-                            width: 100%;
-                        }
                     }
                 }
             }
