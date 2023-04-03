@@ -26,7 +26,8 @@
         "sass-loader": "^13.2.0",
         "unzip-crx-3": "^0.2.0",
         "vue": "^3.2.13",
-        "vue-meta": "next"
+        "vue-meta": "next",
+        "vue-seamless-scroll": "^1.1.23"
     },
     "devDependencies": {
         "@babel/core": "^7.12.16",
