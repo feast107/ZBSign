@@ -35,25 +35,26 @@
         </el-main>
     </el-container>
     <div class="footer">
-        <div class="bottomBack">
-            <el-popover trigger="hover">
-                <el-space size="default">
-                    <div v-for="erase in sizes" :key="erase" @click="() => this.setErase(erase)"
-                        :style="`width:${erase}px;height:${erase}px;background-color:#0073ff;`"></div>
-                    <el-divider direction="vertical" />
-                    <div style="width: 20px; height: 20px" @click="fallbackOne">
-                        <img src="../../assets/Main/Erase/Fallback.svg" />
-                    </div>
-                </el-space>
-                <template #reference>
-                    <el-button circle @click="enableErase = !enableErase" :type="enableErase ? '' : 'info'">
-                        <img v-if="enableErase" src="../../assets/Main/Erase/Erase-enabled.svg" />
-                        <img v-else src="../../assets/Main/Erase/Erase-disabled.svg" />
-                    </el-button>
-                </template>
-            </el-popover>
-        </div>
-        <div class="footer-inner"></div>
+        <Aspratio :ratio="1 / 14">
+            <div class="bottomBack">
+                <el-popover trigger="hover">
+                    <el-space size="default">
+                        <div v-for="erase in sizes" :key="erase" @click="() => this.setErase(erase)"
+                            :style="`width:${erase}px;height:${erase}px;background-color:#0073ff;`"></div>
+                        <el-divider direction="vertical" />
+                        <div style="width: 20px; height: 20px" @click="fallbackOne">
+                            <img src="../../assets/Main/Erase/Fallback.svg" />
+                        </div>
+                    </el-space>
+                    <template #reference>
+                        <el-button circle @click="enableErase = !enableErase" :type="enableErase ? '' : 'info'">
+                            <img v-if="enableErase" src="../../assets/Main/Erase/Erase-enabled.svg" />
+                            <img v-else src="../../assets/Main/Erase/Erase-disabled.svg" />
+                        </el-button>
+                    </template>
+                </el-popover>
+            </div>
+        </Aspratio>
     </div>
 </template>
 
@@ -61,11 +62,13 @@
 import { Activity } from "@/utils/Activity";
 import { ComponentKey, Handlers } from "@/utils/Definition";
 import { Stroke } from "@/utils/Stroke";
+import Aspratio from "../layout/Aspratio.vue";
 import SvgContainer from "./SvgContainer.vue";
 export default {
     inject: [ComponentKey.ModifingActivity],
     components: {
         SvgContainer,
+        Aspratio
     },
     data() {
         return {
@@ -249,17 +252,7 @@ export default {
     width: 100%;
     bottom: 0;
 
-    .footer-inner {
-        height: 0;
-        z-index: 0;
-        width: 100%;
-        padding-bottom: calc(1 / 14 * 100%);
-    }
-
     .bottomBack {
-        left: 0;
-        top: 0;
-        position: absolute;
         z-index: 20;
         height: 100%;
         width: 100%;
