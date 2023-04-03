@@ -175,11 +175,11 @@ export class Activity {
     get PictureSpeed() {
         switch (this.pictureSpeed) {
             case "3x":
-                return 10;
+                return 60;
             case "2x":
-                return 20;
+                return 40;
             case "1x":
-                return 30;
+                return 20;
         }
         return 20;
     }
