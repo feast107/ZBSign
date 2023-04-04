@@ -1,25 +1,23 @@
 <template>
-    <div
-        :style="`display:${can.display};background-image:url(${activity.rightBorder}); `"
-        :class="can.className">
-        <canvas
-            :id="can.id"
-            :z-index="can.index"
-            class="innerCanvas"
-            :style="`z-index:30;background-color:#aaaa0040`"
-            :width="can.drawWidth"
-            :height="can.drawHeight">
-        </canvas>
-        <div
-            :style="`background-image:url(${activity.pageUrl});z-index:20`"
-            class="innerCanvas"></div>
-    </div>
+    <Aspratio :ratio="0.66" :class="can.className">
+        <MultipleBorder :top="20" :bottom="20" :left="14" :right="14" :base-url="activity.rightBorder">
+            <template #center>
+                <div :style="`width:100%;height:100%;display:${can.display};background-image:url(${activity.pageUrl});`">
+                    <canvas :id="can.id" :z-index="can.index" class="innerCanvas"
+                        :style="`z-index:30;background-color:#aaaa0040`" :width="can.drawWidth" :height="can.drawHeight">
+                    </canvas>
+                </div>
+            </template>
+        </MultipleBorder>
+    </Aspratio>
 </template>
 
 <script>
 import { ComponentKey } from "@/utils/Definition";
 import { Activity } from "@/utils/Activity";
 import { Canvas } from "@/utils/Canvas";
+import Aspratio from "../layout/Aspratio.vue";
+import MultipleBorder from "./MultipleBorder.vue";
 export default {
     props: ["canvas"],
     inject: [ComponentKey.PlayActicity, ComponentKey.Dotpen],
@@ -35,19 +33,15 @@ export default {
             can: this["canvas"],
         };
     },
-    methods:{
-        
-    }
+    methods: {},
+    components: { Aspratio, MultipleBorder }
 };
 </script>
 
 <style lang="scss">
 .innerCanvas {
-    left: 0;
-    position: absolute;
-    width: calc(100% - 100px);
-    height: calc(100% - 100px);
-    margin: 50px;
+    width: 100%;
+    height:  100%;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
