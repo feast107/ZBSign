@@ -245,8 +245,8 @@ export class Canvas {
      */
     setScale(scale, canvas) {
         this.scale = scale;
-        this.drawHeight = 520 * scale;
-        this.drawWidth = 753 * scale;
+        this.drawHeight = 676 * scale;
+        this.drawWidth = 979 * scale;
         if (canvas) {
             canvas.width = this.drawWidth;
             canvas.height = this.drawHeight;
