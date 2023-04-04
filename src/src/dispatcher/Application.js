@@ -54,7 +54,7 @@ export class Application {
      * 创建窗口
      * @param {string} name
      * @param {Electron.BrowserWindowConstructorOptions} config
-     * @returns
+     * @returns {BrowserWindow}
      */
     createWindow(name, config) {
         if (!name) throw "Window name required";
