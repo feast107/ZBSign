@@ -86,8 +86,8 @@ async function createWindow() {
             event.preventDefault();
             if (!event.sender.$Scope.$BlueToothConnecting) {
                 event.sender.$Scope.$BlueToothConnecting = true;
-                let connectHandler;
-                let cancelHandler;
+                let connectHandler = () => {};
+                let cancelHandler = () => {};
                 connectHandler = (e, ...args) => {
                     console.log(...args);
                     ipcMain.off(IpcMessage.BlueToothSelect, connectHandler);
