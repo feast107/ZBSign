@@ -213,7 +213,7 @@ export class Canvas {
         this.config = config ?? new ContextConfig();
         this.isRemote = isRemote ?? false;
         this.address = address;
-        this.setScale(scale ?? 1.5);
+        this.setScale(scale ?? 3);
         this.penSerial = penSerial;
         this.pageNum = pageNum;
         this.lastPoint = null;
@@ -245,8 +245,9 @@ export class Canvas {
      */
     setScale(scale, canvas) {
         this.scale = scale;
-        this.drawHeight = 676 * scale;
-        this.drawWidth = 979 * scale;
+        let standard = 600;
+        this.drawHeight = standard * scale;
+        this.drawWidth = (standard * 100 * scale) / 69;
         if (canvas) {
             canvas.width = this.drawWidth;
             canvas.height = this.drawHeight;
@@ -277,7 +278,7 @@ export class Canvas {
     hide() {
         this.display = "none";
     }
-    
+
     onPenUp(store = true) {
         if (this.lastPoint == null) return;
         this.lastPoint = null;
