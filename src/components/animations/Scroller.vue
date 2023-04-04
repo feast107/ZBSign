@@ -25,8 +25,6 @@ export default {
     },
     mounted() {
         if (this.play) this.scroll();
-        this.$refs;
-        debugger;
     },
     unmounted() {
         this.stop();
