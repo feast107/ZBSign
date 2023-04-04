@@ -1,13 +1,13 @@
 <template>
     <el-row class="multi-border" style="width:100%;height:100%;position: absolute;">
         <el-row :style="`height:${Top}%;width:100%`">
-            <div :style="`width:${Left}%;height:100%;background-image:url(${baseUrl})/1.png)`" class="borders">
+            <div :style="`width:${Left}%;height:100%;background-image:url(${baseUrl}/1.png)`" class="borders">
                 <slot name="left-up"></slot>
             </div>
-            <div :style="`width:${Center}%;height:100%;background-image:url(${baseUrl})/2.png)`" class="borders">
+            <div :style="`width:${Center}%;height:100%;background-image:url(${baseUrl}/2.png)`" class="borders">
                 <slot name="up"></slot>
             </div>
-            <div :style="`width:${Right}%;height:100%;background-image:url(${baseUrl})/3.png)`" class="borders">
+            <div :style="`width:${Right}%;height:100%;background-image:url(${baseUrl}/3.png)`" class="borders">
                 <slot name="right-up"></slot>
             </div>
         </el-row>
