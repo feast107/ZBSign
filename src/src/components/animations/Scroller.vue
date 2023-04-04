@@ -41,12 +41,13 @@ export default {
         scroll() {
             this.stop();
             this.interval = setInterval(() => {
-                let height = this.$refs.ul.offsetHeight / 2;
+                let height = this.$refs.ul.scrollHeight / 2;
                 if (this.offset > height) {
                     this.offset -= height;
                 }
                 this.offset++;
-            }, this.speed ? (1000 / this.speed) : 20)
+                window.ul = this.$refs.ul;
+            }, this.speed ? (500 / this.speed) : 20)
         },
         stop() {
             if (!this.interval) return;
