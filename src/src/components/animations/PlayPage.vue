@@ -5,29 +5,18 @@
                 <el-header style="height: 20%">
                     <el-row>
                         <el-col :span="3">
-                            <el-image
-                                v-if="activity.HasLogo"
-                                class="logo"
-                                fit="cover"
-                                :src="activity.logoUrl" />
+                            <el-image v-if="activity.HasLogo" class="logo" fit="cover" :src="activity.logoUrl" />
                         </el-col>
                         <el-col :span="21">
                             <el-row>
-                                <label
-                                    class="title"
-                                    id="MainTitle"
+                                <label class="title" id="MainTitle"
                                     :style="`color:${activity.titleColor};font-size:${activity.titleSize}px;font-family:ForActivity;`">
                                     {{ activity.title }}
                                 </label>
                             </el-row>
                             <el-row v-if="activity.HasSubTitle">
-                                <label
-                                    class="title"
-                                    id="SubTitle"
-                                    :style="`color:${
-                                        activity.titleColor
-                                    };font-size:${
-                                        activity.titleSize / 1.5
+                                <label class="title" id="SubTitle" :style="`color:${activity.titleColor
+                                    };font-size:${activity.titleSize / 1.5
                                     }px;font-family:ForActivity;`">
                                     {{ activity.subTitle }}
                                 </label>
@@ -37,75 +26,44 @@
                 </el-header>
                 <el-container style="height: 75%">
                     <el-aside style="width: 40%">
-                        <el-row id="PictureBorder">
-                            <el-col :span="24">
-                                <div style="width: 80%">
-                                    <Aspratio :ratio="750 / 620">
-                                        <MultipleBorder
-                                            :left="25"
-                                            :right="25"
-                                            :top="20"
-                                            :bottom="20"
-                                            :base-url="activity.leftBorder">
-                                            <template #center>
-                                                <Scroller
-                                                    style="
-                                                        width: 100%;
-                                                        height: 100%;
-                                                    "
-                                                    :pictures="
-                                                        activity.pictureUrls
-                                                    "
-                                                    :speed="
-                                                        activity.PictureSpeed
-                                                    "
-                                                    :play="scroll"></Scroller>
-                                            </template>
-                                        </MultipleBorder>
-                                    </Aspratio>
+                        <div id="PictureBorder">
+                            <Anoaspratio :ratio="1.2">
+                                <div
+                                    style="position:absolute;width:100%;height:100%;background-color: rebeccapurple;z-index: 0;">
                                 </div>
-                            </el-col>
-                        </el-row>
+                                <Ascaler :horizontal="90" :vertical="90">
+                                    <Scroller style="width: 100%; height: 100%" :pictures="activity.pictureUrls"
+                                        :speed="activity.PictureSpeed" :play="scroll"></Scroller>
+                                </Ascaler>
+                            </Anoaspratio>
+                        </div>
                     </el-aside>
                     <el-main style="width: 60%">
-                        <div
-                            id="MainWindow"
-                            style="
-                                position: relative;
-                                background-color: transparent;
-                                overflow: hidden;
-                                width: 100%;
-                                height: 100%;
-                            ">
-                            <Container
-                                :key="key"
-                                v-for="key in Object.keys(locals)"
-                                :canvas="locals[key]"></Container>
-                            <Container
-                                :key="key"
-                                v-for="key in Object.keys(remotes)"
-                                :canvas="remotes[key]"></Container>
+                        <div id="MainWindow" style="
+                                                position: relative;
+                                                background-color: transparent;
+                                                overflow: hidden;
+                                                width: 100%;
+                                                height: 100%;
+                                            ">
+                            <Container :key="key" v-for="key in Object.keys(locals)" :canvas="locals[key]"></Container>
+                            <Container :key="key" v-for="key in Object.keys(remotes)" :canvas="remotes[key]"></Container>
                         </div>
                     </el-main>
                 </el-container>
                 <el-footer style="height: 5%; text-align: end">
-                    <label
-                        style="
-                            color: white;
-                            font-family: 'Helvetica Neue', Helvetica,
-                                'PingFang SC', 'Hiragino Sans GB',
-                                'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-                        ">
+                    <label style="
+                                            color: white;
+                                            font-family: 'Helvetica Neue', Helvetica,
+                                                'PingFang SC', 'Hiragino Sans GB',
+                                                'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+                                        ">
                         技术支持：南京孜博汇信息科技有限公司
                     </label>
                 </el-footer>
             </el-container>
         </div>
-        <el-image
-            id="Background"
-            fit="fill"
-            style="width: 100%; height: 100%; z-index: 0"
-            :src="activity.backgroundUrl">
+        <el-image id="Background" fit="fill" style="width: 100%; height: 100%; z-index: 0" :src="activity.backgroundUrl">
         </el-image>
     </div>
 </template>
@@ -118,17 +76,18 @@ import { Canvas, Dot } from "@/utils/Canvas";
 import { Stroke, StrokeDivider } from "@/utils/Stroke";
 import { Animation, EndlessPlayer } from "@/utils/Animation";
 import { ComponentKey, Dotpen, IpcMessage, Handlers } from "@/utils/Definition";
-
 import Container from "./Container.vue";
 import Scroller from "./Scroller.vue";
 import MultipleBorder from "./MultipleBorder.vue";
-import Aspratio from "../layout/Aspratio.vue";
+import Ascaler from "../layout/Ascaler.vue";
+import Anoaspratio from "../layout/Anoaspratio.vue";
 export default {
     components: {
         Container,
         Scroller,
         MultipleBorder,
-        Aspratio,
+        Anoaspratio,
+        Ascaler
     },
     beforeCreate() {
         window.$Dispatcher.invoke(IpcMessage.FullScreen, true);
@@ -194,7 +153,7 @@ export default {
                 vue.$emit(Handlers.QuitPlay, null);
             }
         });
-        ResizeEvent.on((width, height) => {});
+        ResizeEvent.on((width, height) => { });
         this.dotpen.onDraw(this.callbackHandler());
 
         let effects = this.activity.rollEffect.split(".");
@@ -223,7 +182,6 @@ export default {
             });
     },
     mounted() {
-        //this.scrollImage(this.activity.PictureSpeed);
         let vue = this;
         setTimeout(() => {
             vue.player.start();
@@ -408,32 +366,12 @@ export default {
                 #PictureBorder {
                     height: 100%;
                     width: 100%;
-                    position: relative;
-                    overflow: hidden;
-                    background-size: cover;
-                    background-repeat: no-repeat;
-
-                    #PictureScroll {
-                        margin-top: 40px;
-                        margin-top: 40px;
-                        margin-left: 80px;
-                        margin-right: 80px;
-                        height: calc(100% - 80px);
-                        width: calc(100% - 160px);
-                        position: relative;
-                        overflow: hidden;
-                    }
                 }
             }
 
             .canvas {
-                width: 100%;
-                height: 100%;
                 left: 0;
                 position: absolute;
-                background-size: cover;
-                background-repeat: no-repeat;
-                background-position: center;
                 z-index: 10 !important;
             }
 
