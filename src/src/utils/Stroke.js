@@ -50,7 +50,7 @@ export class StrokeDivider {
      */
     accecptOneStroke(stroke) {
         /**
-         * @type {Canvas}
+         * @type {SvgCanvas}
          */
         let canvas;
         if (this.penSerial != null && stroke.s == this.penSerial) {
