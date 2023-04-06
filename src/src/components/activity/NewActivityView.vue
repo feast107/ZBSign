@@ -191,11 +191,12 @@ export default {
             this.$refs.activeForm.validate()
                 .then(async r => {
                     this.submitting = true;
-                    if (await this.activity.create()) {
+                    let a = await this.activity.create();
+                    if (a.code == 1) {
                         this.$message.success("创建成功");
                         this.$emit(`onJumpToList`);
                     } else {
-                        this.$message.error("创建失败");
+                        this.$message.error("创建失败," + a.msg);
                     }
                     this.submitting = false;
                 }).catch(e => {
