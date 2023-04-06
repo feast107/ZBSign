@@ -29,11 +29,11 @@ export class StrokeDivider {
         this.pageNum = pageNum;
         this.isSvgCanvas = true;
         /**
-         * @type {Canvas}
+         * @type {SvgCanvas}
          */
         this.local = null;
         /**
-         * @type {Canvas}
+         * @type {SvgCanvas[]}
          */
         this.remote = {};
         this.localContainer = localContainer;
@@ -63,18 +63,18 @@ export class StrokeDivider {
         } else {
             canvas = this.createRemote(stroke.s);
         }
-        setTimeout(() => {
-            canvas.bind(document);
-            if (this.isSvgCanvas) {
-                canvas.strokes.push(stroke);
-            } else {
+        if (this.isSvgCanvas) {
+            canvas.strokes.push(stroke);
+        } else {
+            setTimeout(() => {
+                canvas.bind(document);
                 var points = Stroke.SVG2Points2(stroke.p, this.pageAddress);
                 points.forEach((dot) => {
                     canvas.draw(dot, null, false);
                 });
                 canvas.draw(Dot.Up, null, false);
-            }
-        }, 0);
+            }, 0);
+        }
     }
     accecptNewStrokes(strokes) {
         strokes.forEach((stroke) => {
