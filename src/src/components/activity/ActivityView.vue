@@ -8,11 +8,11 @@
         <el-col id="ActivityView" v-else style="height: 100%; width: 100%">
             <el-row justify="center" style="height: 50px; padding: 10px">
                 <el-autocomplete id="AutoComplete" style="
-                            box-shadow: var(--el-box-shadow-light);
-                            width: 80%;
-                            border-radius: 20px;
-                        " v-model="searchPattern" :fetch-suggestions="getSuggests" clearable popper-class="my-autocomplete"
-                    placeholder="搜索活动" @select="selectHandler" @change="onChangeHandler">
+                                        box-shadow: var(--el-box-shadow-light);
+                                        width: 80%;
+                                        border-radius: 20px;
+                                    " v-model="searchPattern" :fetch-suggestions="getSuggests" clearable
+                    popper-class="my-autocomplete" placeholder="搜索活动" @select="selectHandler" @change="onChangeHandler">
                     <template #prefix>
                         <el-icon class="el-input__icon">
                             <search />
@@ -26,16 +26,19 @@
             <el-row id="MainList">
                 <el-scrollbar v-loading="this.loading" style="width: 100%; padding-right: 10px">
                     <el-table stripe :data="activities.show" style="width: 100%">
+                        <el-table-column width="35">
+                            <el-button text style="margin-right: 10px">
+                                <img class="icon-small" src="../../assets/Main/Activity/Activity.svg" />
+                            </el-button>
+                        </el-table-column>
                         <el-table-column>
                             <template #default="scope">
-                                <el-button text style="margin-right: 10px">
-                                    <img class="icon-small" src="../../assets/Main/Activity/Activity.svg" />
-                                </el-button>
                                 <span style="
-                                            user-select: none;
-                                            font-weight: 1000;
-                                            vertical-align: middle;
-                                        ">
+                                                        user-select: none;
+                                                        font-weight: 1000;
+                                                        vertical-align: middle;
+                                                        white-space :nowrap
+                                                        ">
                                     {{ scope.row.title }}
                                 </span>
                             </template>
@@ -84,8 +87,8 @@
                         <el-table-column label="" width="50">
                             <template #default="scope">
                                 <el-popover style="
-                                            box-shadow: var(--el-box-shadow-dark);
-                                        " placement="bottom" :width="'auto'" trigger="click">
+                                                        box-shadow: var(--el-box-shadow-dark);
+                                                    " placement="bottom" :width="'auto'" trigger="click">
                                     <template #reference>
                                         <el-button circle>
                                             <el-icon>
@@ -109,9 +112,9 @@
                                                         )
                                                 " circle>
                                                     <img class="icon-small icon-canClick" style="
-                                                                width: 20px;
-                                                                height: 20px;
-                                                            " src="../../assets/Main/Activity/Copy.svg" />
+                                                                            width: 20px;
+                                                                            height: 20px;
+                                                                        " src="../../assets/Main/Activity/Copy.svg" />
                                                 </el-button>
                                             </template>
                                         </el-popover>
@@ -121,18 +124,18 @@
                                             () => erase(scope.row)
                                         " circle>
                                             <img style="
-                                                        width: 20px;
-                                                        height: 20px;
-                                                    " class="icon-small icon-canClick"
-                                                src="../../assets/Main/Activity/Share.svg" />
+                                                                    width: 20px;
+                                                                    height: 20px;
+                                                                " class="icon-small icon-canClick"
+                                                src="../../assets/Main/Activity/Eraser.svg" />
                                         </el-button>
                                     </el-row>
                                     <el-row>
                                         <el-button class="iconButton" @click="editResource(scope.row)" circle>
                                             <img style="
-                                                        width: 20px;
-                                                        height: 20px;
-                                                    " class="icon-small icon-canClick"
+                                                                    width: 20px;
+                                                                    height: 20px;
+                                                                " class="icon-small icon-canClick"
                                                 src="../../assets/Main/Activity/Resource.svg" />
                                         </el-button>
                                     </el-row>
@@ -140,9 +143,9 @@
                                         <el-button class="iconButton" @click="deleteActivity(scope.row)" plain type="danger"
                                             circle>
                                             <el-icon style="
-                                                        width: 20px;
-                                                        height: 20px;
-                                                    ">
+                                                                    width: 20px;
+                                                                    height: 20px;
+                                                                ">
                                                 <Delete />
                                             </el-icon>
                                         </el-button>
@@ -254,8 +257,8 @@
                         <el-upload v-if="
                             editActivity.target.logoUrl == String() ||
                             editActivity.target.logoUrl == null
-                        " class="avatar-uploader" action="#" :limit="1" :accept="accpetance"
-                            :on-change="uploadLogo" :on-remove="removeLogo" :auto-upload="false" list-type="picture-card">
+                        " class="avatar-uploader" action="#" :limit="1" :accept="accpetance" :on-change="uploadLogo"
+                            :on-remove="removeLogo" :auto-upload="false" list-type="picture-card">
                             <el-icon id="logoUpload" class="avatar-uploader-icon">
                                 <Plus />
                             </el-icon>
@@ -295,9 +298,9 @@
                             <el-popover placement="left" :width="'auto'" trigger="hover">
                                 <template #reference>
                                     <label style="
-                                                user-select: auto;
-                                                pointer-events: all;
-                                            ">上传照片墙</label>
+                                                            user-select: auto;
+                                                            pointer-events: all;
+                                                        ">上传照片墙</label>
                                 </template>
                                 <el-button id="PopRemoveAll" @click="
                                     () => {
