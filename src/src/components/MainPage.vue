@@ -162,7 +162,7 @@ export default {
         window[Bridges.Navigator] = document[Bridges.Navigator] = {
             [Bridges.BlueTooth]: this.bluetooth,
         };
-        this.dotpen.listen(dot=>{ if(dot.IsMove){ console.log(dot) } })
+        //this.dotpen.listen(dot=>{ if(dot.IsMove){ console.log(dot) } })
         try {
             let conf = this.getConfigs();
             let act = this.getActivities();
