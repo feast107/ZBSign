@@ -189,6 +189,101 @@ export class ContextConfig {
     }
 }
 
+export class SvgCanvas {
+    constructor(address, penSerial, pageNum) {
+        this.display = "";
+        this.strokeManager = new StrokeManager(this);
+        this.className = "canvas";
+        this.address = address;
+        this.penSerial = penSerial;
+        this.pageNum = pageNum;
+        this.strokes = [];
+        this.currentStroke = null;
+        this.lastDot = null;
+        this.events = [];
+    }
+    trigger(sender) {
+        this.events.forEach((x) => x(sender));
+    }
+    listen(handler) {
+        this.events.push(handler);
+    }
+    onPenUp(store = true) {
+        if (this.lastDot == null) return;
+        this.lastDot = null;
+        if (this.currentStroke == null) return;
+        if (store) {
+            this.strokeManager.addStroke(this.currentStroke);
+            console.log("提交到manager");
+        }
+        this.currentStroke = null;
+    }
+    /**
+     *
+     * @param {Dot} dot
+     * @returns
+     */
+    onPenMove(dot, store = true) {
+        if (!dot.IsValid) return;
+        if (this.lastDot == null) {
+            this.lastDot = dot;
+            return;
+        }
+        if (this.currentStroke == null) {
+            this.currentStroke = new Stroke(
+                [this.lastDot, dot],
+                this.penSerial,
+                this.pageNum
+            );
+            this.strokes.push(this.currentStroke);
+            console.log(this.currentStroke);
+        } else {
+            this.currentStroke.addPoint(dot);
+            console.log(this.currentStroke);
+        }
+    }
+    /**
+     *
+     * @param {Dot} dot
+     * @param {HTMLCanvasElement} canvas
+     * @param {boolean} store 是否需要存储
+     */
+    draw(dot, _ = null, store = true) {
+        if (dot.IsUp) {
+            this.onPenUp(store);
+            return;
+        }
+        if (dot.IsDown) {
+            return;
+        }
+        this.onPenMove(dot, store);
+    }
+
+    show() {
+        this.display = "";
+    }
+    hide() {
+        this.display = "none";
+    }
+    /**
+     *
+     * @param {Stroke} stroke
+     */
+    hasStroke(stroke) {
+        return this.strokeManager.hasStroke(stroke);
+    }
+    async uploadStroke(activityId) {
+        return await this.strokeManager.upload(activityId);
+    }
+    uploadInterval(activityId, interval = 3000) {
+        this.strokeManager.uploadInterval(activityId, interval);
+    }
+    stopUpload() {
+        this.strokeManager.stopUpload();
+    }
+    bind(_) {}
+}
+
 export class Canvas {
     /**
      *
@@ -278,7 +373,6 @@ export class Canvas {
     hide() {
         this.display = "none";
     }
-
     onPenUp(store = true) {
         if (this.lastPoint == null) return;
         this.lastPoint = null;
@@ -376,15 +470,5 @@ export class Canvas {
     }
     stopUpload() {
         this.strokeManager.stopUpload();
-    }
-    /**
-     * @param {string} value
-     */
-    addClassName(value) {
-        if (this.className.includes(value)) return;
-        this.className += ` ${value}`;
-    }
-    removeClassName(value) {
-        this.className = this.className.replace(value, "").replace("  ", " ");
     }
 }
