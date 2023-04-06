@@ -37,11 +37,7 @@ export default {
     methods: {
         resize() {
             let parent = this.$refs.asp.parentElement;
-            //let pRect = parent.getBoundingClientRect();
-            var pRect = {};
-            pRect.height = parent.offsetHeight;
-            pRect.width = parent.offsetWidth;
-            debugger;
+            let pRect = parent.getBoundingClientRect();
             if (pRect.height == 0 && pRect.width == 0) {
                 if (this.deep > 3) {
                     setTimeout(this.resize, 20);
@@ -64,7 +60,6 @@ export default {
                     this.height = 100;
                     this.width = desiredWidth * 100 / pRect.width;
                 }
-                debugger;
             } else {
                 this.width = desiredWidth;
                 this.height = desiredHeight;
