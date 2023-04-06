@@ -116,10 +116,38 @@ export class Activity {
     }
     static rules() {
         return {
+            bookId: [
+                {
+                    required: true,
+                    message: "请选择本子",
+                    trigger: "blur",
+                },
+            ],
             title: [
                 {
                     required: true,
                     message: "请输入活动名称",
+                    trigger: "blur",
+                },
+            ],
+            font : [
+                {
+                    required:true,
+                    message:"请选择字体",
+                    trigger : "blur",
+                }
+            ],
+            border: [
+                {
+                    required: true,
+                    message: "请选择边框",
+                    trigger: "blur",
+                },
+            ],
+            rollEffect: [
+                {
+                    required: true,
+                    message: "请选择滚动效果",
                     trigger: "blur",
                 },
             ],
