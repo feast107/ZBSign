@@ -171,9 +171,11 @@ export default (function () {
         get: function () {
             const handler = {
                 get: function () {
+                    console.log(arguments);
                     return Reflect.get(...arguments);
                 },
                 set: function () {
+                    console.log(arguments);
                     return Reflect.set(...arguments);
                 },
             };
