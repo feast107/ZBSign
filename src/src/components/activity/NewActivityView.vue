@@ -80,12 +80,15 @@
                             <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/UploadFile.svg" />
                         </el-button>
                     </template>
-                    <el-upload style="max-width: 440px" ref="pictureWall" multiple action="#" :auto-upload="false"
-                        :accept="accpetance" :on-change="pictureUpload" :on-remove="pictureRemove" list-type="picture-card">
-                        <el-icon class="avatar-uploader-icon">
-                            <Plus />
-                        </el-icon>
-                    </el-upload>
+                    <el-scrollbar :max-height="500">
+                        <el-upload style="max-width: 440px" ref="pictureWall" multiple action="#" :auto-upload="false"
+                            :accept="accpetance" :on-change="pictureUpload" :on-remove="pictureRemove"
+                            list-type="picture-card">
+                            <el-icon class="avatar-uploader-icon">
+                                <Plus />
+                            </el-icon>
+                        </el-upload>
+                    </el-scrollbar>
                 </el-popover>
             </el-form-item>
             <el-form-item label="标题尺寸">
