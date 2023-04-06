@@ -27,7 +27,7 @@
                 <el-color-picker v-model="activity.titleColor" />
             </el-form-item>
 
-            <el-form-item label="标题字体">
+            <el-form-item prop="font" label="标题字体">
                 <el-popover placement="right" :width="400" trigger="click">
                     <template #reference>
                         <el-button style="padding: 0; border: none">
@@ -104,7 +104,7 @@
                     <el-radio v-for="item in speeds" :key="item" :label="item"></el-radio>
                 </el-radio-group>
             </el-form-item>
-            <el-form-item label="签名滚动效果">
+            <el-form-item prop="rollEffect" label="签名滚动效果">
                 <el-popover placement="right" :width="400" trigger="click">
                     <template #reference>
                         <el-button style="padding: 0; border: none">
@@ -119,7 +119,7 @@
                 </el-popover>
             </el-form-item>
 
-            <el-form-item label="签名边框">
+            <el-form-item prop="border" label="签名边框">
                 <el-popover placement="right" :width="400" trigger="click">
                     <template #reference>
                         <el-button style="padding: 0; border: none">
