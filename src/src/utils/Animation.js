@@ -123,6 +123,10 @@ export class EndlessPlayer {
         this.interval = null;
         this.index = -1;
         this.getter = elementGetter;
+        this.inAction = () => {};
+        this.outAction = () => {};
+        this.beforeRoundAction = () => {};
+        this.afterAllAction = () => {};
     }
     /**
      *
@@ -133,16 +137,16 @@ export class EndlessPlayer {
         this.Between = 1000 * second;
         return this;
     }
-    byMillionSeconds(millionSecond){
+    byMillionSeconds(millionSecond) {
         this.Between = millionSecond;
         return this;
     }
     /**
      * @param {Number} value
      */
-    set Between(value){
+    set Between(value) {
         this.between = value;
-        if(this.interval){
+        if (this.interval) {
             this.start();
         }
     }
