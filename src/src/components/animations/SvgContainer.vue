@@ -33,6 +33,11 @@ export default {
         this.strokes.forEach(x => {
             if (x.p.split(' ').length > 2) {
                 this.svgs.add(x);
+            } else {
+                this.onRemoveStroke?.call(null, {
+                    stroke: x,
+                    fallback() { }
+                });
             }
         })
     },
