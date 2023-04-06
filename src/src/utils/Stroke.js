@@ -1,4 +1,4 @@
-import { Canvas, Dot } from "./Canvas";
+import { Canvas, Dot, SvgCanvas } from "./Canvas";
 import { Activity } from "./Activity";
 import Request from "./Request";
 import { Location } from "./Location";
@@ -27,6 +27,7 @@ export class StrokeDivider {
         this.activity = activity;
         this.pageAddress = pageAddress;
         this.pageNum = pageNum;
+        this.isSvgCanvas = true;
         /**
          * @type {Canvas}
          */
@@ -34,15 +35,12 @@ export class StrokeDivider {
         /**
          * @type {Canvas}
          */
-        this.remote = null;
+        this.remote = {};
         this.localContainer = localContainer;
         this.remoteContainer = remoteContainer;
         this.accecptStrokes(strokes);
         if (localContainer[pageAddress]) {
             this.local = localContainer[pageAddress];
-        }
-        if (remoteContainer[pageAddress]) {
-            this.remote = remoteContainer[pageAddress];
         }
         this.index = 0;
     }
@@ -67,11 +65,15 @@ export class StrokeDivider {
         }
         setTimeout(() => {
             canvas.bind(document);
-            var points = Stroke.SVG2Points2(stroke.p, this.pageAddress);
-            points.forEach((dot) => {
-                canvas.draw(dot, null, false);
-            });
-            canvas.draw(Dot.Up, null, false);
+            if (this.isSvgCanvas) {
+                canvas.strokes.push(stroke);
+            } else {
+                var points = Stroke.SVG2Points2(stroke.p, this.pageAddress);
+                points.forEach((dot) => {
+                    canvas.draw(dot, null, false);
+                });
+                canvas.draw(Dot.Up, null, false);
+            }
         }, 0);
     }
     accecptNewStrokes(strokes) {
@@ -96,39 +98,56 @@ export class StrokeDivider {
             this.local = this.localContainer[this.pageAddress];
             return this.local;
         }
-        this.localContainer[this.pageAddress] = this.local = new Canvas(
-            null,
-            null,
-            false,
-            this.pageAddress,
-            null,
-            penSerial,
-            this.pageNum
-        );
+        if (this.isSvgCanvas) {
+            this.localContainer[this.pageAddress] = this.local = new SvgCanvas(
+                this.pageAddress,
+                penSerial,
+                this.pageNum
+            );
+        } else {
+            this.localContainer[this.pageAddress] = this.local = new Canvas(
+                null,
+                null,
+                false,
+                this.pageAddress,
+                null,
+                penSerial,
+                this.pageNum
+            );
+        }
         this.local.listen(async (_) => {
             await this.doQuery();
         });
         return this.local;
     }
     createRemote(penSerial) {
-        if (this.remote) return this.remote;
-        if (this.remoteContainer[this.pageAddress]) {
-            this.remote = this.remoteContainer[this.pageAddress];
-            return this.remote;
+        let name = `${this.pageAddress}|${penSerial}`;
+        if (this.remote[name]) return this.remote[name];
+        if (this.remoteContainer[name]) {
+            return (this.remote[name] = this.remoteContainer[name]);
         }
-        this.remoteContainer[this.pageAddress] = this.remote = new Canvas(
-            null,
-            null,
-            false,
-            this.pageAddress,
-            null,
-            penSerial,
-            this.pageNum
-        );
-        this.remote.listen(async (_) => {
+        let remote;
+        if (this.isSvgCanvas) {
+            remote = this.remoteContainer[name] = new SvgCanvas(
+                this.pageAddress,
+                penSerial,
+                this.pageNum
+            );
+        } else {
+            remote = this.remoteContainer[name] = new Canvas(
+                null,
+                null,
+                false,
+                this.pageAddress,
+                null,
+                penSerial,
+                this.pageNum
+            );
+        }
+        remote.listen(async (_) => {
             await this.doQuery();
         });
-        return this.remote;
+        return remote;
     }
     async doQuery(newInterface = true) {
         let promise;
@@ -208,6 +227,33 @@ export class Stroke {
          * 起始点y
          */
         this.y1 = points[0].Y;
+        /**
+         * 最终点
+         */
+        this.last = points[points.length - 1];
+    }
+    /**
+     *
+     * @param {Dot} dot
+     * @returns
+     */
+    addPoint(dot) {
+        let curX = dot.X - this.last.X;
+        let curY = dot.Y - this.last.Y;
+        if (curX == 0 && curY == 0) {
+            return;
+        }
+
+        if (curX >= 0) {
+            this.p += " ";
+        }
+        this.p += String(curX);
+
+        if (curY >= 0) {
+            this.p += " ";
+        }
+        this.p += String(curY);
+        this.last = dot;
     }
     /**
      * SVG转点集合
@@ -329,7 +375,6 @@ export class Stroke {
                     ret += " ";
                 }
                 ret += String(curX);
-
                 if (curY >= 0) {
                     ret += " ";
                 }
@@ -340,10 +385,10 @@ export class Stroke {
         return ret;
     }
 }
-
+window.STROKE = Stroke;
 export class StrokeManager {
     /**
-     * @param {Canvas} canvas
+     * @param {Canvas|SvgCanvas} canvas
      */
     constructor(canvas) {
         this.canvas = canvas;
