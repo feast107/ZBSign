@@ -1,7 +1,8 @@
 <template>
     <Anoaspratio :ratio="0.72" :class="can.className">
-        <div style="position:absolute;width:100%;height:100%;background-color: rebeccapurple;z-index: 0;"></div>
-        <Ascaler :horizontal="82" :vertical="78.6" style="position:absolute">
+        <div class="rightBorder" :style="`background-image:url(${activity.rightBorder});z-index: 500;`">
+        </div>
+        <Ascaler :horizontal="82" :vertical="78.6">
             <div class="innerCanvas"
                 :style="`width:100%;height:100%;display:${can.display};background-image:url(${activity.pageUrl});background-size: contain;`">
                 <canvas :id="can.id" :z-index="can.index" class="innerCanvas"
@@ -43,6 +44,15 @@ export default {
 <style lang="scss">
 .asp {
     position: absolute;
+}
+
+.rightBorder {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .innerCanvas {
