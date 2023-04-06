@@ -126,6 +126,7 @@ export class EndlessPlayer {
         this.inAction = () => {};
         this.outAction = () => {};
         this.beforeRoundAction = () => {};
+        this.beforeAllAction = () => {};
         this.afterAllAction = () => {};
     }
     /**
@@ -157,6 +158,10 @@ export class EndlessPlayer {
      */
     beforeRound(action) {
         this.beforeRoundAction = action;
+        return this;
+    }
+    beforeAll(action) {
+        this.beforeAllAction = action;
         return this;
     }
     /**
@@ -198,10 +203,15 @@ export class EndlessPlayer {
     }
     start() {
         this.stop();
+        let started = false;
         let nextImage = () => {
-            var elements = this.getter();
-            this.beforeRoundAction();
+            let elements = this.getter();
             if (elements.length > 1) {
+                if(!started){
+                    this.beforeAllAction();
+                    started = true;
+                }
+                this.beforeRoundAction();
                 let element = elements[this.Index(elements.length)];
                 this.inAction(element);
 
