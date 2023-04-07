@@ -162,7 +162,6 @@ export default {
         window[Bridges.Navigator] = document[Bridges.Navigator] = {
             [Bridges.BlueTooth]: this.bluetooth,
         };
-        //this.dotpen.listen(dot=>{ if(dot.IsMove){ console.log(dot) } })
         try {
             let conf = this.getConfigs();
             let act = this.getActivities();
@@ -262,6 +261,7 @@ export default {
                 let ac = Activity.from(x);
                 next.push(ac);
             });
+            next = next.orderByDescending(x=>x.createTime);
             this.activities.whole = next;
         },
     },
