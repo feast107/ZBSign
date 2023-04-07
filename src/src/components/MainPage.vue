@@ -8,9 +8,9 @@
                             <div style="padding: 20px">
                                 <el-row style="user-select: none">
                                     <img style="
-                                                margin-left: 10px;
-                                                margin-right: 10px;
-                                            " src="../assets/Main/Logo-2.svg" />
+                                                    margin-left: 10px;
+                                                    margin-right: 10px;
+                                                " src="../assets/Main/Logo-2.svg" />
                                 </el-row>
                                 <el-row justify="center">
                                     <el-col :span="8">
@@ -18,10 +18,10 @@
                                     </el-col>
                                     <el-col :span="10">
                                         <el-button text style="
-                                                    background-color: transparent;
-                                                " type="primary">{{
-                                                    this.user.phoneNumber
-                                                }}</el-button>
+                                                        background-color: transparent;
+                                                    " type="primary">{{
+                                                        this.user.phoneNumber
+                                                    }}</el-button>
                                     </el-col>
                                 </el-row>
                             </div>
@@ -170,13 +170,18 @@ export default {
                 minSize: 10,
                 maxSize: 100,
                 colors: [
-                    '#ff4500',
-                    '#ff8c00',
+                    '#fff',
+                    '#be272d',
+                    '#ea1c24',
+                    '#f8ad3b',
                     '#ffd700',
-                    '#90ee90',
-                    '#00ced1',
-                    '#1e90ff',
-                    '#c71585',
+                    '#f9eb21',
+                    '#22b273',
+                    '#008f45',
+                    '#29a8df',
+                    '#0071b9',
+                    '#662d8e',
+                    "#000"
                 ]
             },
             showActivities: true,
