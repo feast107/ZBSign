@@ -2,16 +2,16 @@
     <el-scrollbar v-loading="submitting" style="margin-right: 1px">
         <el-form :model="activity" :rules="rules" label-width="120px" ref="activeForm" style="margin-right: 20px">
             <el-form-item label="活动本子" prop="bookId">
-                <el-popover placement="right" :width="400" trigger="click">
+                <el-popover placement="right" @show="this.$refs.book.toggleMenu()" :width="400" trigger="click">
                     <template #reference>
                         <el-button style="padding: 0; border: none">
                             <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/Book.svg" />
                         </el-button>
                     </template>
-                    <el-select v-model="activity.bookId" placeholder="选择本子">
+                    <el-select ref="book" v-model="activity.bookId" placeholder="选择本子">
                         <el-option v-for="item in config.books" :key="item.bookId" :label="item.bookName"
                             :value="item.bookId">
-                            <span style="float: left">{{ item.bookName }}</span>
+                            <span style="float: left;">{{ item.bookName }}</span>
                         </el-option>
                     </el-select>
                 </el-popover>
@@ -28,16 +28,16 @@
             </el-form-item>
 
             <el-form-item prop="font" label="标题字体">
-                <el-popover placement="right" :width="400" trigger="click">
+                <el-popover placement="right" :width="400" trigger="click" @show="() => { this.$refs.font.toggleMenu() }">
                     <template #reference>
                         <el-button style="padding: 0; border: none">
                             <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/Font.svg" />
                         </el-button>
                     </template>
-                    <el-select v-model="activity.font" placeholder="选择字体">
+                    <el-select ref="font" v-model="activity.font" placeholder="选择字体">
                         <el-option v-for="item in config.fonts" :key="item.dictValue" :label="item.dictName"
                             :value="item.dictValue">
-                            <span style="float: left">{{ item.dictName }}</span>
+                            <span :style="`float: left;font-family:'${item.dictName}'`">{{ item.dictName }}</span>
                         </el-option>
                     </el-select>
                 </el-popover>
@@ -105,13 +105,13 @@
                 </el-radio-group>
             </el-form-item>
             <el-form-item prop="rollEffect" label="签名滚动效果">
-                <el-popover placement="right" :width="400" trigger="click">
+                <el-popover @show="this.$refs.rollEffect.toggleMenu()" placement="right" :width="400" trigger="click">
                     <template #reference>
                         <el-button style="padding: 0; border: none">
                             <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/RowEffect.svg" />
                         </el-button>
                     </template>
-                    <el-select v-model="activity.rollEffect" placeholder="选择效果">
+                    <el-select ref="rollEffect" v-model="activity.rollEffect" placeholder="选择效果">
                         <el-option v-for="item in effects" :key="item.value" :label="item.label" :value="item.value">
                             <span style="float: left">{{ item.label }}</span>
                         </el-option>
@@ -120,16 +120,16 @@
             </el-form-item>
 
             <el-form-item prop="border" label="签名边框">
-                <el-popover placement="right" :width="400" trigger="click">
+                <el-popover placement="right" @show="this.$refs.border.toggleMenu()" :width="400" trigger="click">
                     <template #reference>
                         <el-button style="padding: 0; border: none">
                             <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/Border.svg" />
                         </el-button>
                     </template>
-                    <el-select v-model="activity.border" placeholder="选择边框">
+                    <el-select ref="border" v-model="activity.border" placeholder="选择边框">
                         <el-option v-for="item in config.borders" :key="item.dictValue" :label="item.dictName"
                             :value="item.dictValue">
-                            <span style="float: left">{{ item.dictName }}</span>
+                            <el-image style="width:200px;" :src="item.rightBorder" />
                         </el-option>
                     </el-select>
                 </el-popover>
@@ -149,6 +149,8 @@ import { EffectLabel } from "@/utils/Animation";
 import { ComponentKey } from "@/utils/Definition";
 import { DomElement } from "@/utils/Events";
 export default {
+    components: {
+    },
     inject: [ComponentKey.Activities],
     created() {
         window.activity = this.activity;
