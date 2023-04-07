@@ -253,6 +253,7 @@
                     </el-form-item>
                     <el-form-item label="标题字体">
                         <el-popover
+                            @show="this.$refs.font.toggleMenu()"
                             placement="right"
                             :width="400"
                             trigger="click">
@@ -264,6 +265,7 @@
                                 </el-button>
                             </template>
                             <el-select
+                                ref="font"
                                 v-model="editActivity.target.font"
                                 placeholder="选择字体">
                                 <el-option
@@ -271,9 +273,10 @@
                                     :key="item.dictValue"
                                     :label="item.dictName"
                                     :value="item.dictValue">
-                                    <span style="float: left">{{
-                                        item.dictName
-                                    }}</span>
+                                    <span
+                                        :style="`float: left;font-family:'${item.dictName}'`"
+                                        >{{ item.dictName }}</span
+                                    >
                                 </el-option>
                             </el-select>
                         </el-popover>
@@ -304,6 +307,7 @@
                     </el-form-item>
                     <el-form-item label="签名滚动效果">
                         <el-popover
+                            @show="this.$refs.rollEffect.toggleMenu()"
                             placement="right"
                             :width="400"
                             trigger="click">
@@ -315,6 +319,7 @@
                                 </el-button>
                             </template>
                             <el-select
+                                ref="rollEffect"
                                 v-model="editActivity.target.rollEffect"
                                 placeholder="选择效果">
                                 <el-option
@@ -331,6 +336,7 @@
                     </el-form-item>
                     <el-form-item label="签名边框">
                         <el-popover
+                            @show="this.$refs.border.toggleMenu()"
                             placement="right"
                             :width="400"
                             trigger="click">
@@ -342,6 +348,7 @@
                                 </el-button>
                             </template>
                             <el-select
+                                ref="border"
                                 v-model="editActivity.target.border"
                                 placeholder="选择边框">
                                 <el-option
@@ -349,9 +356,7 @@
                                     :key="item.dictValue"
                                     :label="item.dictName"
                                     :value="item.dictValue">
-                                    <span style="float: left">{{
-                                        item.dictName
-                                    }}</span>
+                                    <el-image style="width:200px;" :src="item.rightBorder" />
                                 </el-option>
                             </el-select>
                         </el-popover>
