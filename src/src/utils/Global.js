@@ -44,11 +44,11 @@ export default (function () {
             this.pop();
         }
     };
-    Array.prototype.addRange ??= function (another){
-        another.forEach(x=>{
+    Array.prototype.addRange ??= function (another) {
+        another.forEach((x) => {
             this.push(x);
-        })
-    }
+        });
+    };
     Array.prototype.removeAll ??= function (predicate) {
         let index = 0,
             count = 0;
@@ -113,6 +113,16 @@ export default (function () {
     };
     Array.prototype.all ??= function (predicate) {
         return this.every(predicate);
+    };
+    Array.prototype.orderBy ??= function (property) {
+        return this.sort(function (a, b) {
+            return property(a) - property(b);
+        });
+    };
+    Array.prototype.orderByDescending ??= function (property) {
+        return this.sort(function (a, b) {
+            return property(b) - property(a);
+        });
     };
     Map.prototype.containsKey ??= function (key) {
         return this.has(key);
