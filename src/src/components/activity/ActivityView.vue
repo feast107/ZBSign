@@ -8,11 +8,11 @@
         <el-col id="ActivityView" v-else style="height: 100%; width: 100%">
             <el-row justify="center" style="height: 50px; padding: 10px">
                 <el-autocomplete id="AutoComplete" style="
-                            box-shadow: var(--el-box-shadow-light);
-                            width: 80%;
-                            border-radius: 20px;
-                        " v-model="searchPattern" :fetch-suggestions="getSuggests" clearable popper-class="my-autocomplete"
-                    placeholder="搜索活动" @select="selectHandler" @change="onChangeHandler">
+                                box-shadow: var(--el-box-shadow-light);
+                                width: 80%;
+                                border-radius: 20px;
+                            " v-model="searchPattern" :fetch-suggestions="getSuggests" clearable
+                    popper-class="my-autocomplete" placeholder="搜索活动" @select="selectHandler" @change="onChangeHandler">
                     <template #prefix>
                         <el-icon class="el-input__icon">
                             <search />
@@ -44,11 +44,11 @@
                         <el-table-column>
                             <template #default="scope">
                                 <span style="
-                                            user-select: none;
-                                            font-weight: 1000;
-                                            vertical-align: middle;
-                                            white-space: nowrap;
-                                        ">
+                                                user-select: none;
+                                                font-weight: 1000;
+                                                vertical-align: middle;
+                                                white-space: nowrap;
+                                            ">
                                     {{ scope.row.title }}
                                 </span>
                             </template>
@@ -90,8 +90,8 @@
                         <el-table-column label="" width="50">
                             <template #default="scope">
                                 <el-popover style="
-                                            box-shadow: var(--el-box-shadow-dark);
-                                        " placement="bottom" :width="'auto'" trigger="click">
+                                                box-shadow: var(--el-box-shadow-dark);
+                                            " placement="bottom" :width="'auto'" trigger="click">
                                     <template #reference>
                                         <el-button circle>
                                             <el-icon>
@@ -115,9 +115,9 @@
                                                         )
                                                 " circle>
                                                     <img class="icon-small icon-canClick" style="
-                                                                width: 20px;
-                                                                height: 20px;
-                                                            " src="../../assets/Main/Activity/Copy.svg" />
+                                                                    width: 20px;
+                                                                    height: 20px;
+                                                                " src="../../assets/Main/Activity/Copy.svg" />
                                                 </el-button>
                                             </template>
                                         </el-popover>
@@ -125,9 +125,9 @@
                                     <el-row>
                                         <el-button class="iconButton" @click="() => erase(scope.row)" circle>
                                             <img style="
-                                                        width: 20px;
-                                                        height: 20px;
-                                                    " class="icon-small icon-canClick"
+                                                            width: 20px;
+                                                            height: 20px;
+                                                        " class="icon-small icon-canClick"
                                                 src="../../assets/Main/Activity/Eraser.svg" />
                                         </el-button>
                                     </el-row>
@@ -136,9 +136,9 @@
                                         <el-button class="iconButton" @click="deleteActivity(scope.row)" plain type="danger"
                                             circle>
                                             <el-icon style="
-                                                        width: 20px;
-                                                        height: 20px;
-                                                    ">
+                                                            width: 20px;
+                                                            height: 20px;
+                                                        ">
                                                 <Delete />
                                             </el-icon>
                                         </el-button>
@@ -166,19 +166,19 @@
                             @active-change="selectColor" :predefine="activities.colors" />
                     </el-form-item>
                     <el-form-item label="标题字体">
-                        <el-popover @show="this.$refs.font.toggleMenu()" placement="right" :width="400" trigger="click">
+                        <!-- <el-popover @show="this.$refs.font.toggleMenu()" placement="right" :width="400" trigger="click">
                             <template #reference>
                                 <el-button style="padding: 0; border: none">
                                     <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/Font.svg" />
                                 </el-button>
-                            </template>
+                            </template> -->
                             <el-select ref="font" v-model="editActivity.target.font" placeholder="选择字体">
                                 <el-option v-for="item in activities.fonts" :key="item.dictValue" :label="item.dictName"
                                     :value="item.dictValue">
                                     <span :style="`float: left;font-family:'${item.dictName}'`">{{ item.dictName }}</span>
                                 </el-option>
                             </el-select>
-                        </el-popover>
+                        <!-- </el-popover> -->
                     </el-form-item>
                     <el-form-item label="标题尺寸">
                         <el-slider :min="activities.minSize" :max="activities.maxSize" style="width: 200px"
@@ -195,14 +195,14 @@
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item label="签名滚动效果">
-                        <el-popover @show="this.$refs.rollEffect.toggleMenu()" placement="right" :width="400"
+                        <!-- <el-popover @show="this.$refs.rollEffect.toggleMenu()" placement="right" :width="400"
                             trigger="click">
                             <template #reference>
                                 <el-button style="padding: 0; border: none">
                                     <img style="width: 30px; height: 30px"
                                         src="../../assets/Main/NewActivity/RowEffect.svg" />
                                 </el-button>
-                            </template>
+                            </template> -->
                             <el-select ref="rollEffect" v-model="editActivity.target.rollEffect" placeholder="选择效果">
                                 <el-option v-for="item in effects" :key="item.value" :label="item.label"
                                     :value="item.value">
@@ -211,26 +211,23 @@
                                     }}</span>
                                 </el-option>
                             </el-select>
-                        </el-popover>
+                        <!-- </el-popover> -->
                     </el-form-item>
                     <el-form-item label="签名边框">
-                        <el-popover @show="this.$refs.border.toggleMenu()" placement="right" :width="400" trigger="click">
+                        <!-- <el-popover @show="this.$refs.border.toggleMenu()" placement="right" :width="400" trigger="click">
                             <template #reference>
                                 <el-button style="padding: 0; border: none">
                                     <img style="width: 30px; height: 30px" src="../../assets/Main/NewActivity/Border.svg" />
                                 </el-button>
-                            </template>
+                            </template> -->
                             <el-select ref="border" :options="activities.borders" v-model="editActivity.target.border"
                                 placeholder="选择边框">
-                                <el-option
-                                    v-for="item in activities.borders"
-                                    :key="item.dictValue"
-                                    :label="item.dictName"
+                                <el-option v-for="item in activities.borders" :key="item.dictValue" :label="item.dictName"
                                     :value="item.dictValue">
                                     <el-image style="width:200px;" :src="item.rightBorder" />
-                                </el-option> 
+                                </el-option>
                             </el-select>
-                        </el-popover>
+                        <!-- </el-popover> -->
                     </el-form-item>
                 </el-form>
             </el-scrollbar>
@@ -252,8 +249,8 @@
                         <el-upload v-if="
                             editActivity.target.logoUrl == String() ||
                             editActivity.target.logoUrl == null
-                        " class="avatar-uploader" action="#" :limit="1" :accept="accpetance"
-                            :on-change="uploadLogo" :on-remove="removeLogo" :auto-upload="false" list-type="picture-card">
+                        " class="avatar-uploader" action="#" :limit="1" :accept="accpetance" :on-change="uploadLogo"
+                            :on-remove="removeLogo" :auto-upload="false" list-type="picture-card">
                             <el-icon id="logoUpload" class="avatar-uploader-icon">
                                 <Plus />
                             </el-icon>
@@ -293,9 +290,9 @@
                             <el-popover placement="left" :width="'auto'" trigger="hover">
                                 <template #reference>
                                     <label style="
-                                                user-select: auto;
-                                                pointer-events: all;
-                                            ">上传照片墙</label>
+                                                    user-select: auto;
+                                                    pointer-events: all;
+                                                ">上传照片墙</label>
                                 </template>
                                 <el-button id="PopRemoveAll" @click="
                                     () => {
