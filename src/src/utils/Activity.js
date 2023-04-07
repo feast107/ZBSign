@@ -263,6 +263,11 @@ export class Activity {
                     ret[x] = other[x];
                     break;
             }
+            if(x.endsWith("Url")){
+                if(other[x] && other[x].length > 0){
+                    ret[x] = other[x] + '?res=' +new Date().getTime();
+                }
+            }
         });
         return ret;
     }
