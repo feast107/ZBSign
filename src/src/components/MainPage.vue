@@ -246,6 +246,11 @@ export default {
             this.activities.borders = (await bs).data;
             this.activities.fonts = (await fs).data;
             this.activities.books = (await bks).data;
+            this.activities.fonts.forEach(async (x) => {
+                const font = new FontFace(x.dictName, `url(${x.dictValue})`);
+                await font.load();
+                document.fonts.add(font);
+            });
         },
         async getActivities() {
             this.showActivities = false;
@@ -261,7 +266,7 @@ export default {
                 let ac = Activity.from(x);
                 next.push(ac);
             });
-            next = next.orderByDescending(x=>x.createTime);
+            next = next.orderByDescending((x) => x.createTime);
             this.activities.whole = next;
         },
     },
