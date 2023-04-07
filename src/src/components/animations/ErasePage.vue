@@ -18,15 +18,17 @@
             <div id="MainSpace">
                 <el-empty v-if="pages.length == 0" description="空" />
                 <el-scrollbar v-else>
-                    <el-space wrap size="large">
-                        <el-card :key="page" :style="`${width + 50}px`" v-for="page in pages">
-                            <SvgContainer :thick="eraseThick" :is-erasing="isErasing" :width="`${width}px`"
-                                :strokes="page.strokes" :on-remove-stroke="
-                                    (_) => {
-                                        onRemove(_, page.pageNum);
-                                    }
-                                " />
-                        </el-card>
+                    <el-space wrap size="large" style="padding-top:20px">
+                        <el-badge :key="page" v-for="page in pages" :value="page.pageNum" class="item" type="primary">
+                            <el-card :style="`${width + 50}px`">
+                                <SvgContainer :thick="eraseThick" :is-erasing="isErasing" :width="`${width}px`"
+                                    :strokes="page.strokes" :on-remove-stroke="
+                                        (_) => {
+                                            onRemove(_, page.pageNum);
+                                        }
+                                    " />
+                            </el-card>
+                        </el-badge>
                     </el-space>
                     <div v-if="enableErase" z-index="50" class="Rubber"
                         :style="`left:${place.x}px;top:${place.y}px;height:${eraseSize}px;width:${eraseSize}px;`"></div>
@@ -105,10 +107,25 @@ export default {
         pages.data.forEach(async (x) => {
             let promise = await this.activity.queryStrokes(x);
             let addr = this.activity.getPageAddress(x);
-            this.pages.push({
-                strokes: promise.data,
-                pageNum: x,
-            });
+            if (promise.Success) {
+                /**
+                 * @type {Stroke[]}
+                 */
+                let strokes = promise.data;
+                let serials = {};
+                strokes.forEach(s => {
+                    if (!serials[s.s]) { serials[s.s] = []; }
+                    serials[s.s].push(s);
+                });
+                Object.keys(serials).forEach(k => {
+                    this.pages.push({
+                        strokes: serials[k],
+                        pageNum: x,
+                        penSerial: k
+                    });
+                })
+                this.pages = this.pages.orderBy(x => x.pageNum);
+            }
         });
     },
     mounted() {
