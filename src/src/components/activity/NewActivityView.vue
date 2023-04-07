@@ -10,8 +10,8 @@
                     </template>
                     <el-select ref="book" v-model="activity.bookId" placeholder="选择本子">
                         <el-option v-for="item in config.books" :key="item.bookId" :label="item.bookName"
-                            :value="item.bookId">
-                            <span style="float: left;">{{ item.bookName }}</span>
+                            :value="item.bookId" style="max-height:unset;height:unset">
+                            <el-image style="width:200px" :src="item.coverUrl"></el-image>
                         </el-option>
                     </el-select>
                 </el-popover>
@@ -24,7 +24,7 @@
                 <el-input placeholder="可以置空" v-model="activity.subTitle" />
             </el-form-item>
             <el-form-item label="标题颜色">
-                <el-color-picker v-model="activity.titleColor" />
+                <el-color-picker v-model="activity.titleColor" :predefine="config.colors"/>
             </el-form-item>
 
             <el-form-item prop="font" label="标题字体">
@@ -136,7 +136,6 @@
             </el-form-item>
 
             <el-form-item>
-                <!--<el-button type="primary">预览</el-button>-->
                 <el-button type="primary" @click="submitForm">创建</el-button>
             </el-form-item>
         </el-form>
