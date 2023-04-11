@@ -8,9 +8,13 @@ export class Activity {
     constructor(id) {
         this.id = id ?? "";
         this.title = "";
-        this.subTitle = null;
         this.titleColor = "#000";
         this.titleSize = 10;
+
+        this.subTitle = null;
+        this.subTitleSize = 10;
+        this.subTitleColor = null;
+
         this.font = null;
 
         this.logo = null;
@@ -66,9 +70,11 @@ export class Activity {
     getCreateQuery() {
         return {
             title: this.title,
-            subTitle: this.subTitle,
-            titleSize: String(this.titleSize),
+            titleSize: this.titleSize,
             titleColor: this.titleColor,
+            subTitle: this.subTitle,
+            subTitleSize: this.subTitleSize,
+            subTitleColor: this.subTitleColor,
             font: this.font,
             bookId: this.bookId,
             border: this.border,
@@ -130,12 +136,12 @@ export class Activity {
                     trigger: "blur",
                 },
             ],
-            font : [
+            font: [
                 {
-                    required:true,
-                    message:"请选择字体",
-                    trigger : "blur",
-                }
+                    required: true,
+                    message: "请选择字体",
+                    trigger: "blur",
+                },
             ],
             border: [
                 {
@@ -256,6 +262,7 @@ export class Activity {
                 case "createTime":
                     ret[x] = new Date(Number(other[x]));
                     break;
+                case "subTitleSize":
                 case "titleSize":
                     ret[x] = Number(other[x]);
                     break;
@@ -263,9 +270,9 @@ export class Activity {
                     ret[x] = other[x];
                     break;
             }
-            if(x.endsWith("Url")){
-                if(other[x] && other[x].length > 0){
-                    ret[x] = other[x] + '?res=' +new Date().getTime();
+            if (x.endsWith("Url")) {
+                if (other[x] && other[x].length > 0) {
+                    ret[x] = other[x] + "?res=" + new Date().getTime();
                 }
             }
         });
