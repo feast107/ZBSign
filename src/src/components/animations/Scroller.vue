@@ -63,16 +63,21 @@ export default {
     overflow: hidden;
     height: 100%;
     width: 100%;
+    pointer-events: none;
+    user-select: none;   
 
     .scroller-ul {
         left: 0;
         padding: 0;
         margin: 0;
+        pointer-events: none;
+        user-select: none;
 
         .scroller-li {
             list-style: none;
             float: left;
-
+            pointer-events: none;
+            user-select: none;
             img {
                 width: 100%;
             }
