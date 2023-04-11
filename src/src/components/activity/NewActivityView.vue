@@ -18,15 +18,31 @@
             </el-form-item>
 
             <el-form-item prop="title" label="活动标题">
-                <el-input placeholder="请输入文字" v-model="activity.title" />
+                <el-row>
+                    <el-col :span="12">
+                        <el-input placeholder="请输入文字" v-model="activity.title" />
+                    </el-col>
+                    <el-col :span="6">
+                        <el-color-picker v-model="activity.titleColor" :predefine="config.colors"/>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-slider :min="config.minSize" :max="config.maxSize" style="width:200px" v-model="activity.titleSize" />
+                    </el-col>
+                </el-row>
             </el-form-item>
             <el-form-item prop="subTitle" label="活动副标题">
-                <el-input placeholder="可以置空" v-model="activity.subTitle" />
+                <el-row>
+                    <el-col :span="12">
+                        <el-input placeholder="可以置空" v-model="activity.subTitle" />
+                    </el-col>
+                    <el-col :span="6">
+                        <el-color-picker v-model="activity.subTitleColor" :predefine="config.colors"/>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-slider :min="config.minSize" :max="config.maxSize" style="width:200px" v-model="activity.subTitleSize" />
+                    </el-col>
+                </el-row>
             </el-form-item>
-            <el-form-item label="标题颜色">
-                <el-color-picker v-model="activity.titleColor" :predefine="config.colors"/>
-            </el-form-item>
-
             <el-form-item prop="font" label="标题字体">
                 <!-- <el-popover placement="right" :width="400" trigger="click" @show="() => { this.$refs.font.toggleMenu() }">
                     <template #reference>
@@ -90,9 +106,6 @@
                         </el-upload>
                     </el-scrollbar>
                 </el-popover>
-            </el-form-item>
-            <el-form-item label="标题尺寸">
-                <el-slider :min="config.minSize" :max="config.maxSize" style="width:200px" v-model="activity.titleSize" />
             </el-form-item>
             <el-form-item label="照片滚动速度">
                 <el-radio-group v-model="activity.pictureSpeed">
