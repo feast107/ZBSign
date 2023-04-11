@@ -13,64 +13,137 @@
                         </el-col>
                         <el-col :span="21">
                             <el-row>
-                                <label
-                                    class="title"
-                                    id="MainTitle"
-                                    :style="`color:${activity.titleColor};font-size:${activity.titleSize}px;font-family:ForActivity;`">
-                                    {{ activity.title }}
-                                </label>
+                                <el-popover
+                                    placement="bottom"
+                                    :width="200"
+                                    trigger="contextmenu">
+                                    <div style="width: 200px">
+                                        <el-row>
+                                            <el-color-picker
+                                                v-model="activity.titleColor"
+                                                :predefine="config.colors" />
+                                        </el-row>
+                                        <el-row>
+                                            <el-slider
+                                                v-model="activity.titleSize"
+                                                :min="10"
+                                                :max="100" />
+                                        </el-row>
+                                    </div>
+                                    <template #reference>
+                                        <label
+                                            class="title"
+                                            id="MainTitle"
+                                            :style="`color:${activity.titleColor};font-size:${activity.titleSize}px;font-family:ForActivity;`">
+                                            {{ activity.title }}
+                                        </label>
+                                    </template>
+                                </el-popover>
                             </el-row>
                             <el-row v-if="activity.HasSubTitle">
-                                <label
-                                    class="title"
-                                    id="SubTitle"
-                                    :style="`color:${
-                                        activity.titleColor
-                                    };font-size:${
-                                        activity.titleSize / 1.5
-                                    }px;font-family:ForActivity;`">
-                                    {{ activity.subTitle }}
-                                </label>
+                                <el-popover
+                                    placement="top"
+                                    :width="200"
+                                    trigger="contextmenu">
+                                    <div style="width: 200px">
+                                        <el-row>
+                                            <el-color-picker
+                                                v-model="activity.subTitleColor"
+                                                :predefine="config.colors" />
+                                        </el-row>
+                                        <el-row>
+                                            <el-slider
+                                                v-model="activity.subTitleSize"
+                                                :min="10"
+                                                :max="100" />
+                                        </el-row>
+                                    </div>
+                                    <template #reference>
+                                        <label
+                                            class="title"
+                                            id="SubTitle"
+                                            :style="`color:${activity.subTitleColor};font-size:${activity.subTitleSize}px;font-family:ForActivity;`">
+                                            {{ activity.subTitle }}
+                                        </label>
+                                    </template>
+                                </el-popover>
                             </el-row>
                         </el-col>
                     </el-row>
                 </el-header>
                 <el-container style="height: 75%">
                     <el-aside style="width: 40%">
-                        <div id="PictureBorder">
-                            <Aspratio :ratio="1.2">
-                                <div
-                                    class="leftBorder"
-                                    :style="`background-image: url(${activity.leftBorder});z-index: 500;`"></div>
-                                <Ascaler :horizontal="90" :vertical="90">
-                                    <Scroller
-                                        style="width: 100%; height: 100%"
-                                        :pictures="activity.pictureUrls"
-                                        :speed="activity.PictureSpeed"
-                                        :play="scroll"></Scroller>
-                                </Ascaler>
-                            </Aspratio>
-                        </div>
+                        <el-popover
+                            placement="top"
+                            :width="200"
+                            trigger="contextmenu">
+                            <div>
+                                <el-radio-group v-model="activity.pictureSpeed">
+                                    <el-radio
+                                        v-for="item in config.speeds"
+                                        :key="item"
+                                        :label="item"></el-radio>
+                                </el-radio-group>
+                            </div>
+                            <template #reference>
+                                <div id="PictureBorder">
+                                    <Aspratio :ratio="1.2">
+                                        <div
+                                            class="leftBorder"
+                                            :style="`background-image: url(${activity.leftBorder});z-index: 500;`"></div>
+                                        <Ascaler
+                                            :horizontal="90"
+                                            :vertical="90">
+                                            <Scroller
+                                                style="
+                                                    width: 100%;
+                                                    height: 100%;
+                                                "
+                                                :pictures="activity.pictureUrls"
+                                                :speed="activity.PictureSpeed"
+                                                :play="scroll"></Scroller>
+                                        </Ascaler>
+                                    </Aspratio>
+                                </div>
+                            </template>
+                        </el-popover>
                     </el-aside>
                     <el-main style="width: 60%">
-                        <div
-                            id="MainWindow"
-                            style="
-                                position: relative;
-                                background-color: transparent;
-                                overflow: hidden;
-                                width: 100%;
-                                height: 100%;
-                            ">
-                            <Container
-                                :key="key"
-                                v-for="key in Object.keys(locals)"
-                                :canvas="locals[key]"></Container>
-                            <Container
-                                :key="key"
-                                v-for="key in Object.keys(remotes)"
-                                :canvas="remotes[key]"></Container>
-                        </div>
+                        <el-popover
+                            placement="top"
+                            :width="200"
+                            trigger="contextmenu">
+                            <div>
+                                <el-radio-group v-model="activity.signSpeed">
+                                    <el-radio
+                                        v-for="item in config.speeds"
+                                        :key="item"
+                                        :label="item"></el-radio>
+                                </el-radio-group>
+                            </div>
+                            <template #reference>
+                                <div
+                                    id="MainWindow"
+                                    style="
+                                        position: relative;
+                                        background-color: transparent;
+                                        overflow: hidden;
+                                        width: 100%;
+                                        height: 100%;
+                                    ">
+                                    <Container
+                                        :key="key"
+                                        v-for="key in Object.keys(locals)"
+                                        :canvas="locals[key]">
+                                    </Container>
+                                    <Container
+                                        :key="key"
+                                        v-for="key in Object.keys(remotes)"
+                                        :canvas="remotes[key]">
+                                    </Container>
+                                </div>
+                            </template>
+                        </el-popover>
                     </el-main>
                 </el-container>
                 <el-footer style="height: 5%; text-align: end">
@@ -98,7 +171,6 @@
 <script>
 import "animate.css";
 import { Activity } from "@/utils/Activity";
-import { ResizeEvent } from "@/utils/Events";
 import { Canvas, Dot, SvgCanvas } from "@/utils/Canvas";
 import { Stroke, StrokeDivider } from "@/utils/Stroke";
 import { Animation, EndlessPlayer } from "@/utils/Animation";
@@ -121,18 +193,26 @@ export default {
     beforeCreate() {
         window.$Dispatcher.invoke(IpcMessage.FullScreen, true);
     },
-    unmounted() {
+    async unmounted() {
         this.player.stop();
         clearInterval(this.intervals.queryInterval);
         this.getCanvases().forEach((x) => {
             x.stopUpload();
         });
+        if(this.changed){
+            await this.updateInfo();
+        }
         window.$Dispatcher.invoke(IpcMessage.FullScreen, false);
     },
-    inject: [ComponentKey.PlayActicity, ComponentKey.Dotpen],
+    inject: [
+        ComponentKey.PlayActicity,
+        ComponentKey.Dotpen,
+        ComponentKey.Activities,
+    ],
     data() {
         return {
-            pad: 10,
+            changed:false,
+            config: this[ComponentKey.Activities],
             /**
              * @type {Dotpen}
              */
@@ -142,12 +222,9 @@ export default {
              */
             activity: this[ComponentKey.PlayActicity],
             stylePair: Animation.getOpposite("fade", "Right"),
-            index: 0,
             intervals: {
-                scrollInterval: null,
                 queryInterval: null,
             },
-            pictures: [],
             /**
              * @type {SvgCanvas}
              */
@@ -164,14 +241,28 @@ export default {
              * @type {Array<StrokeDivider>}
              */
             strokeDividers: {},
-            diverSize: {},
             /**
              * @type {EndlessPlayer}
              */
             player: null,
-
             scroll: true,
         };
+    },
+    watch: {
+        activity:{
+            handler(n,o){
+                this.changed = true;
+            },
+            deep:true,
+        },
+        ["activity.signSpeed"]: {
+            handler(n, o) {
+                if (!this.player) return;
+                this.player.Between = this.activity.SignSpeed * 1000;
+            },
+            immediate: true,
+            deep: true,
+        },
     },
     created() {
         var vue = this;
@@ -338,6 +429,11 @@ export default {
             Object.keys(this.remotes).forEach((x) => ret.push(this.remotes[x]));
             return ret;
         },
+        async updateInfo() {
+            if (!(await this.activity.changeInfo()).Success) {
+                this.$message.error("修改失败");
+            }
+        },
     },
 };
 </script>
@@ -382,7 +478,6 @@ export default {
                 width: 100%;
                 user-select: none;
                 letter-spacing: 10px;
-                pointer-events: none;
                 vertical-align: middle;
                 text-overflow: ellipsis;
                 display: -webkit-box;
