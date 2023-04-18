@@ -4,62 +4,46 @@
             <div class="insider">
                 <el-form :model="form" style="height:100%;" ref="mainForm" :rules="rules">
                     <el-space fill direction="vertical" :size="16" style="width: 100%;height:100%">
-                        <el-row >
+                        <el-row>
                             <el-form-item prop="phoneNumber" style="width: 100%">
-                                <el-input
-                                    v-model="form.phoneNumber"
-                                    clearable
-                                    maxlength="11"
-                                    controls="false"
-                                    oninput="value=value.replace(/[^\d.]/g,'')"
-                                    placeholder="手机号">
+                                <el-input v-model="form.phoneNumber" clearable maxlength="11" controls="false"
+                                    oninput="value=value.replace(/[^\d.]/g,'')" placeholder="手机号">
                                     <template #prefix>
                                         <el-icon class="el-input__icon">
-                                            <img
-                                                style="
-                                                    width: 20px;
-                                                    height: 20px;
-                                                    margin-top: 3px;
-                                                "
-                                                src="../assets/Home/Phone.svg" />
+                                            <img style="
+                                                        width: 20px;
+                                                        height: 20px;
+                                                        margin-top: 3px;
+                                                    " src="../assets/Home/Phone.svg" />
                                         </el-icon>
                                     </template>
                                 </el-input>
                             </el-form-item>
                         </el-row>
-                        <el-row >
+                        <el-row>
                             <el-col :span="12">
                                 <el-form-item prop="verifyCode" style="width: 100%;height:100%">
-                                    <el-input
-                                        placeholder="验证码"
-                                        :disabled="!this.form.verifyCodeAquired"
-                                        v-model="form.verifyCode"
-                                        oninput="value=value.replace(/[^\d.]/g,'')"
-                                        maxlength="6">
+                                    <el-input placeholder="验证码" :disabled="!this.form.verifyCodeAquired"
+                                        v-model="form.verifyCode" oninput="value=value.replace(/[^\d.]/g,'')" maxlength="6">
                                         <template #prefix>
                                             <el-icon class="el-input__icon">
-                                                <img
-                                                    style="
-                                                        width: 20px;
-                                                        height: 20px;
-                                                        margin-top:3px;
-                                                    "
-                                                    src="../assets/Home/Shield.svg" />
+                                                <img style="
+                                                            width: 20px;
+                                                            height: 20px;
+                                                            margin-top:3px;
+                                                        " src="../assets/Home/Shield.svg" />
                                             </el-icon>
                                         </template>
                                     </el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :offset="2" :span="10">
-                                <el-button
-                                    :disabled="!this.form.canGetCode"
-                                    @click="this.getVerifyCode()"
-                                    style="width:100%; font-size: 10;"
-                                    >获取验证码
+                                <el-button :disabled="!this.form.canGetCode" @click="this.getVerifyCode()"
+                                    style="width:100%; font-size: 10;">获取验证码
                                 </el-button>
                             </el-col>
                         </el-row>
-                        <el-row >
+                        <el-row>
                             <el-button style="width: 100%;" class="loginButton" @click="this.onLogin()">
                                 登录
                             </el-button>
@@ -74,7 +58,7 @@
 <script>
 import { ComponentKey } from '@/utils/Definition';
 export default {
-    inject:[ComponentKey.User],
+    inject: [ComponentKey.User],
     data() {
         return {
             form: {
@@ -158,14 +142,15 @@ export default {
     height: 70%;
 }
 
-.loginButton{
+.loginButton {
     color: antiquewhite !important;
     background-color: #0f8bff !important;
 }
-.loginButton:hover{
+
+.loginButton:hover {
     transition-delay: 0.1s;
     transition-duration: 0.3s;
-    color:#0f8bff  !important;
+    color: #0f8bff !important;
     background-color: #abdbf8 !important;
 }
 
