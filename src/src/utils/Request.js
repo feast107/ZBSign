@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Location } from "./Location";
+import { Location } from "../configure/Location";
 axios.defaults.headers["token"] = Location.Token;
 /*创建axios 实例*/
 const Request = axios.create({
