@@ -156,7 +156,7 @@ export class Handlers {
     static get QuitPlay() {
         return "onEscapePlay";
     }
-    static get QuitErase(){
+    static get QuitErase() {
         return "onEscapeErase";
     }
     static get PlayHandler() {
