@@ -14,7 +14,7 @@
 
 <script>
 import { ComponentKey } from '@/utils/Definition';
-import { Stroke } from '@/utils/Stroke';
+import { Stroke } from '@/models/Stroke';
 export default {
     inject: [ComponentKey.ModifingActivity],
     props: ['strokes', 'width', 'height', 'isErasing', 'onRemoveStroke', 'thick'],
