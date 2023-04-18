@@ -1,4 +1,4 @@
-import { GUID } from "./Definition";
+import { GUID } from "../utils/Definition";
 import { Stroke, StrokeManager } from "./Stroke";
 
 export class DotInfo {
