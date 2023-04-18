@@ -170,9 +170,9 @@
 
 <script>
 import "animate.css";
-import { Activity } from "@/utils/Activity";
-import { Canvas, Dot, SvgCanvas } from "@/utils/Canvas";
-import { Stroke, StrokeDivider } from "@/utils/Stroke";
+import { Activity } from "@/models/Activity";
+import { Canvas, Dot, SvgCanvas } from "@/models/Canvas";
+import { Stroke, StrokeDivider } from "@/models/Stroke";
 import { Animation, EndlessPlayer } from "@/utils/Animation";
 import { ComponentKey, Dotpen, IpcMessage, Handlers } from "@/utils/Definition";
 import Container from "./Container.vue";
