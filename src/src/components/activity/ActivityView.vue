@@ -364,7 +364,7 @@
 
 <script>
 import { ComponentKey, Handlers } from "@/utils/Definition";
-import { Activity } from "@/utils/Activity";
+import { Activity } from "@/models/Activity";
 import { EffectLabel } from "@/utils/Animation";
 import { Timer } from "@/utils/Format";
 import { DomElement } from "@/utils/Events";
