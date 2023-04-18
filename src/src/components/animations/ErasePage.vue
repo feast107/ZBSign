@@ -61,9 +61,9 @@
 </template>
 
 <script>
-import { Activity } from "@/utils/Activity";
+import { Activity } from "@/models/Activity";
 import { ComponentKey, Handlers } from "@/utils/Definition";
-import { Stroke } from "@/utils/Stroke";
+import { Stroke } from "@/models/Stroke";
 import Aspratio from "../layout/Aspratio.vue";
 import SvgContainer from "./SvgContainer.vue";
 export default {
