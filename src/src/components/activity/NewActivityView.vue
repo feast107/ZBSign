@@ -156,7 +156,7 @@
 </template>
 
 <script>
-import { Activity } from "@/utils/Activity";
+import { Activity } from "@/models/Activity";
 import { EffectLabel } from "@/utils/Animation";
 import { ComponentKey } from "@/utils/Definition";
 import { DomElement } from "@/utils/Events";
