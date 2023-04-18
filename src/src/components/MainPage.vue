@@ -91,8 +91,8 @@
 </template>
 <script>
 import { computed } from "vue";
-import { Activity } from "@/utils/Activity";
-import { User } from "@/utils/User";
+import { Activity } from "@/models/Activity";
+import { User } from "@/models/User";
 import {
     ComponentKey,
     Bridges,
