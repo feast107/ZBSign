@@ -1,5 +1,5 @@
-import Request from "./Request";
-import { Location } from "./Location";
+import Request from "../utils/Request";
+import { Location } from "../configure/Location";
 export class User{
     constructor(){
         this.phoneNumber = "";
