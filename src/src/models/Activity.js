@@ -1,8 +1,8 @@
-import { Effects } from "./Animation";
-import { GUID } from "./Definition";
-import Request from "./Request";
-import { Dot } from "@/utils/Canvas";
-import { Location } from "./Location";
+import { Effects } from "../utils/Animation";
+import { GUID } from "../utils/Definition";
+import Request from "../utils/Request";
+import { Dot } from "@/models/Canvas";
+import { Location } from "../configure/Location";
 
 export class Activity {
     constructor(id) {
