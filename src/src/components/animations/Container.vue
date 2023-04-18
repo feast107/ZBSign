@@ -13,8 +13,8 @@
 
 <script>
 import { ComponentKey } from "@/utils/Definition";
-import { Activity } from "@/utils/Activity";
-import { Canvas } from "@/utils/Canvas";
+import { Activity } from "@/models/Activity";
+import { Canvas } from "@/models/Canvas";
 import Aspratio from "../layout/Aspratio.vue";
 import MultipleBorder from "./MultipleBorder.vue";
 import Anoaspratio from "../layout/Anoaspratio.vue";
