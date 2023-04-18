@@ -6,7 +6,7 @@
 <script>
 import HomePage from "./components/HomePage.vue";
 import MainPage from "./components/MainPage.vue";
-import { User } from "./utils/User";
+import { User } from "./models/User";
 import { ComponentKey } from "./utils/Definition";
 import Request from "./utils/Request";
 import { computed } from "vue";
