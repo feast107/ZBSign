@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { Dot } from "@/utils/Canvas";
+import { Dot } from "@/models/Canvas";
 import { ComponentKey, Bridges, IpcMessage, Dotpen, ConnectStatus, BlueTooth } from "@/utils/Definition";
 import TStudyDigitalPen from "../../driver/PenDriver.js";
 export default {
