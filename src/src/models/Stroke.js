@@ -1,7 +1,7 @@
 import { Canvas, Dot, SvgCanvas } from "./Canvas";
 import { Activity } from "./Activity";
-import Request from "./Request";
-import { Location } from "./Location";
+import Request from "../utils/Request";
+import { Location } from "../configure/Location";
 
 export class StrokeDivider {
     /**
@@ -385,7 +385,7 @@ export class Stroke {
         return ret;
     }
 }
-window.STROKE = Stroke;
+
 export class StrokeManager {
     /**
      * @param {Canvas|SvgCanvas} canvas
