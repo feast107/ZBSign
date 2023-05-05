@@ -4,6 +4,7 @@ import Request from "../utils/Request";
 import { Location } from "../configure/Location";
 
 export class StrokeDivider {
+    static Count = 0;
     /**
      *
      * @param {Number} pageNum
@@ -23,6 +24,7 @@ export class StrokeDivider {
         localContainer,
         remoteContainer
     ) {
+        StrokeDivider.Count++;
         this.penSerial = localSerial;
         this.activity = activity;
         this.pageAddress = pageAddress;
@@ -144,6 +146,17 @@ export class StrokeDivider {
                 this.pageNum
             );
         }
+
+        if (StrokeDivider.Count == 1) {
+            let interval = setInterval(async () => {
+                if (StrokeDivider.Count > 1) {
+                    clearInterval(interval);
+                } else {
+                    await this.doQuery();
+                }
+            }, 3000);
+        }
+
         remote.listen(async (_) => {
             await this.doQuery();
         });
@@ -181,8 +194,7 @@ export class StrokeDivider {
             this.accecptNewStrokes(strokes);
         } else {
             console.log(
-                `${this.pageNum}页 拉取全部笔迹 总共:[${
-                    strokes.length
+                `${this.pageNum}页 拉取全部笔迹 总共:[${strokes.length
                 }]条 新增:[${strokes.length - this.index}]条`
             );
             this.accecptStrokes(strokes);
