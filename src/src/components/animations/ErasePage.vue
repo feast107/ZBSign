@@ -19,13 +19,20 @@
 				<el-empty v-if="pages.length == 0" description="空" />
 				<el-scrollbar v-else>
 					<el-space wrap size="large" style="padding-top: 20px">
-						<el-badge 
-						:key="page" v-for="page in pages" 
-						:value="page.pageNum" class="item" type="primary">
-							<el-card :style="`${width + 50}px`">
-								<SvgContainer :thick="eraseThick" :is-erasing="isErasing" :width="`${width}px`"
-									:strokes="page.strokes" :on-remove-stroke="(_) => {onRemove(_, page.pageNum);}" />
-							</el-card>
+						<el-badge :key="page" v-for="(page,index) in pages" :value="page.pageNum" class="item" type="primary">
+							<el-popover 
+								trigger="contextmenu" 
+								placement="top">
+								<el-button type="danger" @click="()=>{ this.clean(index) }">清空</el-button>
+								<template #reference>
+									<el-card :style="`${width + 50}px`">
+										<SvgContainer ref="erasers" :thick="eraseThick" :is-erasing="isErasing" :width="`${width}px`"
+											:strokes="page.strokes" :on-remove-stroke="(_) => {
+												onRemove(_, page.pageNum);
+											}" />
+									</el-card>
+								</template>
+							</el-popover>
 						</el-badge>
 					</el-space>
 					<div v-if="enableErase" z-index="50" class="Rubber"
@@ -113,7 +120,7 @@ export default {
 				let serials = {};
 				strokes.forEach((s) => {
 					if (!serials[s.s]) {
-						serials[s.s] = [];
+						serials[s.s] = []; 
 					}
 					serials[s.s].push(s);
 				});
@@ -122,6 +129,11 @@ export default {
 						strokes: serials[k],
 						pageNum: x,
 						penSerial: k,
+						reff:null,
+						clean(){
+							debugger;
+							this.strokes.clear();
+						}
 					});
 				});
 				this.pages = this.pages.orderBy((x) => x.pageNum);
@@ -233,6 +245,9 @@ export default {
 			}
 			this.quitErase();
 		},
+		clean(index){
+			this.$refs.erasers[index].clean();
+		}
 	},
 };
 </script>
