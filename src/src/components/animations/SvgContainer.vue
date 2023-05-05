@@ -42,8 +42,7 @@ export default {
         })
     },
     methods: {
-        moveBy(stroke) {
-            if (!this.isErasing) return;
+        remove(stroke){
             this.svgs.remove(stroke);
             this.removed.add(stroke);
             let vue = this;
@@ -59,6 +58,15 @@ export default {
                 }
             });
         },
+        moveBy(stroke) {
+            if (!this.isErasing) return;
+            this.remove(stroke);
+        },
+        clean() {
+            this.strokes.forEach(stroke => {
+                this.remove(stroke);
+            })
+        }
     }
 }
 </script>
