@@ -26,6 +26,16 @@ module.exports = defineConfig({
             appId: "com.zbform.sign",
             productName: "孜博汇签到程序",
             preload: "src/preload.js",
+            win : {//win相关配置
+                target: [
+                    {
+                        arch : [
+                            "x64",//64位
+                            "ia32"//32位
+                        ]
+                    }
+                ]
+            }
         },
     },
 });
