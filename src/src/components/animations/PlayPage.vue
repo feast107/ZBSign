@@ -1,6 +1,12 @@
 <template>
 	<div id="PlayMain">
 		<div id="Foreground">
+			<div id="CloseButton"
+				style="z-index: 99; position: fixed; right: 20px;top:20px;opacity: 0;">
+				<el-button @click="quit" circle type="danger" style="width:40px;height:40px;">
+					<el-icon><Close /></el-icon>
+				</el-button>
+			</div>
 			<el-container id="Container">
 				<el-header style="height: 20%">
 					<el-row>
@@ -212,7 +218,7 @@ export default {
 		this.startQuery();
 		document.addEventListener("keyup", (e) => {
 			if (e.key == "Escape") {
-				vue.$emit(Handlers.QuitPlay, null);
+				vue.quit();
 			}
 		});
 		this.dotpen.onDraw(this.callbackHandler());
@@ -379,6 +385,9 @@ export default {
 				this.$message.error("修改失败");
 			}
 		},
+		quit(){
+			this.$emit(Handlers.QuitPlay, null);
+		}
 	},
 };
 </script>
@@ -394,6 +403,12 @@ export default {
 	overflow: hidden;
 
 	#Foreground {
+
+		#CloseButton:hover {
+			opacity: 1 !important;
+			transition-duration: 0.5s;
+		}
+
 		position: fixed;
 		left: 0;
 		top: 0;
