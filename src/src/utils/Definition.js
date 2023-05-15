@@ -12,6 +12,8 @@ export const IpcMessage = {
 
     FileRead: "fileRead",
     FileWrite: "fileWrite",
+    DirExist : "dirExist",
+    MkDir : "mkDir",
 };
 
 export const FileType = {
