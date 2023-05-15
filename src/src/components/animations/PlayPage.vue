@@ -118,6 +118,8 @@
 
 <script>
 import "animate.css";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import { Activity } from "@/models/Activity";
 import { Canvas, Dot, SvgCanvas } from "@/models/Canvas";
 import { Stroke, StrokeDivider } from "@/models/Stroke";
