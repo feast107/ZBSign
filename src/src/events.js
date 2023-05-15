@@ -25,7 +25,7 @@ export const Events = {
             console.log({ event: e, response: args });
             this.bluetoothPinCallback(...args);
         });
-        ipcMain.on(IpcMessage.FullScreen, (e,...args) => {
+        ipcMain.on(IpcMessage.FullScreen, (e, ...args) => {
             e.sender.$Scope.setFullScreen(...args);
         });
 
@@ -51,12 +51,7 @@ export const Events = {
                         //首先创建buffer，文件读取到buffer中
                         let size = fs.statSync(name).size; //计算文件长度
                         let buf = Buffer.alloc(size);
-                        fs.read(
-                            fd,
-                            buf,
-                            0,
-                            size,
-                            0,
+                        fs.read(fd, buf, 0, size, 0,
                             function (err, bytesRead, buffer) {
                                 console.log(buffer.buffer);
                                 e.sender.send(
@@ -72,5 +67,23 @@ export const Events = {
             }
             e.sender.send(IpcMessage.FileRead, name, type, null);
         });
+
+        ipcMain.on(IpcMessage.FileWrite,
+            /**
+             * 
+             * @param {Electron.IpcMainEvent} e 
+             * @param {string} name 
+             * @param {string} str 
+             */
+            (e, name, str) => {
+                fs.writeFileSync(name, str);
+            });
+
+        ipcMain.on(IpcMessage.DirExist, (e, dir) => {
+            e.sender.send(IpcMessage.DirExist, fs.existsSync(dir));
+        })
+        ipcMain.on(IpcMessage.MkDir, (e, dir) => {
+             fs.mkdirSync(dir);
+        })
     },
 };
