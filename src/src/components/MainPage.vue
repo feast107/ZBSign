@@ -66,12 +66,11 @@
                             <NewActivityView @onJumpToList="onJumpToList" v-if="this.select == this.menu[0]" />
                             <ActivityView @[Handlers.PlayHandler]="
                                 this[Handlers.PlayHandler]
-                            " @[Handlers.EraseHandler]="
-    this[Handlers.EraseHandler]
-" @getActivities="getActivities" v-if="
-    this.select == this.menu[1] &&
-    showActivities
-" />
+                                " @[Handlers.EraseHandler]="
+        this[Handlers.EraseHandler]
+        " @getActivities="getActivities" v-if="this.select == this.menu[1] &&
+        showActivities
+        " />
                             <KeepAlive>
                                 <SmartPen v-if="this.select == this.menu[2]" />
                             </KeepAlive>
